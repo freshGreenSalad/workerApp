@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.workerapp.Data.worker
+import com.example.workerapp.ui.HomeUi.Workercard
 import com.example.workerapp.ui.HomeUi.topBar
 import kotlinx.coroutines.launch
 
@@ -61,11 +63,10 @@ fun main(
             Text(text = "Your workers")
         }
         item{
+            val items = worker
             LazyRow() {
-                items(10) { index ->
-                    Card(modifier = Modifier.padding(8.dp).size(width = 120.dp, height = 180.dp),
-                        content = { Text(text = "$index")}
-                    ) 
+                items(items.size) { index ->
+                    Workercard(items[index])
                 }
             }
         }
@@ -73,11 +74,10 @@ fun main(
             Text(text = "Find New Workers")
         }
         item{
+            val items = worker
             LazyRow() {
-                items(10) { index ->
-                    Card(modifier = Modifier.padding(8.dp).size(width = 120.dp, height = 180.dp),
-                        content = { Text(text = "$index")}
-                    )
+                items(items.size) { index ->
+                    Workercard(items[index])
                 }
             }
         }
