@@ -17,13 +17,17 @@ import androidx.compose.ui.unit.sp
 import com.example.workerapp.Data.worker
 import com.example.workerapp.ui.HomeUi.Workercard
 import com.example.workerapp.ui.HomeUi.topBar
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 
-
+@Destination(start = true)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    navigator: DestinationsNavigator
+) {
     val drawerState = rememberDrawerState(initialValue = Closed)
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
@@ -47,7 +51,7 @@ fun HomeScreen() {
                 BottomAppBar()
             },
             content = {
-                main(it)
+                main(it,navigator)
             }
         )
     }
@@ -56,7 +60,8 @@ fun HomeScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun main(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    navigator: DestinationsNavigator
 ){
     LazyColumn(modifier = Modifier.padding(paddingValues)){
         item { 
@@ -66,7 +71,7 @@ fun main(
             val items = worker
             LazyRow() {
                 items(items.size) { index ->
-                    Workercard(items[index])
+                    Workercard(items[index],navigator)
                 }
             }
         }
@@ -77,7 +82,7 @@ fun main(
             val items = worker
             LazyRow() {
                 items(items.size) { index ->
-                    Workercard(items[index])
+                    Workercard(items[index],navigator)
                 }
             }
         }
