@@ -16,6 +16,7 @@ fun BottomAppBar(
 ){
     var selectedItem by remember { mutableStateOf(0) }
     val items = listOf("Songs", "Artists", "Playlists")
+
     NavigationBar() {
         items.forEachIndexed { index, item ->
             NavigationBarItem(
