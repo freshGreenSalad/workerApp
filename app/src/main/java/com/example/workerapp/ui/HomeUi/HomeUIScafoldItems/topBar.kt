@@ -7,11 +7,12 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun topBar(
-    openDrawer: () -> Unit
+    openDrawer: () -> Unit,
+    title : String
 )
 {
     CenterAlignedTopAppBar(
-        title = { Text("Centered TopAppBar") },
+        title = { Text(title) },
         navigationIcon = {
             IconButton(onClick = { openDrawer() }
             ) {
@@ -21,7 +22,7 @@ fun topBar(
                 )
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
     )
 }
 

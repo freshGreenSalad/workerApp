@@ -1,4 +1,4 @@
-package com.example.workerapp.ui.HomeUi
+package com.example.workerapp.ui.workerInfoPage.WorkerUITabs
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -13,10 +13,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.workerapp.ui.workerInfoPage.WorkerChipGroup
 
-@Preview
+@Composable
+fun WorkerStats(
+    paddingValues: PaddingValues,
+){
+    Column() {
+        Box(
+            modifier = androidx.compose.ui.Modifier
+                .padding(paddingValues)
+                .height(200.dp)
+        ) {
+            anamatedWorkHistory()
+        }
+        WorkerChipGroup()
+    }
+}
+
 @Composable
 fun anamatedWorkHistory(){
     val canvasSize = 40
@@ -28,23 +43,23 @@ fun anamatedWorkHistory(){
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(count) { index ->
             Row() {
-                    Canvas(modifier = Modifier
-                        .size(canvasSize.dp)
-                        .clickable { }, onDraw = {
-                        val lineYStart : Float = if (index == 0) size.height/2f else 0f
-                        val lineYEnd : Float = if (index == count-1) size.height/2f else size.height
-                        drawCircle(
-                            color = Color.Gray,
-                            radius = circleSize.toFloat()
-                        )
-                        drawLine(
-                            start = Offset(size.width/2f,lineYStart),
-                            end = Offset(size.width/2f, lineYEnd),
-                            strokeWidth = 5f,
-                            color = Color.Gray
-                        )
-                    }
+                Canvas(modifier = Modifier
+                    .size(canvasSize.dp)
+                    .clickable { }, onDraw = {
+                    val lineYStart : Float = if (index == 0) size.height/2f else 0f
+                    val lineYEnd : Float = if (index == count-1) size.height/2f else size.height
+                    drawCircle(
+                        color = Color.Gray,
+                        radius = circleSize.toFloat()
                     )
+                    drawLine(
+                        start = Offset(size.width/2f,lineYStart),
+                        end = Offset(size.width/2f, lineYEnd),
+                        strokeWidth = 5f,
+                        color = Color.Gray
+                    )
+                }
+                )
                 Box(modifier = Modifier
                     .padding(4.dp)
                     .clip(RoundedCornerShape(4.dp))
@@ -54,8 +69,8 @@ fun anamatedWorkHistory(){
                     .background(
                         color = Color.LightGray
                     )
-                    )
-                 {
+                )
+                {
                     Text(text = "this is a box")
                 }
             }
