@@ -3,12 +3,11 @@ package com.example.workerapp.ui.HomeUi
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,6 +19,8 @@ import androidx.compose.ui.zIndex
 import com.example.workerapp.Data.Room.Workers
 import com.example.workerapp.R
 import com.example.workerapp.ui.destinations.WorkerPageDestination
+import com.example.workerapp.ui.theme.TriangleShape
+import com.example.workerapp.ui.theme.WorkerCardShape
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,8 +31,6 @@ fun Workercard(
     showPlus: Boolean,
     onClickWatchlist: () -> Unit
 ){
-    var cornerCutt = if (showPlus) 0 else 40
-
     Surface(
         onClick = {
                   navigator.navigate(
@@ -40,21 +39,21 @@ fun Workercard(
                       )
                   )
         },
-        enabled = true,
+        shape = if (!showPlus) { WorkerCardShape(40f) } else { RoundedCornerShape(15.dp) },
         shadowElevation = 1000.dp,
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 100.dp,
         modifier = Modifier
             .padding(8.dp)
-            .clip(CutCornerShape(topEnd = cornerCutt.dp))
-            .clip(RoundedCornerShape(15.dp))
             .size(width = 180.dp, height = 180.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().zIndex(1f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .zIndex(1f),
             horizontalArrangement = Arrangement.End
         ) {
-            watchlistedCardIcon(showPlus) { onClickWatchlist}
+            watchlistedCardIcon(showPlus, { onClickWatchlist() })
         }
         Image(
             contentScale = ContentScale.FillBounds,
@@ -75,31 +74,52 @@ fun Workercard(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun watchlistedCardIcon(
-        cornerClipped:Boolean,
-        onClickWatchlist : () -> Unit
-){
-    Box(
-        modifier = Modifier
-            .width(20.dp)
-            .height(20.dp)
-            .background(color = Color.Gray)
-            .clickable {
-                onClickWatchlist
-            }
-    ) {
-        when (cornerClipped) {
-           (cornerClipped== true) -> {
-                   Image(
-                       painter = painterResource(id = R.drawable.ic_plus),
-                       contentDescription = ""
-                   )
-               }
-            (cornerClipped == false) ->{
-                Image(
-                    painter = painterResource(id = R.drawable.ic_add),
-                    contentDescription = ""
+    cornerClipped: Boolean,
+    onClickWatchlist: () -> Unit
+) {
+    if (cornerClipped) {
+        Box(
+            modifier = Modifier
+                .width(47.dp)
+                .height(47.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = TriangleShape()
                 )
-            }
-           }
+                .clickable {
+                    onClickWatchlist()
+                },
+            contentAlignment = Alignment.TopEnd
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_plus),
+                contentDescription = ""
+            )
+
         }
+    } else {
+
+        Box(
+            modifier = Modifier
+                .width(47.dp)
+                .height(47.dp)
+                .clip(
+                    RoundedCornerShape(
+                        bottomStart = 15.dp
+                    )
+                )
+                .background(color = MaterialTheme.colorScheme.primary)
+                .clickable {
+                    onClickWatchlist()
+                },
+            contentAlignment = Alignment.BottomStart
+        ) {
+            Image(
+              //  modifier = Modifier.fillMaxSize(),
+                painter = painterResource(id = R.drawable.ic_add),
+                contentDescription = "",
+               // alignment = Alignment.BottomStart
+            )
+        }
+    }
 }

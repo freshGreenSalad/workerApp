@@ -22,7 +22,7 @@ fun topBar(
                 )
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
+      //  colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.inversePrimary)
     )
 }
 

@@ -21,7 +21,7 @@ class MainViewModel @Inject constructor(
 
     private val homeBottomAppBarTabs = MutableStateFlow(HomeBottomAppBarTabs.values().asList())
 
-    private val SelectedHomeBottomAppBarTabs = MutableStateFlow(HomeBottomAppBarTabs.Home)
+    private val SelectedHomeBottomAppBarTab = MutableStateFlow(HomeBottomAppBarTabs.Home)
 
     @OptIn(ExperimentalMaterial3Api::class)
     private val drawerState = MutableStateFlow(DrawerState(initialValue = Closed))
@@ -38,13 +38,14 @@ class MainViewModel @Inject constructor(
             combine(
                 showPlus,
                 homeBottomAppBarTabs,
-                SelectedHomeBottomAppBarTabs,
+                SelectedHomeBottomAppBarTab,
                 drawerState
-            ) { showPlus, homeBottomAppBarTabs,SelectedHomeBottomAppBarTabs,drawerState ->
+            ) { showPlus, homeBottomAppBarTabs,SelectedHomeBottomAppBarTab,drawerState ->
                 HomeViewState(
-                    drawerState = drawerState,
                     showPlus = showPlus,
-                    homeAppBarTabs = homeBottomAppBarTabs
+                    homeAppBarTabs = homeBottomAppBarTabs,
+                    selectedHomeBarTab = SelectedHomeBottomAppBarTab,
+                    drawerState = drawerState,
                 )
             }.catch { throwable ->
                 // TODO: emit a UI error here. For now we'll just rethrow
@@ -67,16 +68,16 @@ class MainViewModel @Inject constructor(
     }
 
     fun onClickHomeBottomAppTab (tab: HomeBottomAppBarTabs){
-        SelectedHomeBottomAppBarTabs.value = tab
+        SelectedHomeBottomAppBarTab.value = tab
     }
 
 }
 
 data class HomeViewState @OptIn(ExperimentalMaterial3Api::class) constructor(
-    val drawerState: DrawerState = DrawerState(initialValue = Closed),
     val showPlus: Boolean = true,
     val homeAppBarTabs: List<HomeBottomAppBarTabs> = emptyList(),
-    val SelectedHomeBottomAppBarTabs: HomeBottomAppBarTabs = HomeBottomAppBarTabs.Home
+    val selectedHomeBarTab: HomeBottomAppBarTabs = HomeBottomAppBarTabs.Home,
+    val drawerState: DrawerState = DrawerState(initialValue = Closed),
 )
 
 enum class HomeBottomAppBarTabs{

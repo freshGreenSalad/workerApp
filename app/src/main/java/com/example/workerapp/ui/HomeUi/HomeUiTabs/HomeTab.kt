@@ -1,21 +1,17 @@
 package com.example.workerapp.ui.HomeUi.HomeUiTabs
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.workerapp.Data.Room.Workers
 import com.example.workerapp.Data.Room.workerList
-import com.example.workerapp.ui.HomeUi.MainViewModel
 import com.example.workerapp.ui.HomeUi.Workercard
+import com.example.workerapp.ui.theme.TriangleShape
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,28 +19,12 @@ import kotlinx.coroutines.launch
 fun main(
     paddingValues: PaddingValues,
     navigator: DestinationsNavigator,
-   // viewModel: MainViewModel,
     showPlus: Boolean,
     onClickWatchlist: () -> Unit
 ) {
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
         item {
-            val scope = rememberCoroutineScope()
-            val worker2 = workerList[1]
-            /*Button(
-                onClick = {
-                    scope.launch {
-                        viewModel.addworker(worker2)
-                    }
-                },
-            ) {}*/
-
-
-           /* val workers: List<Workers> by viewModel.GetWorkerFlow()
-                .collectAsState(initial = workerList)*/
-
-
-           /* Text(text = workers.first().name)*/
+               Box(modifier = Modifier.size(180.dp).background(MaterialTheme.colorScheme.primary, TriangleShape()))
             Text(
                 modifier = Modifier.padding(10.dp),
                 style = MaterialTheme.typography.bodyLarge,
@@ -122,3 +102,26 @@ fun main(
 
     }
 }
+
+/*
+val scope = rememberCoroutineScope()
+val worker2 = workerList[1]
+*/
+/*Button(
+    onClick = {
+        scope.launch {
+            viewModel.addworker(worker2)
+        }
+    },
+) {}*//*
+
+
+
+*/
+/* val workers: List<Workers> by viewModel.GetWorkerFlow()
+     .collectAsState(initial = workerList)*//*
+
+
+
+*/
+/* Text(text = workers.first().name)*/

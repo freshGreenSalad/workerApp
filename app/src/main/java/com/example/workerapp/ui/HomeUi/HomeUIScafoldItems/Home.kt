@@ -21,14 +21,15 @@ fun MainHolderComposable(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val viewState by viewModel.state.collectAsState()
-    Surface() {
+    Surface{
         HomeScreen(
             navigator = navigator,
             showPlus = viewState.showPlus,
-            homeSelectedTab = viewState.SelectedHomeBottomAppBarTabs,
+            homeAppBarTabs = viewState.homeAppBarTabs,
+            homeSelectedTab = viewState.selectedHomeBarTab,
+            drawerState = viewState.drawerState,
             onClickWatchlist = viewModel::onClickWatchlist,
             onclickHomeBottomAppTab = viewModel::onClickHomeBottomAppTab,
-            drawerState = viewState.drawerState
         )
     }
 }
@@ -39,6 +40,7 @@ fun MainHolderComposable(
 fun HomeScreen(
     navigator: DestinationsNavigator,
     showPlus :Boolean,
+    homeAppBarTabs:  List<HomeBottomAppBarTabs>,
     homeSelectedTab: HomeBottomAppBarTabs,
     onClickWatchlist: () -> Unit,
     onclickHomeBottomAppTab: (HomeBottomAppBarTabs) -> Unit,
@@ -66,7 +68,7 @@ fun HomeScreen(
                 )
             },
             bottomBar = {
-                BottomAppBarHomePage(homeSelectedTab, onclick = {onclickHomeBottomAppTab(it)})
+                BottomAppBarHomePage(homeSelectedTab, onclick = {onclickHomeBottomAppTab(it)}, homeAppBarTabs)
             },
             content = {
                 when (homeSelectedTab) {
