@@ -1,16 +1,16 @@
 package com.example.workerapp.ui.HomeUi.HomeUiTabs
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.workerapp.Data.Room.AppModuel.AWSConnection
+import com.example.workerapp.Data.Room.ktor.AWSInterface
 import com.example.workerapp.Data.Room.workerList
 import com.example.workerapp.ui.HomeUi.Workercard
-import com.example.workerapp.ui.theme.TriangleShape
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
@@ -20,11 +20,23 @@ fun main(
     paddingValues: PaddingValues,
     navigator: DestinationsNavigator,
     showPlus: Boolean,
-    onClickWatchlist: () -> Unit
+    onClickWatchlist: () -> Unit,
+    service: AWSInterface = AWSConnection()
 ) {
+
+    val text = produceState<String>(
+        initialValue = "emptyText",
+        producer = {
+            value = service.gethelloWorld()
+        }
+    )
+
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
         item {
-               Box(modifier = Modifier.size(180.dp).background(MaterialTheme.colorScheme.primary, TriangleShape()))
+               //Box(modifier = Modifier.size(180.dp).background(MaterialTheme.colorScheme.primary, TriangleShape()))
+            Text(
+                text = text.toString()
+            )
             Text(
                 modifier = Modifier.padding(10.dp),
                 style = MaterialTheme.typography.bodyLarge,

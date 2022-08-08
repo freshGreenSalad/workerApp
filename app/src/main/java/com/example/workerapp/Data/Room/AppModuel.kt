@@ -2,6 +2,7 @@ package com.example.workerapp.Data.Room
 
 import android.content.Context
 import androidx.room.Room
+import com.example.workerapp.Data.Room.ktor.AWSInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,4 +28,8 @@ object AppModuel {
     @Singleton
     @Provides
     fun provideYourDao(db: roomDatabase) = db.getArticleDao()
+
+    @Singleton
+    @Provides
+    fun AWSConnection() = AWSInterface.create()
 }
