@@ -7,7 +7,9 @@ import io.ktor.client.features.logging.*
 
 interface AWSInterface {
 
-    suspend fun gethelloWorld(): String
+    suspend fun getWorker(key:Int): String
+
+    suspend fun getImage(): String
 
     companion object {
         fun create(): AWSInterface {

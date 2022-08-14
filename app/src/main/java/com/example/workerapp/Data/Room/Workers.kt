@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.workerapp.R
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 @Entity()
 @Parcelize
@@ -24,3 +25,13 @@ val worker4 = Workers(0,"worker4",25, R.drawable.four,35)
 val worker5 = Workers(0,"worker5",25, R.drawable.one,35)
 
 val workerList = listOf<Workers>(worker1, worker2, worker3, worker4, worker5)
+
+
+@Serializable
+data class WorkerTest(
+    val key:Int,
+    val name:String,
+    val age: Int,
+    val hourlyRate: Int,
+    val imageURl: String
+)

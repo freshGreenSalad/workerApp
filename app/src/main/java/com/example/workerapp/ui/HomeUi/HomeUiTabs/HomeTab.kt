@@ -8,10 +8,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.Data.Room.AppModuel.AWSConnection
+import com.example.workerapp.Data.Room.Worker
+import com.example.workerapp.Data.Room.WorkerTest
 import com.example.workerapp.Data.Room.ktor.AWSInterface
 import com.example.workerapp.Data.Room.workerList
 import com.example.workerapp.ui.HomeUi.Workercard
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,20 +27,34 @@ fun main(
     onClickWatchlist: () -> Unit,
     service: AWSInterface = AWSConnection()
 ) {
-
-    val text = produceState<String>(
-        initialValue = "emptyText",
-        producer = {
-            value = service.gethelloWorld()
-        }
-    )
-
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
         item {
-               //Box(modifier = Modifier.size(180.dp).background(MaterialTheme.colorScheme.primary, TriangleShape()))
-            Text(
-                text = text.toString()
+
+            val text = produceState(
+                initialValue = "emptyText",
+                producer = {
+                    value = try {
+                        Json.decodeFromString<WorkerTest>(service.getWorker(1)).toString()
+                    } catch (e: Exception) {
+                        ""
+                    }
+                }
             )
+            Text(text.value)
+
+            //URL image loader  Json.decodeFromString<Worker>
+            /*AsyncImage(
+                modifier = Modifier.size(200.dp),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(
+                        "https://testbucketletshopeitsfree.s3.ap-southeast-2.amazonaws.com/ImageTest"
+                    )
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.four),
+                contentDescription = ""
+            )*/
+
             Text(
                 modifier = Modifier.padding(10.dp),
                 style = MaterialTheme.typography.bodyLarge,
@@ -56,7 +74,7 @@ fun main(
         }
         item {
             val items = workerList
-            LazyRow() {
+            LazyRow{
                 items(items.size) { index ->
                     Workercard(items[index], navigator, showPlus, onClickWatchlist)
                 }
@@ -82,7 +100,7 @@ fun main(
         }
         item {
             val items = workerList
-            LazyRow() {
+            LazyRow {
                 items(items.size) { index ->
                     Workercard(items[index], navigator, showPlus, onClickWatchlist)
                 }
@@ -114,26 +132,3 @@ fun main(
 
     }
 }
-
-/*
-val scope = rememberCoroutineScope()
-val worker2 = workerList[1]
-*/
-/*Button(
-    onClick = {
-        scope.launch {
-            viewModel.addworker(worker2)
-        }
-    },
-) {}*//*
-
-
-
-*/
-/* val workers: List<Workers> by viewModel.GetWorkerFlow()
-     .collectAsState(initial = workerList)*//*
-
-
-
-*/
-/* Text(text = workers.first().name)*/

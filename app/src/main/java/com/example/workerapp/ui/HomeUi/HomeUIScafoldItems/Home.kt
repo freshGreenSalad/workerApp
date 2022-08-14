@@ -71,17 +71,21 @@ fun HomeScreen(
                 BottomAppBarHomePage(homeSelectedTab, onclick = {onclickHomeBottomAppTab(it)}, homeAppBarTabs)
             },
             content = {
-                when (homeSelectedTab) {
-                    HomeBottomAppBarTabs.Home -> {
-                        main(
-                            it, navigator, showPlus, onClickWatchlist
-                        )
-                    }
-                    HomeBottomAppBarTabs.Search->{
-                        WorkerSearch(it)
-                    }
-                    HomeBottomAppBarTabs.Watchlisted->{
-                        SavedWorkers(it)
+                Surface(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    when (homeSelectedTab) {
+                        HomeBottomAppBarTabs.Home -> {
+                            main(
+                                it, navigator, showPlus, onClickWatchlist
+                            )
+                        }
+                        HomeBottomAppBarTabs.Search -> {
+                            WorkerSearch(it)
+                        }
+                        HomeBottomAppBarTabs.Watchlisted -> {
+                            SavedWorkers(it)
+                        }
                     }
                 }
             }

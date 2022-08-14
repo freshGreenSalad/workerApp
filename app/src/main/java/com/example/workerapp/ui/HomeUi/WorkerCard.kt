@@ -40,12 +40,11 @@ fun Workercard(
                   )
         },
         shape = if (!showPlus) { WorkerCardShape(40f) } else { RoundedCornerShape(15.dp) },
-        shadowElevation = 1000.dp,
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 100.dp,
         modifier = Modifier
             .padding(8.dp)
-            .size(width = 180.dp, height = 180.dp)
+            .size(width = 180.dp, height = 180.dp),
+        shadowElevation = 20.dp,
     ) {
         Row(
             modifier = Modifier

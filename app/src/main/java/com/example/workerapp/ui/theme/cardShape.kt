@@ -1,5 +1,6 @@
 package com.example.workerapp.ui.theme
 
+import android.content.res.Resources
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
@@ -37,9 +38,9 @@ fun drawTicketPath(size: Size, cornerRadius: Float): Path {
             sweepAngleDegrees = 90.0f,
             forceMoveTo = false
         )
-        lineTo(x = size.width - cornerRadius*3f, y = 0f)
+        lineTo(x = size.width - size.width/4f, y = 0f)
         // Top right line
-        lineTo(x = size.width, y = cornerRadius*3f)
+        lineTo(x = size.width, y = size.width/4f)
         lineTo(x = size.width, y = size.height - cornerRadius)
         // Bottom right arc
         arcTo(
