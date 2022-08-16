@@ -30,6 +30,9 @@ fun MainHolderComposable(
             drawerState = viewState.drawerState,
             onClickWatchlist = viewModel::onClickWatchlist,
             onclickHomeBottomAppTab = viewModel::onClickHomeBottomAppTab,
+            ListOfSavedWorkers = viewState.savedWorkers,
+            removeFromWatchlist = viewModel::onClickWatchlist2,
+            addToWatchList = viewModel::onClickWatchlist3
         )
     }
 }
@@ -44,8 +47,12 @@ fun HomeScreen(
     homeSelectedTab: HomeBottomAppBarTabs,
     onClickWatchlist: () -> Unit,
     onclickHomeBottomAppTab: (HomeBottomAppBarTabs) -> Unit,
-    drawerState: DrawerState
+    drawerState: DrawerState,
+    ListOfSavedWorkers: MutableList<Int>,
+    removeFromWatchlist: (Int) -> Unit ,
+    addToWatchList:(Int) -> Unit
 ) {
+    val listofwatchlistedworkers = mutableListOf<Int>(1,2)
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -77,14 +84,16 @@ fun HomeScreen(
                     when (homeSelectedTab) {
                         HomeBottomAppBarTabs.Home -> {
                             main(
-                                it, navigator, showPlus, onClickWatchlist
+                                it, navigator, showPlus, onClickWatchlist,watchlistedWorkers =ListOfSavedWorkers,removeFromWatchlist = removeFromWatchlist,
+                            addToWatchList = addToWatchList
                             )
                         }
                         HomeBottomAppBarTabs.Search -> {
                             WorkerSearch(it)
                         }
                         HomeBottomAppBarTabs.Watchlisted -> {
-                            SavedWorkers(it)
+                            SavedWorkers(it,ListOfSavedWorkers,navigator, showPlus, onClickWatchlist,removeFromWatchlist = removeFromWatchlist,
+                                addToWatchList = addToWatchList)
                         }
                     }
                 }

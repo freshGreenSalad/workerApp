@@ -12,6 +12,12 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.material3.DrawerValue.Closed
+import androidx.compose.runtime.State
+import androidx.compose.runtime.produceState
+import com.example.workerapp.Data.Room.WorkerTest
+import com.example.workerapp.Data.Room.workerTestTest
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalMaterial3Api::class)
 @HiltViewModel
@@ -28,6 +34,8 @@ class MainViewModel @Inject constructor(
 
     private val showPlus = MutableStateFlow(true)
 
+    private val savedWorkers = MutableStateFlow(mutableListOf<Int>(1,2))
+
     private val _state = MutableStateFlow(HomeViewState())
 
     val state: StateFlow<HomeViewState>
@@ -42,13 +50,15 @@ class MainViewModel @Inject constructor(
                 showPlus,
                 homeBottomAppBarTabs,
                 SelectedHomeBottomAppBarTab,
-                drawerState
-            ) { showPlus, homeBottomAppBarTabs,SelectedHomeBottomAppBarTab,drawerState ->
+                drawerState,
+                savedWorkers
+            ) { showPlus, homeBottomAppBarTabs,SelectedHomeBottomAppBarTab,drawerState,savedWorkers ->
                 HomeViewState(
                     showPlus = showPlus,
                     homeAppBarTabs = homeBottomAppBarTabs,
                     selectedHomeBarTab = SelectedHomeBottomAppBarTab,
                     drawerState = drawerState,
+
                 )
             }.catch { throwable ->
                 // TODO: emit a UI error here. For now we'll just rethrow
@@ -69,6 +79,13 @@ class MainViewModel @Inject constructor(
     fun onClickWatchlist(){
         showPlus.value = !showPlus.value
     }
+    fun onClickWatchlist2(key:Int){
+        savedWorkers.value.remove(key)
+    }
+
+    fun onClickWatchlist3(key:Int){
+        savedWorkers.value.add(key)
+    }
 
     fun onClickHomeBottomAppTab (tab: HomeBottomAppBarTabs){
         SelectedHomeBottomAppBarTab.value = tab
@@ -81,6 +98,7 @@ data class HomeViewState @OptIn(ExperimentalMaterial3Api::class) constructor(
     val homeAppBarTabs: List<HomeBottomAppBarTabs> = emptyList(),
     val selectedHomeBarTab: HomeBottomAppBarTabs = HomeBottomAppBarTabs.Home,
     val drawerState: DrawerState = DrawerState(initialValue = Closed),
+    val savedWorkers: MutableList<Int> = mutableListOf<Int>(1,2)
 )
 
 enum class HomeBottomAppBarTabs{

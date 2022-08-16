@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
+import com.example.workerapp.Data.Room.WorkerTest
 import com.example.workerapp.Data.Room.Workers
 import com.example.workerapp.ui.HomeUi.MainDrawer
 import com.example.workerapp.ui.HomeUi.topBar
@@ -20,7 +21,8 @@ import kotlinx.coroutines.launch
 @Destination
 @Composable
 fun WorkerPage(
-    SelectedClickThroughWorker: Workers,
+    inter: Int,
+    SelectedClickThroughWorker: WorkerTest,
     navigator: DestinationsNavigator
 ) {
     var selectedItem by remember { mutableStateOf(BottomAppBarWorkerPageCatagory.WorkerPhoto) }
