@@ -21,7 +21,6 @@ import kotlinx.coroutines.launch
 @Destination
 @Composable
 fun WorkerPage(
-    inter: Int,
     SelectedClickThroughWorker: WorkerTest,
     navigator: DestinationsNavigator
 ) {

@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.workerapp.ui.destinations.MainHolderComposableDestination
+import com.example.workerapp.ui.destinations.ProfileDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
@@ -46,6 +47,24 @@ fun MainDrawer(
                style = MaterialTheme.typography.bodyMedium,
 
            )
+       }
+       Box (
+           modifier = Modifier
+               .fillMaxWidth()
+               .padding(8.dp)
+               .height(40.dp)
+               .clip(RoundedCornerShape(4.dp)).background(MaterialTheme.colorScheme.secondary)
+               .clickable {
+                   navigator.navigate(ProfileDestination)
+               }
+       ){
+           Text(text = "Profile",
+               color = MaterialTheme.colorScheme.onSecondary,
+               fontSize = 22.sp,
+               modifier = Modifier.fillMaxSize().padding(4.dp),
+               style = MaterialTheme.typography.bodyMedium,
+
+               )
        }
 
    }

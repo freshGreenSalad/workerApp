@@ -28,11 +28,10 @@ fun MainHolderComposable(
             homeAppBarTabs = viewState.homeAppBarTabs,
             homeSelectedTab = viewState.selectedHomeBarTab,
             drawerState = viewState.drawerState,
-            onClickWatchlist = viewModel::onClickWatchlist,
             onclickHomeBottomAppTab = viewModel::onClickHomeBottomAppTab,
             ListOfSavedWorkers = viewState.savedWorkers,
-            removeFromWatchlist = viewModel::onClickWatchlist2,
-            addToWatchList = viewModel::onClickWatchlist3
+            removeFromWatchlist = viewModel::removeFromWatchlist,
+            addToWatchList = viewModel::addToWatchList
         )
     }
 }
@@ -45,14 +44,12 @@ fun HomeScreen(
     showPlus :Boolean,
     homeAppBarTabs:  List<HomeBottomAppBarTabs>,
     homeSelectedTab: HomeBottomAppBarTabs,
-    onClickWatchlist: () -> Unit,
     onclickHomeBottomAppTab: (HomeBottomAppBarTabs) -> Unit,
     drawerState: DrawerState,
     ListOfSavedWorkers: MutableList<Int>,
     removeFromWatchlist: (Int) -> Unit ,
     addToWatchList:(Int) -> Unit
 ) {
-    val listofwatchlistedworkers = mutableListOf<Int>(1,2)
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -84,7 +81,7 @@ fun HomeScreen(
                     when (homeSelectedTab) {
                         HomeBottomAppBarTabs.Home -> {
                             main(
-                                it, navigator, showPlus, onClickWatchlist,watchlistedWorkers =ListOfSavedWorkers,removeFromWatchlist = removeFromWatchlist,
+                                it, navigator, showPlus,watchlistedWorkers =ListOfSavedWorkers,removeFromWatchlist = removeFromWatchlist,
                             addToWatchList = addToWatchList
                             )
                         }
@@ -92,7 +89,7 @@ fun HomeScreen(
                             WorkerSearch(it)
                         }
                         HomeBottomAppBarTabs.Watchlisted -> {
-                            SavedWorkers(it,ListOfSavedWorkers,navigator, showPlus, onClickWatchlist,removeFromWatchlist = removeFromWatchlist,
+                            SavedWorkers(it,ListOfSavedWorkers,navigator, showPlus,removeFromWatchlist = removeFromWatchlist,
                                 addToWatchList = addToWatchList)
                         }
                     }

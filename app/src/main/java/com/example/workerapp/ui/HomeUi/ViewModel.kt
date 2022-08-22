@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.material3.DrawerValue.Closed
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.produceState
 import com.example.workerapp.Data.Room.WorkerTest
 import com.example.workerapp.Data.Room.workerTestTest
@@ -34,15 +35,12 @@ class MainViewModel @Inject constructor(
 
     private val showPlus = MutableStateFlow(true)
 
-    private val savedWorkers = MutableStateFlow(mutableListOf<Int>(1,2))
+    private val savedWorkers = MutableStateFlow(mutableStateListOf<Int>(1,2))
 
     private val _state = MutableStateFlow(HomeViewState())
 
     val state: StateFlow<HomeViewState>
         get() = _state
-
-
-
 
     init {
         viewModelScope.launch {
@@ -58,7 +56,7 @@ class MainViewModel @Inject constructor(
                     homeAppBarTabs = homeBottomAppBarTabs,
                     selectedHomeBarTab = SelectedHomeBottomAppBarTab,
                     drawerState = drawerState,
-
+                    savedWorkers = savedWorkers
                 )
             }.catch { throwable ->
                 // TODO: emit a UI error here. For now we'll just rethrow
@@ -69,22 +67,16 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun GetWorkerFlow(): Flow<List<Workers>> = repository.getWorkers()
-
-    suspend fun addworker(workers: Workers) {
-        Log.d("button", "worker added")
-        repository.upsert(workers)
-    }
-
-    fun onClickWatchlist(){
-        showPlus.value = !showPlus.value
-    }
-    fun onClickWatchlist2(key:Int){
+    fun removeFromWatchlist(key:Int){
         savedWorkers.value.remove(key)
+        Log.d("main", "removed from watchlist at viewmodel level")
+        println(savedWorkers.value.toString())
     }
 
-    fun onClickWatchlist3(key:Int){
+    fun addToWatchList(key:Int){
         savedWorkers.value.add(key)
+        Log.d("main", "added to wathclist at viewmodel level")
+        println(savedWorkers.value.toString())
     }
 
     fun onClickHomeBottomAppTab (tab: HomeBottomAppBarTabs){
@@ -98,7 +90,7 @@ data class HomeViewState @OptIn(ExperimentalMaterial3Api::class) constructor(
     val homeAppBarTabs: List<HomeBottomAppBarTabs> = emptyList(),
     val selectedHomeBarTab: HomeBottomAppBarTabs = HomeBottomAppBarTabs.Home,
     val drawerState: DrawerState = DrawerState(initialValue = Closed),
-    val savedWorkers: MutableList<Int> = mutableListOf<Int>(1,2)
+    val savedWorkers: MutableList<Int> = mutableListOf(1,2)
 )
 
 enum class HomeBottomAppBarTabs{

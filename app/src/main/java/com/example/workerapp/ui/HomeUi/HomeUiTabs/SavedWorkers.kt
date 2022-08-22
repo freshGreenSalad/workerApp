@@ -27,7 +27,6 @@ fun SavedWorkers(
     ListOfSavedWorkers: MutableList<Int>,
     navigator: DestinationsNavigator,
     showPlus: Boolean,
-    onClickWatchlist: () -> Unit,
     service: AWSInterface = AppModuel.AWSConnection(),
     removeFromWatchlist: (Int) -> Unit ,
     addToWatchList:(Int) -> Unit
@@ -50,7 +49,7 @@ fun SavedWorkers(
                     }
                 }
             )
-            Workercard(worker, navigator, showPlus, onClickWatchlist,ListOfSavedWorkers, removeFromWatchlist,
+            Workercard(worker, navigator, showPlus, ListOfSavedWorkers, removeFromWatchlist,
             addToWatchList)
         }
     }

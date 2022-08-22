@@ -24,7 +24,6 @@ import com.example.workerapp.ui.destinations.WorkerPageDestination
 import com.example.workerapp.ui.theme.TriangleShape
 import com.example.workerapp.ui.theme.WorkerCardShape
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,35 +31,23 @@ fun Workercard(
     worker: State<WorkerTest>,
     navigator: DestinationsNavigator,
     showPlus: Boolean,
-    onClickWatchlist: () -> Unit,
     watchlistedWorkers: MutableList<Int>,
     removeFromWatchlist: (Int) -> Unit ,
     addToWatchList:(Int) -> Unit
 ) {
 
-    val savedWorkers = mutableListOf<Int>(1,2)
-
-    val onClickWatchlist4 = fun(key:Int){
-        savedWorkers.remove(key)
-        Log.d("removed a worker","removed a worker")
-    }
-
-    val onClickWatchlist5 = fun(key:Int){
-        savedWorkers.add(key)
-        Log.d("added a worker", "added a worker")
-    }
-    val inWatchlist = worker.value.key !in savedWorkers
+    val inWatchlist = worker.value.key in watchlistedWorkers
+    Log.d("composed", watchlistedWorkers.toString())
     val imageURL = worker.value.imageURL
     Surface(
         onClick = {
             navigator.navigate(
                 WorkerPageDestination(
-                    5,
                     worker.value
                 )
             )
         },
-        shape = if (!inWatchlist) {
+        shape = if (inWatchlist) {
             WorkerCardShape(40f)
         } else {
             RoundedCornerShape(15.dp)
@@ -77,7 +64,7 @@ fun Workercard(
                 .zIndex(1f),
             horizontalArrangement = Arrangement.End
         ) {
-            watchlistedCardIcon(worker,inWatchlist, { onClickWatchlist() }, onClickWatchlist4, onClickWatchlist5)
+            watchlistedCardIcon(worker,inWatchlist, removeFromWatchlist, addToWatchList)
         }
         AsyncImage(
                 modifier = Modifier.size(200.dp),
@@ -107,12 +94,11 @@ fun Workercard(
 @Composable
 fun watchlistedCardIcon(
     worker: State<WorkerTest>,
-    cornerClipped: Boolean,
-    onClickWatchlist: () -> Unit,
+    inWatchlist: Boolean,
     removeFromWatchlist: (Int) -> Unit ,
     addToWatchList:(Int) -> Unit
 ) {
-    if (cornerClipped) {
+    if (!inWatchlist) {
         Box(
             modifier = Modifier
                 .width(47.dp)
@@ -123,7 +109,7 @@ fun watchlistedCardIcon(
                 )
                 .clickable {
                     addToWatchList(worker.value.key)
-                    Log.d("log test", "test")
+                    Log.d("log test", "clicked add to watchlist")
                 },
             contentAlignment = Alignment.TopEnd
         ) {
@@ -131,7 +117,6 @@ fun watchlistedCardIcon(
                 painter = painterResource(id = R.drawable.ic_plus),
                 contentDescription = ""
             )
-
         }
     } else {
 
@@ -147,7 +132,6 @@ fun watchlistedCardIcon(
                 .background(color = MaterialTheme.colorScheme.primary)
                 .clickable {
                     removeFromWatchlist(worker.value.key)
-
                 },
             contentAlignment = Alignment.BottomStart
         ) {

@@ -23,7 +23,6 @@ fun main(
     paddingValues: PaddingValues,
     navigator: DestinationsNavigator,
     showPlus: Boolean,
-    onClickWatchlist: () -> Unit,
     service: AWSInterface = AWSConnection(),
     watchlistedWorkers: MutableList<Int>,
     removeFromWatchlist: (Int) -> Unit ,
@@ -32,6 +31,7 @@ fun main(
 
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
         item {
+
             Text(
                 modifier = Modifier.padding(10.dp),
                 style = MaterialTheme.typography.bodyLarge,
@@ -62,7 +62,7 @@ fun main(
                             }
                         }
                     )
-                    Workercard(worker, navigator, showPlus, onClickWatchlist,watchlistedWorkers, removeFromWatchlist, addToWatchList)
+                    Workercard(worker, navigator, showPlus, watchlistedWorkers, removeFromWatchlist, addToWatchList)
                 }
             }
         }
@@ -97,7 +97,7 @@ fun main(
                             }
                         }
                     )
-                    Workercard(worker, navigator, showPlus, onClickWatchlist,watchlistedWorkers, removeFromWatchlist, addToWatchList)
+                    Workercard(worker, navigator, showPlus, watchlistedWorkers, removeFromWatchlist, addToWatchList)
                 }
             }
         }
