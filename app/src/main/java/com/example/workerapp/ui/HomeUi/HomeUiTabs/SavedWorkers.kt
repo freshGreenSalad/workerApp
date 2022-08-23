@@ -19,6 +19,7 @@ import com.example.workerapp.Data.Room.workerTestTest
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import kotlin.reflect.KSuspendFunction1
 
 
 @Composable
@@ -27,9 +28,9 @@ fun SavedWorkers(
     ListOfSavedWorkers: MutableList<Int>,
     navigator: DestinationsNavigator,
     showPlus: Boolean,
-    service: AWSInterface = AppModuel.AWSConnection(),
     removeFromWatchlist: (Int) -> Unit ,
-    addToWatchList:(Int) -> Unit
+    addToWatchList:(Int) -> Unit,
+    getworker: KSuspendFunction1<Int, String>
 ) {
     LazyVerticalGrid(
         modifier = Modifier
@@ -43,7 +44,7 @@ fun SavedWorkers(
                 initialValue = workerTestTest,
                 producer = {
                     value = try {
-                        Json.decodeFromString<WorkerTest>(service.getWorkerString(ListOfSavedWorkers[index]))
+                        Json.decodeFromString<WorkerTest>(getworker(ListOfSavedWorkers[index]))
                     } catch (e: Exception) {
                         workerTestTest
                     }

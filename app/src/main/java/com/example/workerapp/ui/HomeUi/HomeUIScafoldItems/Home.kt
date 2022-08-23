@@ -11,6 +11,7 @@ import com.example.workerapp.ui.HomeUi.HomeUiTabs.main
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
+import kotlin.reflect.KSuspendFunction1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination(start = true)
@@ -31,7 +32,8 @@ fun MainHolderComposable(
             onclickHomeBottomAppTab = viewModel::onClickHomeBottomAppTab,
             ListOfSavedWorkers = viewState.savedWorkers,
             removeFromWatchlist = viewModel::removeFromWatchlist,
-            addToWatchList = viewModel::addToWatchList
+            addToWatchList = viewModel::addToWatchList,
+            getworker = viewModel::getworker
         )
     }
 }
@@ -41,14 +43,15 @@ fun MainHolderComposable(
 @Composable
 fun HomeScreen(
     navigator: DestinationsNavigator,
-    showPlus :Boolean,
+    showPlus:Boolean,
     homeAppBarTabs:  List<HomeBottomAppBarTabs>,
     homeSelectedTab: HomeBottomAppBarTabs,
     onclickHomeBottomAppTab: (HomeBottomAppBarTabs) -> Unit,
     drawerState: DrawerState,
     ListOfSavedWorkers: MutableList<Int>,
-    removeFromWatchlist: (Int) -> Unit ,
-    addToWatchList:(Int) -> Unit
+    removeFromWatchlist: (Int) -> Unit,
+    addToWatchList:(Int) -> Unit,
+    getworker: KSuspendFunction1<Int, String>
 ) {
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
@@ -82,7 +85,7 @@ fun HomeScreen(
                         HomeBottomAppBarTabs.Home -> {
                             main(
                                 it, navigator, showPlus,watchlistedWorkers =ListOfSavedWorkers,removeFromWatchlist = removeFromWatchlist,
-                            addToWatchList = addToWatchList
+                            addToWatchList = addToWatchList, getworker
                             )
                         }
                         HomeBottomAppBarTabs.Search -> {
@@ -90,7 +93,7 @@ fun HomeScreen(
                         }
                         HomeBottomAppBarTabs.Watchlisted -> {
                             SavedWorkers(it,ListOfSavedWorkers,navigator, showPlus,removeFromWatchlist = removeFromWatchlist,
-                                addToWatchList = addToWatchList)
+                                addToWatchList = addToWatchList,getworker)
                         }
                     }
                 }

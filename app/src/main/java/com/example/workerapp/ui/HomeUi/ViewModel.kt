@@ -5,8 +5,6 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.workerapp.Data.Room.Workers
-import com.example.workerapp.Data.Room.YourRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -15,16 +13,29 @@ import androidx.compose.material3.DrawerValue.Closed
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.produceState
-import com.example.workerapp.Data.Room.WorkerTest
-import com.example.workerapp.Data.Room.workerTestTest
+import com.example.workerapp.Data.Room.*
+import com.example.workerapp.Data.Room.ktor.AWSInterface
+import com.example.workerapp.Data.Room.ktor.WorkerCasheMap
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalMaterial3Api::class)
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: YourRepository
+    private val repository: YourRepository,
 ): ViewModel() {
+
+    suspend fun getworker(key:Int): String{
+        val index = key + 1
+        val cashedcharacter = WorkerCasheMap.workerCashMap[index]
+        if (cashedcharacter != null){
+            return cashedcharacter
+        }else {
+            val response = repository.getworkerstring(index)
+            WorkerCasheMap.workerCashMap[index] = response
+            return response
+        }
+    }
 
     private val homeBottomAppBarTabs = MutableStateFlow(HomeBottomAppBarTabs.values().asList())
 
@@ -66,6 +77,8 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+
 
     fun removeFromWatchlist(key:Int){
         savedWorkers.value.remove(key)

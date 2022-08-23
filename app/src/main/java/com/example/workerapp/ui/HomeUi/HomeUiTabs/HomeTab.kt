@@ -16,6 +16,7 @@ import com.example.workerapp.ui.HomeUi.Workercard
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
+import kotlin.reflect.KSuspendFunction1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,10 +24,10 @@ fun main(
     paddingValues: PaddingValues,
     navigator: DestinationsNavigator,
     showPlus: Boolean,
-    service: AWSInterface = AWSConnection(),
     watchlistedWorkers: MutableList<Int>,
     removeFromWatchlist: (Int) -> Unit ,
-    addToWatchList:(Int) -> Unit
+    addToWatchList:(Int) -> Unit,
+    getworker: KSuspendFunction1<Int, String>
 ) {
 
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
@@ -56,7 +57,7 @@ fun main(
                         initialValue = workerTestTest,
                         producer = {
                             value = try {
-                                Json.decodeFromString<WorkerTest>(service.getWorkerString(index + 1))
+                                Json.decodeFromString<WorkerTest>(getworker(index))
                             } catch (e: Exception) {
                                 workerTestTest
                             }
@@ -91,7 +92,7 @@ fun main(
                         initialValue = workerTestTest,
                         producer = {
                             value = try {
-                                Json.decodeFromString<WorkerTest>(service.getWorkerString(index + 1))
+                                Json.decodeFromString<WorkerTest>(getworker(index))
                             } catch (e: Exception) {
                                 workerTestTest
                             }
