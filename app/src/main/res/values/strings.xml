@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">workerApp</string>
+    <string name="drawer_menu">Drawer menu</string>
+    <string name="drawer_item_home">Home</string>
+    <string name="drawer_item_profile">Profile</string>
+    <string name="home_screen_findNewWorkers">Find New Workers</string>
+    <string name="home_screen_yourCrew">Your Crew</string>
+    <string name="worker_card_addToWatchlist">Add to watchlist?</string>
+    <string name="worker_card_removeFromWatchlist">Remove from watchlist?</string>
 </resources>
