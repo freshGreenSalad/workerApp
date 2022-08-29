@@ -19,9 +19,10 @@ import kotlin.reflect.KSuspendFunction1
 @Composable
 fun MainHolderComposable(
     navigator: DestinationsNavigator,
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel
 ) {
     val viewState by viewModel.state.collectAsState()
+    
     Surface{
         HomeScreen(
             navigator = navigator,

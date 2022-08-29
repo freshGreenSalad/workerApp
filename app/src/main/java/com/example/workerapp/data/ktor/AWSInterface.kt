@@ -1,5 +1,6 @@
 package com.example.workerapp.data.ktor
 
+import com.example.workerapp.data.models.Profile
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -9,6 +10,8 @@ import kotlinx.serialization.json.*
 
 interface AWSInterface {
     suspend fun getWorkerString(key: Int): String
+
+    suspend fun  postProfile(textprofile: Profile)
 
     companion object {
         fun create(): AWSInterface {

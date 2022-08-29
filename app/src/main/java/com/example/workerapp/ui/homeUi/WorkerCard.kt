@@ -24,6 +24,7 @@ import com.example.workerapp.data.models.Worker
 import com.example.workerapp.R
 import com.example.workerapp.ui.destinations.WorkerPageDestination
 import com.example.workerapp.ui.theme.TriangleShape
+import com.example.workerapp.ui.theme.TriangleShapeRounded
 import com.example.workerapp.ui.theme.WorkerCardShape
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -41,7 +42,7 @@ fun Workercard(
         onClick = {
             navigator.navigate(
                 WorkerPageDestination(
-                    worker.value
+                    worker.value,
                 )
             )
         },
@@ -63,7 +64,7 @@ fun Workercard(
             horizontalArrangement = Arrangement.End
         ) {
             WatchlistedCardIcon(
-                worker = worker,
+                worker = worker.value,
                 inWatchlist = inWatchlist,
                 removeFromWatchlist = removeFromWatchlist,
                 addToWatchList = addToWatchList
@@ -95,7 +96,7 @@ fun Workercard(
 
 @Composable
 fun WatchlistedCardIcon(
-    worker: State<Worker>,
+    worker: Worker,
     inWatchlist: Boolean,
     removeFromWatchlist: (Int) -> Unit,
     addToWatchList: (Int) -> Unit
@@ -110,7 +111,7 @@ fun WatchlistedCardIcon(
                     shape = TriangleShape()
                 )
                 .clickable {
-                    addToWatchList(worker.value.key)
+                    addToWatchList(worker.key)
                 },
             contentAlignment = Alignment.TopEnd
         ) {
@@ -127,13 +128,11 @@ fun WatchlistedCardIcon(
                 .width(47.dp)
                 .height(47.dp)
                 .clip(
-                    RoundedCornerShape(
-                        bottomStart = 15.dp
-                    )
+                    TriangleShapeRounded(40f)
                 )
                 .background(color = MaterialTheme.colorScheme.primary)
                 .clickable {
-                    removeFromWatchlist(worker.value.key)
+                    removeFromWatchlist(worker.key)
                 },
             contentAlignment = Alignment.BottomStart
         ) {

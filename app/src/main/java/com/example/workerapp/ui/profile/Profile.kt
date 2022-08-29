@@ -20,12 +20,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.workerapp.R
+import com.example.workerapp.data.models.Profile
+import com.example.workerapp.data.models.blankWorker
+import com.example.workerapp.data.models.testProfile
 import com.example.workerapp.ui.homeUi.*
 import com.example.workerapp.ui.homeUi.homeUIScafoldItems.MainDrawer
 import com.example.workerapp.ui.homeUi.homeUIScafoldItems.TopBar
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +46,16 @@ fun Profile(
     val viewState by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
     val drawerState = viewState.drawerState
+    val profile = produceState(
+        initialValue = testProfile,
+        producer = {
+            value = try {
+                viewModel.getProfile()
+            } catch (e: Exception) {
+                testProfile
+            }
+        }
+    )
     fun showCamera() {
         shouldShowCamera = !shouldShowCamera
     }
@@ -65,7 +82,7 @@ fun Profile(
             if (shouldShowCamera) {
                 profilecamera(shouldShowCamera, { showCamera() })
             } else {
-                profile(it, { showCamera() })
+                profile(it, { showCamera() }, profile.value)
             }
         }
     }
@@ -74,7 +91,8 @@ fun Profile(
 @Composable
 fun profile(
     padding: PaddingValues,
-    showCamera: () -> Unit
+    showCamera: () -> Unit,
+    profile: Profile
 ) {
     Column(
         modifier = Modifier.padding(padding)
@@ -90,7 +108,8 @@ fun profile(
 
             item {
                 Text(
-                    "Name:", modifier = Modifier
+                    text = "Name: ${profile.firstNameVal}",
+                    modifier = Modifier
                         .padding(5.dp)
                         .alpha(.7f), style = MaterialTheme.typography.headlineSmall
                 )
@@ -100,7 +119,7 @@ fun profile(
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
-                    "Email:", modifier = Modifier
+                    "Email: ${profile.emailVal}", modifier = Modifier
                         .padding(5.dp)
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
@@ -110,9 +129,9 @@ fun profile(
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
-                    "Company:", modifier = Modifier
+                    "Company: ${profile.companyVal}", modifier = Modifier
                         .padding(5.dp)
-                        .alpha(.5f), style = MaterialTheme.typography.titleLarge
+                        .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
                     text = "Password:", modifier = Modifier

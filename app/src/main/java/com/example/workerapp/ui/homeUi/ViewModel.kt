@@ -13,6 +13,8 @@ import androidx.compose.material3.DrawerValue.Closed
 import androidx.compose.runtime.mutableStateListOf
 import com.example.workerapp.data.room.*
 import com.example.workerapp.data.cashing.WorkerCasheMap
+import com.example.workerapp.data.models.Profile
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @HiltViewModel
@@ -31,10 +33,15 @@ class MainViewModel @Inject constructor(
             response
         }
     }
+    suspend fun postprofile(profile: Profile) = repository.postprofile(profile)
+
+    suspend fun getProfile():Profile = repository.getProfile()
 
     private val homeBottomAppBarTabs = MutableStateFlow(HomeBottomAppBarTabs.values().asList())
 
     private val selectedHomeBottomAppBarTab = MutableStateFlow(HomeBottomAppBarTabs.Home)
+
+    suspend fun upsert(profile: Profile) = repository.upsert(profile)
 
     @OptIn(ExperimentalMaterial3Api::class)
     private val drawerState = MutableStateFlow(DrawerState(initialValue = Closed))

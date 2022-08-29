@@ -5,7 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.workerapp.data.models.Worker
+import com.example.workerapp.ui.homeUi.MainViewModel
 import com.example.workerapp.ui.homeUi.homeUIScafoldItems.MainDrawer
 import com.example.workerapp.ui.homeUi.homeUIScafoldItems.TopBar
 import com.example.workerapp.ui.workerInfoPage.workerUITabs.WorkerPhotoTab
@@ -18,8 +20,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun WorkerPage(
     SelectedClickThroughWorker: Worker,
-    navigator: DestinationsNavigator
+    viewModel: MainViewModel,
+    navigator: DestinationsNavigator,
 ) {
+    val viewstate by viewModel.state.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val workerhistory = listOf<Pair<Int, String>>(
@@ -29,7 +33,6 @@ fun WorkerPage(
     )
     val workerSkill = listOf("formworker", "crane driver", "pie eater")
     val workerTools = listOf("drill", "ute", "hammer")
-
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -53,11 +56,15 @@ fun WorkerPage(
             },
             content = {
                 WorkerPhotoTab(
+                    navigator = navigator,
                     paddingValues = it,
                     worker = SelectedClickThroughWorker,
                     workerhistory = workerhistory,
                     workerTools = workerTools,
-                    workerSkill = workerSkill
+                    workerSkill = workerSkill,
+                    addToWatchList = viewModel::addToWatchList,
+                    ListOfSavedWorkers = viewstate.savedWorkers,
+                    removeFromWatchlist = viewModel::removeFromWatchlist,
                 )
             }
         )

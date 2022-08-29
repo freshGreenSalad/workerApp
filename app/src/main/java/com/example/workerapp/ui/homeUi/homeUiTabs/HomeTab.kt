@@ -3,9 +3,11 @@ package com.example.workerapp.ui.homeUi.homeUiTabs
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.models.blankWorker
@@ -61,8 +63,6 @@ fun Main(
                 style = MaterialTheme.typography.bodyLarge,
                 text = stringResource(id = R.string.home_screen_yourCrew)
             )
-        }
-        item {
             Divider(
                 modifier = Modifier
                     .padding(end = 30.dp)
@@ -70,6 +70,28 @@ fun Main(
                     .height(2.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
+        }
+        item{
+            Surface(
+                shape = RoundedCornerShape(15.dp),
+                color = MaterialTheme.colorScheme.surface,
+                modifier = Modifier
+                    .padding(
+                        start = 8.dp,
+                        top = 8.dp,
+                        bottom = 8.dp
+                    )
+                    .size(width = 400.dp, height = 180.dp),
+                shadowElevation = 20.dp,
+            ){
+                Text(
+                    text = "no workers in your crew",
+                    modifier = Modifier.padding(20.dp).alpha(0.5f),
+                    style = MaterialTheme.typography.headlineSmall
+                    )
+            }
+        }
+        item{
             Text(
                 modifier = Modifier.padding(10.dp),
                 style = MaterialTheme.typography.bodyLarge,

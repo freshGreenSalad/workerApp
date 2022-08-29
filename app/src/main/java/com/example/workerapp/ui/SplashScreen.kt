@@ -17,12 +17,14 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import com.example.workerapp.R
 import com.example.workerapp.ui.destinations.MainHolderComposableDestination
+import com.example.workerapp.ui.destinations.SignInPageDestination
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 import kotlinx.coroutines.delay
-
-@Destination(start = true)
+@RootNavGraph(start = true)
+@Destination
 @Composable
 fun spalshScreen(
     navigator: DestinationsNavigator,
@@ -41,7 +43,7 @@ fun spalshScreen(
             )
         )
         delay(2000L)
-        navigator.navigate(MainHolderComposableDestination)
+        navigator.navigate(SignInPageDestination)
     }
     Box(
         contentAlignment = Alignment.Center,
