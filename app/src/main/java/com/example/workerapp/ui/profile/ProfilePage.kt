@@ -21,24 +21,19 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.workerapp.R
 import com.example.workerapp.data.models.Profile
-import com.example.workerapp.data.models.blankWorker
 import com.example.workerapp.data.models.testProfile
 import com.example.workerapp.ui.homeUi.*
 import com.example.workerapp.ui.homeUi.homeUIScafoldItems.MainDrawer
 import com.example.workerapp.ui.homeUi.homeUIScafoldItems.TopBar
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Destination
-fun Profile(
+fun ProfilePageComposable(
     navigator: DestinationsNavigator,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
@@ -108,7 +103,7 @@ fun profile(
 
             item {
                 Text(
-                    text = "Name: ${profile.firstNameVal}",
+                    text = "Name: ${profile.firstName}",
                     modifier = Modifier
                         .padding(5.dp)
                         .alpha(.7f), style = MaterialTheme.typography.headlineSmall
@@ -119,7 +114,7 @@ fun profile(
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
-                    "Email: ${profile.emailVal}", modifier = Modifier
+                    "Email: ${profile.email}", modifier = Modifier
                         .padding(5.dp)
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
@@ -129,7 +124,7 @@ fun profile(
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
-                    "Company: ${profile.companyVal}", modifier = Modifier
+                    "Company: ${profile.company}", modifier = Modifier
                         .padding(5.dp)
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )

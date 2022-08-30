@@ -1,5 +1,6 @@
 package com.example.workerapp.ui.signin
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,18 +13,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.workerapp.data.models.ProfileLoginAuthRequest
+import com.example.workerapp.data.models.jwtTokin
 import com.example.workerapp.ui.destinations.MainHolderComposableDestination
 import com.example.workerapp.ui.destinations.signinDestination
 import com.example.workerapp.ui.homeUi.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.reflect.KSuspendFunction0
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
+import kotlin.reflect.KSuspendFunction1
+import kotlin.reflect.KSuspendFunction3
 
 @Destination
 @Composable
@@ -37,6 +42,8 @@ fun SignInPage(
     ) {
         SignInBox(
             navigator,
+            viewModel::login,
+            viewModel::save,
         )
     }
 }
@@ -47,6 +54,8 @@ fun SignInPage(
 @Composable
 fun SignInBox(
     navigator: DestinationsNavigator,
+    Login: KSuspendFunction1<ProfileLoginAuthRequest, String>,
+    saveInDataStore: KSuspendFunction3<String, String, Context, Unit>,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -55,7 +64,8 @@ fun SignInBox(
             keyboardController?.hide()
         }
     )
-    val scope = CoroutineScope(Dispatchers.IO)
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var email by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
     Column {
@@ -89,13 +99,17 @@ fun SignInBox(
                     color = MaterialTheme.colorScheme.primary
                 )
                 .clickable {
-
+                    scope.launch {
+                        val tokin = Login(ProfileLoginAuthRequest(email.text,password.text))
+                        val deserialisedTokin = Json.decodeFromString<jwtTokin>(tokin)
+                        saveInDataStore("JWT",deserialisedTokin.token,context)
+                    }
                     navigator.navigate(MainHolderComposableDestination)
                 },
             contentAlignment = Alignment.Center
         ){
             Text(
-                text = "Sign in",
+                text = "Login",
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onPrimary
             )
@@ -110,7 +124,7 @@ fun SignInBox(
                     color = MaterialTheme.colorScheme.primary
                 )
                 .clickable {
-                    navigator.navigate(signinDestination)
+                 navigator.navigate(signinDestination)
                 },
             contentAlignment = Alignment.Center
         ){

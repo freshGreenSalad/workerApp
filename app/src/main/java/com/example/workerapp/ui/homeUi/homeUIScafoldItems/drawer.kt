@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.example.workerapp.R
 import com.example.workerapp.ui.destinations.DirectionDestination
 import com.example.workerapp.ui.destinations.MainHolderComposableDestination
-import com.example.workerapp.ui.destinations.ProfileDestination
+import com.example.workerapp.ui.destinations.ProfilePageComposableDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
@@ -43,7 +43,7 @@ fun MainDrawer(
         )
         DrawerItem(
             navigator = navigator,
-            destination = ProfileDestination,
+            destination = ProfilePageComposableDestination,
             title = stringResource(id = R.string.drawer_item_profile)
         )
     }

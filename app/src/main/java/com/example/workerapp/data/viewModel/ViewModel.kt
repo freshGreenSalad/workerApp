@@ -1,5 +1,7 @@
 package com.example.workerapp.ui.homeUi
 
+
+import android.content.Context
 import android.util.Log
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,11 +13,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.material3.DrawerValue.Closed
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.platform.LocalContext
+import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.workerapp.data.room.*
 import com.example.workerapp.data.cashing.WorkerCasheMap
 import com.example.workerapp.data.models.Profile
+import com.example.workerapp.data.models.ProfileLoginAuthRequest
 
-
+private val Context.dataStore by preferencesDataStore("user_preferences")
 @OptIn(ExperimentalMaterial3Api::class)
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -33,9 +43,32 @@ class MainViewModel @Inject constructor(
             response
         }
     }
+    //val context = LocalContext.current
+
+
+    suspend fun save(key: String, value: String, context: Context) {
+        val dataStore = context.dataStore
+        val dataStoreKey = stringPreferencesKey( name = key)
+        dataStore.edit { settings ->
+            settings[dataStoreKey] = value
+        }
+    }
+    suspend fun read(key: String, context: Context): String? {
+        val dataStore = context.dataStore
+        val dataStoreKey = stringPreferencesKey( name = key)
+        val preferences = dataStore.data.first()
+        return preferences[dataStoreKey]
+    }
+
+    suspend fun authenticate(jwt:String) = repository.authenticate(jwt)
+
+    suspend fun login(authRequest: ProfileLoginAuthRequest): String = repository.login(authRequest)
+
     suspend fun postprofile(profile: Profile) = repository.postprofile(profile)
 
     suspend fun getProfile():Profile = repository.getProfile()
+
+    suspend fun postAuthProfile(profileLoginAuthRequest: ProfileLoginAuthRequest) = repository.postAuthProfile(profileLoginAuthRequest)
 
     private val homeBottomAppBarTabs = MutableStateFlow(HomeBottomAppBarTabs.values().asList())
 
@@ -91,6 +124,10 @@ class MainViewModel @Inject constructor(
     fun onClickHomeBottomAppTab(tab: HomeBottomAppBarTabs) {
         selectedHomeBottomAppBarTab.value = tab
     }
+
+}
+
+private operator fun String.set(dataStoreKey: Preferences.Key<String>, value: String) {
 
 }
 

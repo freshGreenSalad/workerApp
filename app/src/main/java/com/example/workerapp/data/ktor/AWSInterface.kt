@@ -1,6 +1,7 @@
 package com.example.workerapp.data.ktor
 
 import com.example.workerapp.data.models.Profile
+import com.example.workerapp.data.models.ProfileLoginAuthRequest
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -12,6 +13,12 @@ interface AWSInterface {
     suspend fun getWorkerString(key: Int): String
 
     suspend fun  postProfile(textprofile: Profile)
+
+    suspend fun postProfileAuth (profileLoginAuthRequest: ProfileLoginAuthRequest)
+
+    suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest): String
+
+    suspend fun authenticate(jwt:String)
 
     companion object {
         fun create(): AWSInterface {
