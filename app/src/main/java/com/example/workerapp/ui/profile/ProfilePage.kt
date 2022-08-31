@@ -22,6 +22,7 @@ import coil.request.ImageRequest
 import com.example.workerapp.R
 import com.example.workerapp.data.models.Profile
 import com.example.workerapp.data.models.testProfile
+import com.example.workerapp.navgraphs.HomeViewNavGraph
 import com.example.workerapp.ui.homeUi.*
 import com.example.workerapp.ui.homeUi.homeUIScafoldItems.MainDrawer
 import com.example.workerapp.ui.homeUi.homeUIScafoldItems.TopBar
@@ -31,6 +32,7 @@ import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
+@HomeViewNavGraph
 @Composable
 @Destination
 fun ProfilePageComposable(

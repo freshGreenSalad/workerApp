@@ -19,8 +19,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
 import com.example.workerapp.data.models.jwtTokin
-import com.example.workerapp.ui.destinations.MainHolderComposableDestination
-import com.example.workerapp.ui.destinations.signinDestination
+import com.example.workerapp.destinations.MainHolderComposableDestination
+import com.example.workerapp.destinations.signinDestination
+import com.example.workerapp.navgraphs.HomeViewNavGraph
 import com.example.workerapp.ui.homeUi.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -29,7 +30,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
 import kotlin.reflect.KSuspendFunction1
 import kotlin.reflect.KSuspendFunction3
-
+@HomeViewNavGraph
 @Destination
 @Composable
 fun SignInPage(
@@ -58,7 +59,6 @@ fun SignInBox(
     saveInDataStore: KSuspendFunction3<String, String, Context, Unit>,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-
     val keyboardActions = KeyboardActions(
         onDone = {
             keyboardController?.hide()

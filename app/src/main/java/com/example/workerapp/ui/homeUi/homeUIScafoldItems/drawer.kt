@@ -14,9 +14,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.workerapp.R
-import com.example.workerapp.ui.destinations.DirectionDestination
-import com.example.workerapp.ui.destinations.MainHolderComposableDestination
-import com.example.workerapp.ui.destinations.ProfilePageComposableDestination
+import com.example.workerapp.destinations.DirectionDestination
+import com.example.workerapp.destinations.MainHolderComposableDestination
+import com.example.workerapp.destinations.ProfilePageComposableDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable

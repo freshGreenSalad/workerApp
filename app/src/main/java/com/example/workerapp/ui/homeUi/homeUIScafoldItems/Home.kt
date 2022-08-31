@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.workerapp.navgraphs.HomeViewNavGraph
 import com.example.workerapp.ui.homeUi.*
 import com.example.workerapp.ui.homeUi.homeUiTabs.Main
 import com.example.workerapp.ui.homeUi.homeUiTabs.WorkerSearch
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlin.reflect.KSuspendFunction1
 
 @OptIn(ExperimentalMaterial3Api::class)
+@HomeViewNavGraph
 @Destination
 @Composable
 fun MainHolderComposable(

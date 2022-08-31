@@ -16,14 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import com.example.workerapp.R
-import com.example.workerapp.ui.destinations.MainHolderComposableDestination
-import com.example.workerapp.ui.destinations.SignInPageDestination
+import com.example.workerapp.destinations.SignInPageDestination
+import com.example.workerapp.navgraphs.HomeViewNavGraph
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 import kotlinx.coroutines.delay
-@RootNavGraph(start = true)
+
+@HomeViewNavGraph(start = true)
 @Destination
 @Composable
 fun spalshScreen(

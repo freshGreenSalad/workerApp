@@ -1,6 +1,6 @@
 package com.example.workerapp.ui
 
-import android.widget.Toast
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,11 +17,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.workerapp.data.models.Profile
-import com.example.workerapp.data.models.ProfileLoginAuthRequest
-import com.example.workerapp.navgraphs.SettingsNavGraph
-import com.example.workerapp.ui.destinations.MainHolderComposableDestination
-import com.example.workerapp.ui.destinations.ProfilePageComposableDestination
+import com.example.workerapp.destinations.ProfileCreationPageDestination
+import com.example.workerapp.destinations.ProfilePageComposableDestination
+import com.example.workerapp.navgraphs.HomeViewNavGraph
+import com.example.workerapp.navgraphs.ProfileCreationNavGraph
 import com.example.workerapp.ui.homeUi.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -30,7 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
-@SettingsNavGraph
+@HomeViewNavGraph
 @Destination
 @Composable
 fun signin(
@@ -82,9 +81,9 @@ fun signin(
                     )
                     .clickable {
                         scope.launch {
-                              //  (viewModel::postAuthProfile)(ProfileLoginAuthRequest(email.text,password.text))
-                            navigate.navigate(ProfilePageComposableDestination)
+                            //  (viewModel::postAuthProfile)(ProfileLoginAuthRequest(email.text,password.text))
                         }
+                            navigate.navigate(ProfileCreationPageDestination)
                     },
                 contentAlignment = Alignment.Center
             ) {

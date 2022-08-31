@@ -12,15 +12,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.workerapp.data.models.Worker
-import com.example.workerapp.ui.destinations.HireScafoldDestination
-import com.example.workerapp.ui.theme.shape
 import java.util.*
 
 @Composable

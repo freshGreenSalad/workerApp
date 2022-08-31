@@ -3,20 +3,28 @@ package com.example.workerapp.ui.profileCreation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
+import com.example.workerapp.data.models.Licence
 import com.example.workerapp.data.viewModel.EmployeerOrEmployee
 import com.example.workerapp.data.viewModel.signUpViewModel
+import com.example.workerapp.navgraphs.ProfileCreationNavGraph
+import com.example.workerapp.ui.profileCreation.employee.Employee
 import com.ramcosta.composedestinations.annotation.Destination
 
+@ProfileCreationNavGraph(start = true)
 @Destination
 @Composable
 fun ProfileCreationPage(
@@ -24,22 +32,57 @@ fun ProfileCreationPage(
 ) {
     val viewState by viewModel.state.collectAsState()
     val selectedtab = viewState.selectedEmployeerOrEmployee
+    ProfileCreation(
+        selectedtab = selectedtab,
+        onClick = viewModel::changeUserType,
+        listoflicences = viewState.listOfLicences,
+        viewModel::addSpecilizedLicence,
+        viewModel::removeFromSpecilisedLicence,
+        viewModel::addExperience,
+        viewModel::removeFromExperience,
+        viewState.experience,
+        viewState.licence,
+        viewModel::UpdateLicencefullLicence
+    )
+
+}
+
+@Composable
+fun ProfileCreation(
+    selectedtab: EmployeerOrEmployee,
+    onClick: (String) -> Unit,
+    listoflicences: List<String>,
+    addSpecilizedLicence: (String) -> Unit,
+    removeSpecilisedLicence: (String) -> Unit,
+    addExperience: (String) -> Unit,
+    removeExperience: (String) -> Unit,
+    experienceList: List<String>,
+    licence: Licence,
+    UpdateLicencefullLicence: (String) -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         Column {
             Row() {
-                ButtonUserType("Employer", EmployeerOrEmployee.employer, viewModel::changeUserType)
-                Spacer(modifier = Modifier.width(20.dp))
-                ButtonUserType("Employee", EmployeerOrEmployee.employee, viewModel::changeUserType)
+                radiobuttonGroup(onClick,selectedtab)
             }
             Surface(modifier = Modifier.fillMaxSize()) {
                 when (selectedtab) {
-                    EmployeerOrEmployee.employer -> {
-                        Text(text = "employer")
+                    EmployeerOrEmployee.Employee -> {
+                        Employee(
+                            listoflicences,
+                            addSpecilizedLicence,
+                            removeSpecilisedLicence,
+                            addExperience,
+                            removeExperience,
+                            experienceList,
+                            licence,
+                            UpdateLicencefullLicence
+                        )
                     }
-                    EmployeerOrEmployee.employee -> {
-                        Text(text = "Employee")
+                    EmployeerOrEmployee.Employer -> {
+                        Employer()
                     }
                 }
             }
@@ -47,30 +90,86 @@ fun ProfileCreationPage(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ButtonUserType(
-    text: String,
-    usertype: EmployeerOrEmployee,
-    changeusertype: (EmployeerOrEmployee)-> Unit
-    ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .padding(10.dp)
-            .background(
-                color = MaterialTheme.colorScheme.secondary,
-                shape = RoundedCornerShape(5.dp)
+fun radiobuttonGroup(
+    onOptionSelected: (String)->Unit,
+    selectedtab: EmployeerOrEmployee
+) {
+    Row(Modifier.selectableGroup()) {
+        Row(
+            Modifier
+                .width(200.dp)
+                .height(56.dp)
+                .selectable(
+                    selected = ("Employer" == selectedtab.toString()),
+                    onClick = { onOptionSelected("Employer") },
+                    role = Role.RadioButton
+                )
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = ("Employer" == selectedtab.toString()),
+                onClick = null
             )
-            .clickable {
-                changeusertype(usertype)
-            },
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            color = MaterialTheme.colorScheme.onSecondary,
-            text = text,
-            style = MaterialTheme.typography.headlineSmall
-        )
+            Text(
+                text = "Employer",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
+
+        Row(
+            Modifier
+                .width(200.dp)
+                .height(56.dp)
+                .selectable(
+                    selected = ("Employee" == selectedtab.toString()),
+                    onClick = { onOptionSelected("Employee") },
+                    role = Role.RadioButton
+                )
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = ("Employee" == selectedtab.toString()),
+                onClick = null
+            )
+            Text(
+                text = "Employee",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

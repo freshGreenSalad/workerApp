@@ -1,6 +1,5 @@
 package com.example.workerapp.ui.homeUi
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +21,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.workerapp.data.models.Worker
 import com.example.workerapp.R
-import com.example.workerapp.ui.destinations.WorkerPageDestination
+import com.example.workerapp.destinations.WorkerPageDestination
 import com.example.workerapp.ui.theme.TriangleShape
 import com.example.workerapp.ui.theme.TriangleShapeRounded
 import com.example.workerapp.ui.theme.WorkerCardShape
