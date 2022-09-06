@@ -5,16 +5,21 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.models.Licence
+import com.example.workerapp.ui.profileCreation.employee.switchrow
 
 @Composable
 fun licence(
     licence: Licence,
     UpdateLicencefullLicence: (String)-> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(50.dp,0.dp,50.dp,0.dp)) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(50.dp,0.dp,50.dp,0.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         switchrow("Learners Licence",licence.learners,{UpdateLicencefullLicence("learners")})
         switchrow("Restricted Licence",licence.restricted,{UpdateLicencefullLicence("restricted")})
         switchrow("Full Licence",licence.fullLicence,{UpdateLicencefullLicence("fullLicence")})

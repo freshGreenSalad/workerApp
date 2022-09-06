@@ -1,5 +1,6 @@
 package com.example.workerapp.ui.homeUi.homeUiTabs
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -8,15 +9,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.models.blankWorker
 import com.example.workerapp.R
+import com.example.workerapp.data.models.testProfile
 import com.example.workerapp.ui.homeUi.Workercard
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
 import kotlin.reflect.KSuspendFunction1
+import kotlin.reflect.KSuspendFunction2
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,11 +30,19 @@ fun Main(
     watchlistedWorkers: MutableList<Int>,
     removeFromWatchlist: (Int) -> Unit,
     addToWatchList: (Int) -> Unit,
-    getworker: KSuspendFunction1<Int, String>
+    getworker: KSuspendFunction1<Int, String>,
+    readFromDataStore: KSuspendFunction2<String, Context, String?>
 ) {
-    LazyColumn(modifier = Modifier.padding(paddingValues)) {
-        item {
+    val context = LocalContext.current
+    val jwtVal = produceState(
+        initialValue = "testProfile",
+        producer = {value = readFromDataStore("JWT", context)?:"sdfg"}
+    )
 
+    LazyColumn(modifier = Modifier.padding(paddingValues)) {
+
+        item {
+            Text(jwtVal.value)
             Text(
                 modifier = Modifier.padding(10.dp),
                 style = MaterialTheme.typography.bodyLarge,

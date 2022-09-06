@@ -20,15 +20,15 @@ fun experience(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
         ) {
         DropDownMenuexperience(
             addExperience,
-        removeExperience,
-        experienceList
+            removeExperience,
+            experienceList
         )
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

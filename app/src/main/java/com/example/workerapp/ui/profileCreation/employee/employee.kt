@@ -37,7 +37,7 @@ fun Employee(
                     showBasicInformation,
                     { showBasicInformation = !showBasicInformation })
                 if (showBasicInformation) {
-                    basicInformation()
+                    basicInformationEmployee()
                 }
                 switchrow("Drivers Licence", showlicence, { showlicence = !showlicence })
                 if (showlicence) {

@@ -1,11 +1,19 @@
 package com.example.workerapp.data.ktor
 
+import android.content.Context
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import coil.network.HttpException
+import com.example.workerapp.data.authResult
 import com.example.workerapp.data.models.Profile
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
+import com.example.workerapp.data.models.jwtTokin
+import com.example.workerapp.ui.homeUi.dataStore
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 
@@ -34,13 +42,25 @@ class AWSRequest(
             setBody(Json.encodeToString<ProfileLoginAuthRequest>(profileLoginAuthRequest))
         }
     }
+    override suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest,context:Context): authResult<Unit> {
+        return try {
+            val respose = client.post(Routes.signin) {
+                contentType(ContentType.Application.Json)
+                setBody(Json.encodeToString<ProfileLoginAuthRequest>(profileLoginAuthRequest))
+            }
 
-    override suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest): String {
-        val respose = client.post(Routes.signin){
-            contentType(ContentType.Application.Json)
-            setBody(Json.encodeToString<ProfileLoginAuthRequest>(profileLoginAuthRequest))
-        }.body<String>()
-        return respose
+            context.dataStore.edit { settings ->
+                settings[stringPreferencesKey( name = "JWT")] = Json.decodeFromString(respose.body<String>())
+            }
+            when (respose.status) {
+                HttpStatusCode.OK -> authResult.authorised()
+                HttpStatusCode.Conflict -> authResult.unauthorised()
+                else -> authResult.unauthorised()
+            }
+
+        }catch(e:Exception){
+            authResult.unauthorised()
+        }
     }
 
     override suspend fun authenticate(jwt: String) {

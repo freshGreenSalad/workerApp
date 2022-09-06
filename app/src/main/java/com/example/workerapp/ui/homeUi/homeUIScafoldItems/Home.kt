@@ -1,11 +1,11 @@
 package com.example.workerapp.ui.homeUi.homeUIScafoldItems
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.workerapp.navgraphs.HomeViewNavGraph
 import com.example.workerapp.ui.homeUi.*
 import com.example.workerapp.ui.homeUi.homeUiTabs.Main
@@ -14,6 +14,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import kotlin.reflect.KSuspendFunction1
+import kotlin.reflect.KSuspendFunction2
 
 @OptIn(ExperimentalMaterial3Api::class)
 @HomeViewNavGraph
@@ -35,7 +36,9 @@ fun MainHolderComposable(
             ListOfSavedWorkers = viewState.savedWorkers,
             removeFromWatchlist = viewModel::removeFromWatchlist,
             addToWatchList = viewModel::addToWatchList,
-            getWorker = viewModel::getworker
+            getWorker = viewModel::getworker,
+            readFromDataStore = viewModel::read,
+            deleteFromDataStore = viewModel::delete
         )
     }
 }
@@ -51,14 +54,18 @@ fun HomeScreen(
     ListOfSavedWorkers: MutableList<Int>,
     removeFromWatchlist: (Int) -> Unit,
     addToWatchList:(Int) -> Unit,
-    getWorker: KSuspendFunction1<Int, String>
+    getWorker: KSuspendFunction1<Int, String>,
+    readFromDataStore: KSuspendFunction2<String, Context, String?>,
+    deleteFromDataStore: KSuspendFunction1<Context, Unit>
 ) {
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             MainDrawer(
-                navigator
+                navigator,
+                deleteFromDataStore,
+                closeDrawer = {scope.launch { drawerState.close() }}
             )
         }
     ) {
@@ -94,7 +101,8 @@ fun HomeScreen(
                                 watchlistedWorkers = ListOfSavedWorkers,
                                 removeFromWatchlist = removeFromWatchlist,
                                 addToWatchList = addToWatchList,
-                                getworker = getWorker
+                                getworker = getWorker,
+                                readFromDataStore = readFromDataStore
                             )
                         }
                         HomeBottomAppBarTabs.Search -> {

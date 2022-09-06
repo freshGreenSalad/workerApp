@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 @Destination
 fun ProfilePageComposable(
     navigator: DestinationsNavigator,
-    viewModel: MainViewModel = hiltViewModel(),
+    viewModel: MainViewModel,
 ) {
     var shouldShowCamera by remember { mutableStateOf(false) }
     val viewState by viewModel.state.collectAsState()
@@ -60,7 +60,9 @@ fun ProfilePageComposable(
         drawerState = drawerState,
         drawerContent = {
             MainDrawer(
-                navigator
+                navigator,
+                viewModel::delete,
+                closeDrawer = {scope.launch { drawerState.close() }}
             )
         }
     ) {

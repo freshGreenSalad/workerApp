@@ -1,6 +1,8 @@
 package com.example.workerapp.data.room
 
+import android.content.Context
 import com.example.workerapp.data.AppModule
+import com.example.workerapp.data.authResult
 import com.example.workerapp.data.ktor.AWSInterface
 import com.example.workerapp.data.models.Profile
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
@@ -20,7 +22,7 @@ class YourRepository @Inject constructor(
 
     suspend fun getProfile():Profile = yourDAO.getProfile()
 
-    suspend fun login(authRequest: ProfileLoginAuthRequest): String = service.getauthtokin(authRequest)
+    suspend fun login(authRequest: ProfileLoginAuthRequest, context: Context): authResult<Unit> = service.getauthtokin(authRequest, context = context)
 
     suspend fun authenticate(jwt:String) = service.authenticate(jwt)
 

@@ -13,19 +13,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.material3.DrawerValue.Closed
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.platform.LocalContext
-import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.workerapp.data.authResult
 import com.example.workerapp.data.room.*
 import com.example.workerapp.data.cashing.WorkerCasheMap
 import com.example.workerapp.data.models.Profile
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
 
-private val Context.dataStore by preferencesDataStore("user_preferences")
+val Context.dataStore by preferencesDataStore("user_preferences")
 @OptIn(ExperimentalMaterial3Api::class)
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -43,8 +43,6 @@ class MainViewModel @Inject constructor(
             response
         }
     }
-    //val context = LocalContext.current
-
 
     suspend fun save(key: String, value: String, context: Context) {
         val dataStore = context.dataStore
@@ -59,10 +57,21 @@ class MainViewModel @Inject constructor(
         val preferences = dataStore.data.first()
         return preferences[dataStoreKey]
     }
+    suspend fun delete(context: Context) {
+        val dataStore = context.dataStore
+        dataStore.edit { it.clear()}
+    }
 
     suspend fun authenticate(jwt:String) = repository.authenticate(jwt)
 
-    suspend fun login(authRequest: ProfileLoginAuthRequest): String = repository.login(authRequest)
+    private val resultChannel = Channel<authResult<Unit>>()
+    val authResults = resultChannel.receiveAsFlow()
+
+    suspend fun login(authRequest: ProfileLoginAuthRequest, context: Context){
+        val result = repository.login(authRequest, context = context)
+        resultChannel.send(result)
+        Log.d("login", result.toString())
+    }
 
     suspend fun postprofile(profile: Profile) = repository.postprofile(profile)
 

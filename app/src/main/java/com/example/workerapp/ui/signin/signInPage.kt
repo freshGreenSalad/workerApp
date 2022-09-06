@@ -1,6 +1,8 @@
 package com.example.workerapp.ui.signin
 
 import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,19 +19,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.workerapp.data.authResult
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
-import com.example.workerapp.data.models.jwtTokin
 import com.example.workerapp.destinations.MainHolderComposableDestination
-import com.example.workerapp.destinations.signinDestination
 import com.example.workerapp.navgraphs.HomeViewNavGraph
 import com.example.workerapp.ui.homeUi.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.decodeFromString
-import kotlin.reflect.KSuspendFunction1
+import kotlin.reflect.KSuspendFunction2
 import kotlin.reflect.KSuspendFunction3
+
 @HomeViewNavGraph
 @Destination
 @Composable
@@ -37,6 +37,8 @@ fun SignInPage(
     navigator: DestinationsNavigator,
     viewModel: MainViewModel
 ) {
+
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -45,26 +47,41 @@ fun SignInPage(
             navigator,
             viewModel::login,
             viewModel::save,
+            viewModel
         )
     }
 }
-
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignInBox(
     navigator: DestinationsNavigator,
-    Login: KSuspendFunction1<ProfileLoginAuthRequest, String>,
-    saveInDataStore: KSuspendFunction3<String, String, Context, Unit>,
+    Login: KSuspendFunction2<ProfileLoginAuthRequest, Context, Unit>,
+    viewModel: MainViewModel
 ) {
+    val context = LocalContext.current
+    LaunchedEffect(viewModel, context) {
+        viewModel.authResults.collect() { result ->
+            when (result) {
+                is authResult.authorised -> navigator.navigate(MainHolderComposableDestination)
+                is authResult.unauthorised -> {
+                    Log.d("login", "unothorised block")
+                    Toast.makeText(context, "wrong email password combo", Toast.LENGTH_LONG).show()
+                }
+                is authResult.unknownError -> {
+                    Toast.makeText(context, "wrong email password combo", Toast.LENGTH_LONG).show()
+                }
+            }
+
+        }
+    }
     val keyboardController = LocalSoftwareKeyboardController.current
     val keyboardActions = KeyboardActions(
         onDone = {
             keyboardController?.hide()
         }
     )
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var email by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
@@ -75,7 +92,7 @@ fun SignInBox(
             onValueChange = {
                 email = it
             },
-            placeholder = {Text(text = "Enter email")},
+            placeholder = { Text(text = "Enter email") },
             singleLine = true,
             keyboardActions = keyboardActions
         )
@@ -85,7 +102,7 @@ fun SignInBox(
             onValueChange = {
                 password = it
             },
-            placeholder = {Text("Enter password")},
+            placeholder = { Text("Enter password") },
             singleLine = true,
             keyboardActions = keyboardActions
         )
@@ -100,14 +117,11 @@ fun SignInBox(
                 )
                 .clickable {
                     scope.launch {
-                        val tokin = Login(ProfileLoginAuthRequest(email.text,password.text))
-                        val deserialisedTokin = Json.decodeFromString<jwtTokin>(tokin)
-                        saveInDataStore("JWT",deserialisedTokin.token,context)
+                        Login(ProfileLoginAuthRequest(email.text, password.text), context)
                     }
-                    navigator.navigate(MainHolderComposableDestination)
                 },
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Text(
                 text = "Login",
                 style = MaterialTheme.typography.headlineSmall,
@@ -124,10 +138,10 @@ fun SignInBox(
                     color = MaterialTheme.colorScheme.primary
                 )
                 .clickable {
-                 navigator.navigate(signinDestination)
+                    navigator.navigate(MainHolderComposableDestination)
                 },
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Text(
                 text = "Sign up",
                 style = MaterialTheme.typography.headlineSmall,

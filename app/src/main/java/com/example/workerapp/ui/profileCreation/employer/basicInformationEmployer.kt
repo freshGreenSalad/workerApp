@@ -1,6 +1,9 @@
-package com.example.workerapp.ui.profileCreation
+package com.example.workerapp.ui.profileCreation.employer
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -14,17 +17,17 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun basicInformationEmployee() {
+fun basicInformationEmployer() {
     var firstName by remember { mutableStateOf(TextFieldValue("")) }
     var LastName by remember { mutableStateOf(TextFieldValue("")) }
+    var company by remember { mutableStateOf(TextFieldValue("")) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val keyboardActions = KeyboardActions(
         onDone = {
             keyboardController?.hide()
         }
     )
-    Column(
-        modifier = Modifier.fillMaxWidth(),
+    Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         OutlinedTextField(
@@ -43,6 +46,16 @@ fun basicInformationEmployee() {
                 LastName = it
             },
             label = { Text(text = "LastName") },
+            singleLine = true,
+            keyboardActions = keyboardActions
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        OutlinedTextField(
+            value = company,
+            onValueChange = {
+                company = it
+            },
+            label = { Text(text = "Company") },
             singleLine = true,
             keyboardActions = keyboardActions
         )

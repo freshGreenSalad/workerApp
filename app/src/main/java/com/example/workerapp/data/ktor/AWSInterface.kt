@@ -1,5 +1,7 @@
 package com.example.workerapp.data.ktor
 
+import android.content.Context
+import com.example.workerapp.data.authResult
 import com.example.workerapp.data.models.Profile
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
 import io.ktor.client.*
@@ -16,7 +18,7 @@ interface AWSInterface {
 
     suspend fun postProfileAuth (profileLoginAuthRequest: ProfileLoginAuthRequest)
 
-    suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest): String
+    suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest, context: Context): authResult<Unit>
 
     suspend fun authenticate(jwt:String)
 

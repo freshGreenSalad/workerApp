@@ -1,20 +1,13 @@
 package com.example.workerapp.ui.profileCreation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.models.Licence
@@ -22,6 +15,8 @@ import com.example.workerapp.data.viewModel.EmployeerOrEmployee
 import com.example.workerapp.data.viewModel.signUpViewModel
 import com.example.workerapp.navgraphs.ProfileCreationNavGraph
 import com.example.workerapp.ui.profileCreation.employee.Employee
+import com.example.workerapp.ui.profileCreation.scaffoldItems.TopBarProfileCreationPage
+import com.example.workerapp.ui.profileCreation.scaffoldItems.bottomAppBarComposable
 import com.ramcosta.composedestinations.annotation.Destination
 
 @ProfileCreationNavGraph(start = true)
@@ -44,9 +39,9 @@ fun ProfileCreationPage(
         viewState.licence,
         viewModel::UpdateLicencefullLicence
     )
-
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileCreation(
     selectedtab: EmployeerOrEmployee,
@@ -62,31 +57,37 @@ fun ProfileCreation(
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
-    ) {
-        Column {
-            Row() {
-                radiobuttonGroup(onClick,selectedtab)
-            }
-            Surface(modifier = Modifier.fillMaxSize()) {
-                when (selectedtab) {
-                    EmployeerOrEmployee.Employee -> {
-                        Employee(
-                            listoflicences,
-                            addSpecilizedLicence,
-                            removeSpecilisedLicence,
-                            addExperience,
-                            removeExperience,
-                            experienceList,
-                            licence,
-                            UpdateLicencefullLicence
-                        )
-                    }
-                    EmployeerOrEmployee.Employer -> {
-                        Employer()
+    ) {Scaffold(
+        topBar = {TopBarProfileCreationPage("Create your profile")},
+        bottomBar = { bottomAppBarComposable() },
+        content = {
+            Column(modifier = Modifier.padding(it)) {
+                Row() {
+                    radiobuttonGroup(onClick, selectedtab)
+                }
+
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    when (selectedtab) {
+                        EmployeerOrEmployee.Employee -> {
+                            Employee(
+                                listoflicences,
+                                addSpecilizedLicence,
+                                removeSpecilisedLicence,
+                                addExperience,
+                                removeExperience,
+                                experienceList,
+                                licence,
+                                UpdateLicencefullLicence
+                            )
+                        }
+                        EmployeerOrEmployee.Employer -> {
+                            Employer()
+                        }
                     }
                 }
             }
         }
+    )
     }
 }
 

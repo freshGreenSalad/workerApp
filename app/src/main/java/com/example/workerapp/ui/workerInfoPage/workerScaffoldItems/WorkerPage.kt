@@ -40,7 +40,9 @@ fun WorkerPage(
         drawerState = drawerState,
         drawerContent = {
             MainDrawer(
-                navigator
+                navigator,
+                viewModel::delete,
+                closeDrawer = {scope.launch { drawerState.close() }}
             )
         }
     ) {

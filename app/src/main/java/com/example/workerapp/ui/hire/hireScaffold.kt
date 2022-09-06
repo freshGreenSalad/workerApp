@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.models.Worker
 import com.example.workerapp.navgraphs.HomeViewNavGraph
+import com.example.workerapp.ui.homeUi.MainViewModel
 import com.example.workerapp.ui.homeUi.homeUIScafoldItems.MainDrawer
 import com.example.workerapp.ui.homeUi.homeUIScafoldItems.TopBar
 import com.ramcosta.composedestinations.annotation.Destination
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 fun HireScafold(
     worker: Worker,
     navigator: DestinationsNavigator,
+    viewModel: MainViewModel
 ){
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -28,7 +30,9 @@ fun HireScafold(
         drawerState = drawerState,
         drawerContent = {
             MainDrawer(
-                navigator
+                navigator,
+                viewModel::delete,
+                closeDrawer = {scope.launch { drawerState.close() }}
             )
         }
     ) {
