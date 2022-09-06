@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 @HomeViewNavGraph
 @Destination
 @Composable
-fun signin(
+fun Signup(
     viewModel: MainViewModel,
     navigate: DestinationsNavigator
 ) {

@@ -22,13 +22,13 @@ import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
 import com.example.workerapp.destinations.MainHolderComposableDestination
+import com.example.workerapp.destinations.SignupDestination
 import com.example.workerapp.navgraphs.HomeViewNavGraph
 import com.example.workerapp.ui.homeUi.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import kotlin.reflect.KSuspendFunction2
-import kotlin.reflect.KSuspendFunction3
 
 @HomeViewNavGraph
 @Destination
@@ -137,7 +137,7 @@ fun SignInBox(
                     color = MaterialTheme.colorScheme.primary
                 )
                 .clickable {
-                    navigator.navigate(MainHolderComposableDestination)
+                    navigator.navigate(SignupDestination)
                 },
             contentAlignment = Alignment.Center
         ) {
