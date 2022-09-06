@@ -46,7 +46,6 @@ fun SignInPage(
         SignInBox(
             navigator,
             viewModel::login,
-            viewModel::save,
             viewModel
         )
     }
