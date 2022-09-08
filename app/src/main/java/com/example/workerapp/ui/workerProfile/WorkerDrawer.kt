@@ -44,12 +44,12 @@ fun WorkerDrawer(
         )
         DrawerItem(
             navigator = navigator,
-            destination = WorkerProfileDestination,
+            destination = WorkerProfilePageComposableDestination,
             title = stringResource(id = R.string.drawer_item_home)
         )
         DrawerItem(
             navigator = navigator,
-            destination = ProfilePageComposableDestination,
+            destination = WorkerProfilePageComposableDestination,
             title = stringResource(id = R.string.drawer_item_profile)
         )
         signoutDrawerItem(

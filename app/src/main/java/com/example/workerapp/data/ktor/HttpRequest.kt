@@ -1,6 +1,7 @@
 package com.example.workerapp.data.ktor
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import coil.network.HttpException
@@ -50,7 +51,7 @@ class AWSRequest(
             }
 
             context.dataStore.edit { settings ->
-                settings[stringPreferencesKey( name = "JWT")] = Json.decodeFromString(respose.body<String>())
+                settings[stringPreferencesKey( name = "JWT")] = Json.decodeFromString<jwtTokin>(respose.body<String>()).token.toString()
             }
             when (respose.status) {
                 HttpStatusCode.OK -> authResult.authorised()
@@ -59,6 +60,7 @@ class AWSRequest(
             }
 
         }catch(e:Exception){
+            Log.d("login", "catch block of getauthtokin http  request")
             authResult.unauthorised()
         }
     }
