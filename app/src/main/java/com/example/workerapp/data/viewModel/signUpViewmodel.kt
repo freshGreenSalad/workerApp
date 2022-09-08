@@ -5,13 +5,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.workerapp.data.authResult
 import com.example.workerapp.data.models.Licence
 import com.example.workerapp.data.room.YourRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,6 +27,9 @@ class signUpViewModel @Inject constructor(
     private var experience =MutableStateFlow(  mutableStateListOf("formworker 2 years") )
 
     private val userTypeSelected = MutableStateFlow(EmployeerOrEmployee.Employee)
+
+    private val resultChannel = Channel<authResult<Unit>>()
+    val authResults = resultChannel.receiveAsFlow()
 
     private val licence = MutableStateFlow(Licence(
         fullLicence = false,

@@ -1,6 +1,8 @@
 package com.example.workerapp.ui
 
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,6 +19,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.workerapp.data.authResult
+import com.example.workerapp.data.viewModel.signUpViewModel
+import com.example.workerapp.destinations.MainHolderComposableDestination
 import com.example.workerapp.destinations.ProfileCreationPageDestination
 import com.example.workerapp.destinations.ProfilePageComposableDestination
 import com.example.workerapp.navgraphs.HomeViewNavGraph
@@ -29,17 +34,33 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
-@HomeViewNavGraph
+@ProfileCreationNavGraph
 @Destination
 @Composable
 fun Signup(
-    viewModel: MainViewModel,
+    viewModel: signUpViewModel,
     navigate: DestinationsNavigator
 ) {
     val scope = CoroutineScope(Dispatchers.IO)
     var email by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
     val context = LocalContext.current
+    LaunchedEffect(viewModel, context) {
+        viewModel.authResults.collect() { result ->
+            when (result) {
+                is authResult.authorised -> navigate.navigate(ProfileCreationPageDestination)
+                is authResult.unauthorised -> {
+                    Log.d("login", "unothorised block")
+                    Toast.makeText(context, "wrong email password combo", Toast.LENGTH_LONG).show()
+                }
+                is authResult.unknownError -> {
+                    Toast.makeText(context, "wrong email password combo", Toast.LENGTH_LONG).show()
+                }
+            }
+
+        }
+    }
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -83,7 +104,6 @@ fun Signup(
                         scope.launch {
                             //  (viewModel::postAuthProfile)(ProfileLoginAuthRequest(email.text,password.text))
                         }
-                            navigate.navigate(ProfileCreationPageDestination)
                     },
                 contentAlignment = Alignment.Center
             ) {

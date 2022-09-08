@@ -16,14 +16,17 @@ class YourRepository @Inject constructor(
 
     suspend fun postprofile(profile: Profile) = service.postProfile(profile)
 
+    //Dynamodb
     suspend fun postAuthProfile(profileLoginAuthRequest: ProfileLoginAuthRequest) = service.postProfileAuth(profileLoginAuthRequest)
-
-    suspend fun upsert(profile: Profile) = yourDAO.upsertProfile(profile)
-
-    suspend fun getProfile():Profile = yourDAO.getProfile()
 
     suspend fun login(authRequest: ProfileLoginAuthRequest, context: Context): authResult<Unit> = service.getauthtokin(authRequest, context = context)
 
     suspend fun authenticate(jwt:String) = service.authenticate(jwt)
+
+    //Room
+    suspend fun upsert(profile: Profile) = yourDAO.upsertProfile(profile)
+
+    suspend fun getProfile():Profile = yourDAO.getProfile()
+
 
 }

@@ -6,9 +6,7 @@ import com.example.workerapp.data.models.Profile
 import com.example.workerapp.data.models.Worker
 
 @Database(
-    entities = [
-        Profile::class
-               ],
+    entities = [Profile::class],
     version = 3
 )
 abstract class RoomDatabase: RoomDatabase() {

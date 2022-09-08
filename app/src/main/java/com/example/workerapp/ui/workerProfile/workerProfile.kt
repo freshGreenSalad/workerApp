@@ -18,6 +18,7 @@ import com.example.workerapp.data.viewModel.workerviewmodel
 import com.example.workerapp.navgraphs.WorkerNavGraph
 import com.example.workerapp.ui.homeUi.homeUIScafoldItems.TopBar
 import com.example.workerapp.ui.workerProfile.WorkerDrawer
+import com.example.workerapp.ui.workerProfile.WorkerHomeProfile
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
@@ -64,7 +65,7 @@ fun workerProfileScaffold (
             modifier = Modifier.padding(.4.dp),
             topBar = {
                 TopBar(
-                    title = "",
+                    title = "Home",
                     openDrawer = {
                         scope.launch {
                             drawerState.open()
@@ -74,7 +75,9 @@ fun workerProfileScaffold (
             },
             bottomBar = {},
             content = {
-                Box(Modifier.padding(it))
+                Box(){
+                    WorkerHomeProfile(it)
+                }
             }
         )
     }

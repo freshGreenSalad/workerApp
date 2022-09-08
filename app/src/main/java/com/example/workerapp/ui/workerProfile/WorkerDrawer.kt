@@ -44,7 +44,7 @@ fun WorkerDrawer(
         )
         DrawerItem(
             navigator = navigator,
-            destination = WorkerProfilePageComposableDestination,
+            destination = WorkerProfileDestination,
             title = stringResource(id = R.string.drawer_item_home)
         )
         DrawerItem(
