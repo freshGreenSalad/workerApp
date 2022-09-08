@@ -18,16 +18,19 @@ import com.example.workerapp.ui.profileCreation.employee.Employee
 import com.example.workerapp.ui.profileCreation.scaffoldItems.TopBarProfileCreationPage
 import com.example.workerapp.ui.profileCreation.scaffoldItems.bottomAppBarComposable
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @ProfileCreationNavGraph(start = true)
 @Destination
 @Composable
 fun ProfileCreationPage(
-    viewModel: signUpViewModel
+    viewModel: signUpViewModel,
+    navigator: DestinationsNavigator
 ) {
     val viewState by viewModel.state.collectAsState()
     val selectedtab = viewState.selectedEmployeerOrEmployee
     ProfileCreation(
+        navigator,
         selectedtab = selectedtab,
         onClick = viewModel::changeUserType,
         listoflicences = viewState.listOfLicences,
@@ -44,6 +47,7 @@ fun ProfileCreationPage(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileCreation(
+    navigator: DestinationsNavigator,
     selectedtab: EmployeerOrEmployee,
     onClick: (String) -> Unit,
     listoflicences: List<String>,
@@ -59,7 +63,10 @@ fun ProfileCreation(
         modifier = Modifier.fillMaxSize()
     ) {Scaffold(
         topBar = {TopBarProfileCreationPage("Create your profile")},
-        bottomBar = { bottomAppBarComposable() },
+        bottomBar = { bottomAppBarComposable(
+            selectedtab,
+            navigator = navigator
+        ) },
         content = {
             Column(modifier = Modifier.padding(it)) {
                 Row() {

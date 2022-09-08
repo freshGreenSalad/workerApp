@@ -18,6 +18,12 @@ annotation class HomeViewNavGraph(
     val start: Boolean = false
 )
 
+@RootNavGraph
+@NavGraph
+annotation class WorkerNavGraph(
+    val start: Boolean = false
+)
+
 
 
 @ProfileCreationNavGraph

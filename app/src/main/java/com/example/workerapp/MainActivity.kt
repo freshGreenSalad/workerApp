@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.workerapp.data.viewModel.signUpViewModel
+import com.example.workerapp.data.viewModel.workerviewmodel
 import com.example.workerapp.ui.theme.WorkerAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.workerapp.ui.homeUi.MainViewModel
@@ -31,8 +32,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -51,6 +50,12 @@ class MainActivity : ComponentActivity() {
                                 navController.getBackStackEntry(NavGraphs.root.route)
                             }
                             hiltViewModel<signUpViewModel>(parentEntry)
+                        }
+                        dependency(NavGraphs.worker) {
+                            val parentEntry = remember(navBackStackEntry) {
+                                navController.getBackStackEntry(NavGraphs.root.route)
+                            }
+                            hiltViewModel<workerviewmodel>(parentEntry)
                         }
                     }
                 )

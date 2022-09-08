@@ -8,15 +8,29 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.workerapp.data.viewModel.EmployeerOrEmployee
+import com.example.workerapp.destinations.MainHolderComposableDestination
+import com.example.workerapp.destinations.WorkerProfileDestination
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
-fun bottomAppBarComposable(){
+fun bottomAppBarComposable(
+    selectedtab: EmployeerOrEmployee,
+    navigator: DestinationsNavigator
+) {
     ElevatedButton(
         modifier = Modifier
             .fillMaxWidth()
             .padding(20.dp),
-        content = {Text("Create Profile!")},
-        onClick = {},
+        content = { Text("Create Profile!") },
+        onClick = {
+            when (selectedtab) {
+                EmployeerOrEmployee.Employee -> navigator.navigate(WorkerProfileDestination)
+                EmployeerOrEmployee.Employer -> navigator.navigate(MainHolderComposableDestination)
+            }
+
+        },
         colors = ButtonDefaults.buttonColors()
     )
 }
