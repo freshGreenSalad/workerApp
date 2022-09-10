@@ -1,6 +1,7 @@
 package com.example.workerapp.data.ktor
 
 import android.content.Context
+import android.text.TextUtils
 import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -36,11 +37,18 @@ class AWSRequest(
             setBody(Json.encodeToString<Profile>(testProfile))
         }
     }
-
-    override suspend fun postProfileAuth(profileLoginAuthRequest: ProfileLoginAuthRequest) {
-        client.post(Routes.postProfileAuth){
-            contentType(ContentType.Application.Json)
-            setBody(Json.encodeToString<ProfileLoginAuthRequest>(profileLoginAuthRequest))
+    //posts the initial profile to dynamo db
+    override suspend fun postProfileAuth(profileLoginAuthRequest: ProfileLoginAuthRequest):authResult<Unit> {
+        return try {
+            if (!profileLoginAuthRequest.email.isEmailValid()) {throw Exception ("email not valid")}
+            if (profileLoginAuthRequest.password.length < 8) {throw Exception ("password to small")}
+            client.post(Routes.postProfileAuth){
+                contentType(ContentType.Application.Json)
+                setBody(Json.encodeToString<ProfileLoginAuthRequest>(profileLoginAuthRequest))
+            }
+            authResult.authorised()
+        } catch (e: Exception) {
+            authResult.unauthorised()
         }
     }
     override suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest,context:Context): authResult<Unit> {
@@ -81,4 +89,8 @@ object Routes {
     const val postProfileAuth = Url + "UserAuthSignUp"
     const val signin = Url + "signIn"
     const val authenticate = Url + "authenticate"
+}
+
+fun String.isEmailValid(): Boolean {
+    return !TextUtils.isEmpty(this) && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }

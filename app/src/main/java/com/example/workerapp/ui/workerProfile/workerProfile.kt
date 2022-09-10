@@ -76,7 +76,7 @@ fun workerProfileScaffold (
             bottomBar = {},
             content = {
                 Box(){
-                    WorkerHomeProfile(it)
+                    WorkerHomeProfile(it, navigator)
                 }
             }
         )

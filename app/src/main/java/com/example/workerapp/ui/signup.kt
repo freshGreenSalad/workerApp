@@ -51,10 +51,10 @@ fun Signup(
                 is authResult.authorised -> navigate.navigate(ProfileCreationPageDestination)
                 is authResult.unauthorised -> {
                     Log.d("login", "unothorised block")
-                    Toast.makeText(context, "wrong email password combo", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "profile not created", Toast.LENGTH_LONG).show()
                 }
                 is authResult.unknownError -> {
-                    Toast.makeText(context, "wrong email password combo", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "profile not created", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -102,7 +102,8 @@ fun Signup(
                     )
                     .clickable {
                         scope.launch {
-                            //  (viewModel::postAuthProfile)(ProfileLoginAuthRequest(email.text,password.text))
+                            (viewModel::updateStateEmailPassword)(email.text,password.text)
+                            (viewModel::postAuthProfile)()
                         }
                     },
                 contentAlignment = Alignment.Center

@@ -16,8 +16,9 @@ interface AWSInterface {
 
     suspend fun  postProfile(textprofile: Profile)
 
-    suspend fun postProfileAuth (profileLoginAuthRequest: ProfileLoginAuthRequest)
-
+    //posts initial profile to dynamodb db
+    suspend fun postProfileAuth (profileLoginAuthRequest: ProfileLoginAuthRequest):authResult<Unit>
+    //sends login details, returns authorisation and saves jwt at lower level
     suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest, context: Context): authResult<Unit>
 
     suspend fun authenticate(jwt:String)

@@ -17,7 +17,7 @@ class YourRepository @Inject constructor(
     suspend fun postprofile(profile: Profile) = service.postProfile(profile)
 
     //Dynamodb
-    suspend fun postAuthProfile(profileLoginAuthRequest: ProfileLoginAuthRequest) = service.postProfileAuth(profileLoginAuthRequest)
+    suspend fun postAuthProfile(profileLoginAuthRequest: ProfileLoginAuthRequest):authResult<Unit> = service.postProfileAuth(profileLoginAuthRequest)
 
     suspend fun login(authRequest: ProfileLoginAuthRequest, context: Context): authResult<Unit> = service.getauthtokin(authRequest, context = context)
 

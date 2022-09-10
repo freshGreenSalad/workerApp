@@ -32,7 +32,7 @@ class MainViewModel @Inject constructor(
     private val repository: YourRepository,
 ) : ViewModel() {
 
-    //caching block for worker info--------
+    //caching block for worker info-------- s3
     suspend fun getworker(key: Int): String {
         val index = key + 1
         val cashedcharacter = WorkerCasheMap.workerCashMap[index]
@@ -51,6 +51,7 @@ class MainViewModel @Inject constructor(
     suspend fun getProfile(): Profile = repository.getProfile()
 
     //aws functions --------------------------
+    //dynamodbfunctions
     suspend fun authenticate(jwt: String) = repository.authenticate(jwt)
 
     suspend fun login(authRequest: ProfileLoginAuthRequest, context: Context) {
@@ -58,10 +59,8 @@ class MainViewModel @Inject constructor(
         resultChannel.send(result)
     }
 
+    //s3functions?
     suspend fun postprofile(profile: Profile) = repository.postprofile(profile)
-
-    suspend fun postAuthProfile(profileLoginAuthRequest: ProfileLoginAuthRequest) =
-        repository.postAuthProfile(profileLoginAuthRequest)
 
     //updating datastore entries---------------------
     suspend fun save(key: String, value: String, context: Context) {

@@ -28,7 +28,7 @@ fun ProfileCreationPage(
     navigator: DestinationsNavigator
 ) {
     val viewState by viewModel.state.collectAsState()
-    val selectedtab = viewState.selectedEmployeerOrEmployee
+    val selectedtab = viewState.selectedEmployerOrEmployee
     ProfileCreation(
         navigator,
         selectedtab = selectedtab,
@@ -40,7 +40,7 @@ fun ProfileCreationPage(
         viewModel::removeFromExperience,
         viewState.experience,
         viewState.licence,
-        viewModel::UpdateLicencefullLicence
+        viewModel::updateLicencefullLicence
     )
 }
 

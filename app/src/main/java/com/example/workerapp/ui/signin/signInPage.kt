@@ -23,6 +23,7 @@ import com.example.workerapp.data.authResult
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
 import com.example.workerapp.destinations.MainHolderComposableDestination
 import com.example.workerapp.destinations.SignupDestination
+import com.example.workerapp.destinations.WorkerProfileDestination
 import com.example.workerapp.navgraphs.HomeViewNavGraph
 import com.example.workerapp.ui.homeUi.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -143,6 +144,25 @@ fun SignInBox(
         ) {
             Text(
                 text = "Sign up",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        Box(
+            modifier = Modifier
+                .width(280.dp)
+                .height(50.dp)
+                .background(
+                    shape = RoundedCornerShape(5.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+                .clickable {
+                    navigator.navigate(WorkerProfileDestination)
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "to working page",
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onPrimary
             )
