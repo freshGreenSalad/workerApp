@@ -3,9 +3,10 @@ package com.example.workerapp.data.ktor
 import android.content.Context
 import android.text.TextUtils
 import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import coil.network.HttpException
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.models.Profile
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
@@ -18,10 +19,12 @@ import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
+import javax.inject.Inject
 
-class AWSRequest(
-    private val client: HttpClient
-):AWSInterface {
+class AWSRequest @Inject constructor(
+    private val client: HttpClient,
+    private val dataStore: DataStore<Preferences>
+) :AWSInterface{
 
     override suspend fun getWorkerString(key:Int): String {
         return try {
@@ -37,28 +40,31 @@ class AWSRequest(
             setBody(Json.encodeToString<Profile>(testProfile))
         }
     }
+
     //posts the initial profile to dynamo db
     override suspend fun postProfileAuth(profileLoginAuthRequest: ProfileLoginAuthRequest):authResult<Unit> {
         return try {
             if (!profileLoginAuthRequest.email.isEmailValid()) {throw Exception ("email not valid")}
             if (profileLoginAuthRequest.password.length < 8) {throw Exception ("password to small")}
-            client.post(Routes.postProfileAuth){
+            val response = client.post(Routes.signin) {
                 contentType(ContentType.Application.Json)
                 setBody(Json.encodeToString<ProfileLoginAuthRequest>(profileLoginAuthRequest))
+            }
+            dataStore.edit { settings ->
+                settings[stringPreferencesKey( name = "JWT")] = Json.decodeFromString<jwtTokin>(response.body<String>()).token.toString()
             }
             authResult.authorised()
         } catch (e: Exception) {
             authResult.unauthorised()
         }
     }
-    override suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest,context:Context): authResult<Unit> {
+    override suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest): authResult<Unit> {
         return try {
             val respose = client.post(Routes.signin) {
                 contentType(ContentType.Application.Json)
                 setBody(Json.encodeToString<ProfileLoginAuthRequest>(profileLoginAuthRequest))
             }
-
-            context.dataStore.edit { settings ->
+            dataStore.edit { settings ->
                 settings[stringPreferencesKey( name = "JWT")] = Json.decodeFromString<jwtTokin>(respose.body<String>()).token.toString()
             }
             when (respose.status) {

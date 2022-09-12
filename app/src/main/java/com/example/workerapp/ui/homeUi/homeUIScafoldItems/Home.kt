@@ -14,7 +14,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import kotlin.reflect.KSuspendFunction1
-import kotlin.reflect.KSuspendFunction2
+import kotlin.reflect.KSuspendFunction0
 
 @OptIn(ExperimentalMaterial3Api::class)
 @HomeViewNavGraph
@@ -37,8 +37,8 @@ fun MainHolderComposable(
             removeFromWatchlist = viewModel::removeFromWatchlist,
             addToWatchList = viewModel::addToWatchList,
             getWorker = viewModel::getworker,
-            readFromDataStore = viewModel::read,
-            deleteFromDataStore = viewModel::delete
+            readFromDataStore = viewModel::readFromDataStore,
+            deleteFromDataStore = viewModel::deleteAllFromDataStore
         )
     }
 }
@@ -55,8 +55,8 @@ fun HomeScreen(
     removeFromWatchlist: (Int) -> Unit,
     addToWatchList:(Int) -> Unit,
     getWorker: KSuspendFunction1<Int, String>,
-    readFromDataStore: KSuspendFunction2<String, Context, String?>,
-    deleteFromDataStore: KSuspendFunction1<Context, Unit>
+    readFromDataStore: KSuspendFunction1<String,String?>,
+    deleteFromDataStore: KSuspendFunction0<Unit>
 ) {
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(

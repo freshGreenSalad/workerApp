@@ -25,12 +25,12 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Job
 
 import kotlinx.coroutines.launch
-import kotlin.reflect.KSuspendFunction1
+import kotlin.reflect.KSuspendFunction0
 
 @Composable
 fun MainDrawer(
     navigator: DestinationsNavigator,
-    deleteFromDataStore: KSuspendFunction1<Context, Unit>,
+    deleteFromDataStore: KSuspendFunction0< Unit>,
     closeDrawer: () -> Job
 ) {
     Column(
@@ -98,13 +98,12 @@ fun DrawerItem(
 
 @Composable
 fun signoutDrawerItem(
-    clickable: KSuspendFunction1<Context, Unit>,
+    clickable: KSuspendFunction0<Unit>,
     title: String,
     navigator: DestinationsNavigator,
     destination: DirectionDestination,
     closeDrawer: () -> Job
 ) {
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Box(
         modifier = Modifier
@@ -115,7 +114,7 @@ fun signoutDrawerItem(
             .background(MaterialTheme.colorScheme.secondary)
             .clickable {
                 scope.launch {
-                    clickable(context)
+                    clickable()
                 }
                 navigator.navigate(destination)
                 closeDrawer()

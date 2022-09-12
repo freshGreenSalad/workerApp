@@ -5,7 +5,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.workerapp.data.models.Worker
 import com.example.workerapp.navgraphs.HomeViewNavGraph
 import com.example.workerapp.ui.homeUi.MainViewModel
@@ -41,7 +40,7 @@ fun WorkerPage(
         drawerContent = {
             MainDrawer(
                 navigator,
-                viewModel::delete,
+                viewModel::deleteAllFromDataStore,
                 closeDrawer = {scope.launch { drawerState.close() }}
             )
         }

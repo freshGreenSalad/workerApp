@@ -31,12 +31,12 @@ fun Main(
     removeFromWatchlist: (Int) -> Unit,
     addToWatchList: (Int) -> Unit,
     getworker: KSuspendFunction1<Int, String>,
-    readFromDataStore: KSuspendFunction2<String, Context, String?>
+    readFromDataStore: KSuspendFunction1<String, String?>
 ) {
     val context = LocalContext.current
     val jwtVal = produceState(
         initialValue = "testProfile",
-        producer = {value = readFromDataStore("JWT", context)?:"sdfg"}
+        producer = {value = readFromDataStore("JWT")?:"sdfg"}
     )
 
     LazyColumn(modifier = Modifier.padding(paddingValues)) {

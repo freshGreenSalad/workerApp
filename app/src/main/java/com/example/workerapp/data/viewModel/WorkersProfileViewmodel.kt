@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class workerviewmodel @Inject constructor(
     private val repository: YourRepository,
+    private val dataStore: DataStore<Preferences>
 ) : ViewModel() {
     @OptIn(ExperimentalMaterial3Api::class)
     private val drawerState = MutableStateFlow(DrawerState(initialValue = DrawerValue.Closed))
@@ -49,7 +52,6 @@ class workerviewmodel @Inject constructor(
         }
     }
     suspend fun delete(context: Context) {
-        val dataStore = context.dataStore
         dataStore.edit { it.clear()}
     }
 

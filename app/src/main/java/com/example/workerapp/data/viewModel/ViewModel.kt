@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.material3.DrawerValue.Closed
 import androidx.compose.runtime.mutableStateListOf
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import androidx.datastore.preferences.core.edit
@@ -30,6 +32,7 @@ val Context.dataStore by preferencesDataStore("user_preferences")
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: YourRepository,
+    private val dataStore: DataStore<Preferences>
 ) : ViewModel() {
 
     //caching block for worker info-------- s3
@@ -63,23 +66,20 @@ class MainViewModel @Inject constructor(
     suspend fun postprofile(profile: Profile) = repository.postprofile(profile)
 
     //updating datastore entries---------------------
-    suspend fun save(key: String, value: String, context: Context) {
-        val dataStore = context.dataStore
+    suspend fun saveToDataStore(key: String, value: String) {
         val dataStoreKey = stringPreferencesKey(name = key)
         dataStore.edit { settings ->
             settings[dataStoreKey] = value
         }
     }
 
-    suspend fun read(key: String, context: Context): String? {
-        val dataStore = context.dataStore
+    suspend fun readFromDataStore(key: String): String? {
         val dataStoreKey = stringPreferencesKey(name = key)
         val preferences = dataStore.data.first()
         return preferences[dataStoreKey]
     }
 
-    suspend fun delete(context: Context) {
-        val dataStore = context.dataStore
+    suspend fun deleteAllFromDataStore() {
         dataStore.edit { it.clear() }
     }
 
