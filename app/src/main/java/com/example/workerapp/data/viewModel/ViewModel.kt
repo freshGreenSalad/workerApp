@@ -55,7 +55,7 @@ class MainViewModel @Inject constructor(
 
     //aws functions --------------------------
     //dynamodbfunctions
-    suspend fun authenticate(jwt: String) = repository.authenticate(jwt)
+    suspend fun authenticate() = repository.authenticate()
 
     suspend fun login(authRequest: ProfileLoginAuthRequest, context: Context) {
         val result = repository.login(authRequest, context = context)

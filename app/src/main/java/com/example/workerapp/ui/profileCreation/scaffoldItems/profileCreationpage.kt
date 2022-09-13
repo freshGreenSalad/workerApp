@@ -19,6 +19,7 @@ import com.example.workerapp.ui.profileCreation.scaffoldItems.TopBarProfileCreat
 import com.example.workerapp.ui.profileCreation.scaffoldItems.bottomAppBarComposable
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlin.reflect.KSuspendFunction0
 
 @ProfileCreationNavGraph(start = true)
 @Destination
@@ -40,7 +41,10 @@ fun ProfileCreationPage(
         viewModel::removeFromExperience,
         viewState.experience,
         viewState.licence,
-        viewModel::updateLicencefullLicence
+        viewModel::updateLicencefullLicence,
+        viewModel::PostProfileInformation,
+        viewModel::updatefirstname,
+        viewModel::updatelastname,
     )
 }
 
@@ -57,7 +61,10 @@ fun ProfileCreation(
     removeExperience: (String) -> Unit,
     experienceList: List<String>,
     licence: Licence,
-    UpdateLicencefullLicence: (String) -> Unit
+    UpdateLicencefullLicence: (String) -> Unit,
+    postProfileInformation: KSuspendFunction0<Unit>,
+    updateFirstName:(String)->Unit,
+    updateLastName:(String)->Unit,
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -65,7 +72,8 @@ fun ProfileCreation(
         topBar = {TopBarProfileCreationPage("Create your profile")},
         bottomBar = { bottomAppBarComposable(
             selectedtab,
-            navigator = navigator
+            navigator = navigator,
+            postProfileInformation
         ) },
         content = {
             Column(modifier = Modifier.padding(it)) {
@@ -84,7 +92,9 @@ fun ProfileCreation(
                                 removeExperience,
                                 experienceList,
                                 licence,
-                                UpdateLicencefullLicence
+                                UpdateLicencefullLicence,
+                                updateFirstName,
+                                updateLastName
                             )
                         }
                         EmployeerOrEmployee.Employer -> {

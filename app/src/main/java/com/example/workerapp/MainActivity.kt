@@ -7,16 +7,13 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.workerapp.data.DataStoreManager
 import com.example.workerapp.data.viewModel.signUpViewModel
 import com.example.workerapp.data.viewModel.workerviewmodel
 import com.example.workerapp.ui.theme.WorkerAppTheme
@@ -42,15 +39,14 @@ class MainActivity : ComponentActivity() {
         }
     }
     val context = this@MainActivity
-    val datastore = DataStoreManager(context)
     @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             WorkerAppTheme {
                 val animation = NestedNavGraphDefaultAnimations(
-                    enterTransition = { fadeIn(animationSpec = tween(2000)) },
-                    exitTransition = { fadeOut(animationSpec = tween(2000)) }
+                    enterTransition = { slideInHorizontally(animationSpec = tween(500)) },
+                    exitTransition = { slideOutHorizontally(animationSpec = tween(500)) }
                 )
                 DestinationsNavHost(
                     engine = rememberAnimatedNavHostEngine(

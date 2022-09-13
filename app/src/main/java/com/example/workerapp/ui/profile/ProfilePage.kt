@@ -28,6 +28,7 @@ import com.example.workerapp.ui.homeUi.homeUIScafoldItems.TopBar
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
+import kotlin.reflect.KSuspendFunction0
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,16 +43,6 @@ fun ProfilePageComposable(
     val viewState by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
     val drawerState = viewState.drawerState
-    val profile = produceState(
-        initialValue = testProfile,
-        producer = {
-            value = try {
-                viewModel.getProfile()
-            } catch (e: Exception) {
-                testProfile
-            }
-        }
-    )
     fun showCamera() {
         shouldShowCamera = !shouldShowCamera
     }
@@ -80,7 +71,7 @@ fun ProfilePageComposable(
             if (shouldShowCamera) {
                 profilecamera(shouldShowCamera, { showCamera() })
             } else {
-                profile(it, { showCamera() }, profile.value)
+                profile(it, { showCamera() }, viewModel::getProfile)
             }
         }
     }
@@ -90,8 +81,18 @@ fun ProfilePageComposable(
 fun profile(
     padding: PaddingValues,
     showCamera: () -> Unit,
-    profile: Profile
+    profile: KSuspendFunction0<Profile>
 ) {
+    val profile = produceState(
+        initialValue = testProfile,
+        producer = {
+            value = try {
+                profile()
+            } catch (e: Exception) {
+                testProfile
+            }
+        }
+    )
     Column(
         modifier = Modifier.padding(padding)
     ) {
@@ -106,7 +107,7 @@ fun profile(
 
             item {
                 Text(
-                    text = "Name: ${profile.firstName}",
+                    text = "Name:",
                     modifier = Modifier
                         .padding(5.dp)
                         .alpha(.7f), style = MaterialTheme.typography.headlineSmall
@@ -117,7 +118,7 @@ fun profile(
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
-                    "Email: ${profile.email}", modifier = Modifier
+                    "Email: ", modifier = Modifier
                         .padding(5.dp)
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
@@ -127,7 +128,7 @@ fun profile(
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
-                    "Company: ${profile.company}", modifier = Modifier
+                    "Company: ", modifier = Modifier
                         .padding(5.dp)
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )

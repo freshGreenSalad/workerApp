@@ -38,10 +38,8 @@ fun SignInPage(
     navigator: DestinationsNavigator,
     viewModel: MainViewModel
 ) {
-
-
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         SignInBox(
@@ -51,7 +49,6 @@ fun SignInPage(
         )
     }
 }
-
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

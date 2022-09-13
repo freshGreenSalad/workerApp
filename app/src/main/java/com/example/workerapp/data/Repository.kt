@@ -5,6 +5,7 @@ import com.example.workerapp.data.authResult
 import com.example.workerapp.data.ktor.AWSRequest
 import com.example.workerapp.data.models.Profile
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
+import com.example.workerapp.data.models.ProfileInformation
 import javax.inject.Inject
 
 class YourRepository @Inject constructor(
@@ -20,7 +21,9 @@ class YourRepository @Inject constructor(
 
     suspend fun login(authRequest: ProfileLoginAuthRequest, context: Context): authResult<Unit> = service.getauthtokin(authRequest)
 
-    suspend fun authenticate(jwt:String) = service.authenticate(jwt)
+    suspend fun authenticate() = service.authenticate()
+
+    suspend fun PostProfileInformation(profileInformation: ProfileInformation) = service.postProfileInformation(profileInformation)
 
     //Room
     suspend fun upsert(profile: Profile) = yourDAO.upsertProfile(profile)

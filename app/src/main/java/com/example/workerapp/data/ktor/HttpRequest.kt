@@ -1,6 +1,5 @@
 package com.example.workerapp.data.ktor
 
-import android.content.Context
 import android.text.TextUtils
 import android.util.Log
 import androidx.datastore.core.DataStore
@@ -10,12 +9,13 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.models.Profile
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
+import com.example.workerapp.data.models.ProfileInformation
 import com.example.workerapp.data.models.jwtTokin
-import com.example.workerapp.ui.homeUi.dataStore
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
@@ -46,7 +46,7 @@ class AWSRequest @Inject constructor(
         return try {
             if (!profileLoginAuthRequest.email.isEmailValid()) {throw Exception ("email not valid")}
             if (profileLoginAuthRequest.password.length < 8) {throw Exception ("password to small")}
-            val response = client.post(Routes.signin) {
+            val response = client.post(Routes.postProfileAuth) {
                 contentType(ContentType.Application.Json)
                 setBody(Json.encodeToString<ProfileLoginAuthRequest>(profileLoginAuthRequest))
             }
@@ -79,10 +79,24 @@ class AWSRequest @Inject constructor(
         }
     }
 
-    override suspend fun authenticate(jwt: String) {
-        client.get(Routes.authenticate){
+    override suspend fun authenticate() {
+        val jwt = dataStore.data.first()[stringPreferencesKey(name = "JWT")]
+        val response = client.post(Routes.authenticate){
+
             headers {
                 append("Authorization","Bearer $jwt")
+            }
+        }.body<String>()
+        Log.d("authentication", response)
+    }
+
+    override suspend fun postProfileInformation(profileInformation: ProfileInformation) {
+        val jwt = dataStore.data.first()[stringPreferencesKey(name = "JWT")]
+        client.post(Routes.postProfileInformation) {
+            contentType(ContentType.Application.Json)
+            setBody(Json.encodeToString<ProfileInformation>(profileInformation))
+            headers {
+                append("Authorization", "Bearer $jwt")
             }
         }
     }
@@ -95,6 +109,7 @@ object Routes {
     const val postProfileAuth = Url + "UserAuthSignUp"
     const val signin = Url + "signIn"
     const val authenticate = Url + "authenticate"
+    const val postProfileInformation = Url+"postProfileInformation"
 }
 
 fun String.isEmailValid(): Boolean {

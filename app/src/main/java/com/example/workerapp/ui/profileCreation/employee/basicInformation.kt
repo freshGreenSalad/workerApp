@@ -14,7 +14,10 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun basicInformationEmployee() {
+fun basicInformationEmployee(
+    updateFirstName:(String)->Unit,
+    updateLastName:(String)->Unit,
+) {
     var firstName by remember { mutableStateOf(TextFieldValue("")) }
     var LastName by remember { mutableStateOf(TextFieldValue("")) }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -31,6 +34,7 @@ fun basicInformationEmployee() {
             value = firstName,
             onValueChange = {
                 firstName = it
+                updateFirstName(firstName.text)
             },
             label = { Text(text = "FirstName") },
             singleLine = true,
@@ -41,6 +45,7 @@ fun basicInformationEmployee() {
             value = LastName,
             onValueChange = {
                 LastName = it
+                updateLastName(LastName.text)
             },
             label = { Text(text = "LastName") },
             singleLine = true,

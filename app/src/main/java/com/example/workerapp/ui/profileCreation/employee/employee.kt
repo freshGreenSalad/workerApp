@@ -21,7 +21,9 @@ fun Employee(
     removeExperience: (String) -> Unit,
     experienceList: List<String>,
     licence: Licence,
-    UpdateLicencefullLicence: (String) -> Unit
+    UpdateLicencefullLicence: (String) -> Unit,
+    updateFirstName:(String)->Unit,
+    updateLastName:(String)->Unit,
 ) {
     var showBasicInformation by remember { mutableStateOf(false) }
     var showlicence by remember { mutableStateOf(false) }
@@ -37,7 +39,7 @@ fun Employee(
                     showBasicInformation,
                     { showBasicInformation = !showBasicInformation })
                 if (showBasicInformation) {
-                    basicInformationEmployee()
+                    basicInformationEmployee(updateFirstName,updateLastName)
                 }
                 switchrow("Drivers Licence", showlicence, { showlicence = !showlicence })
                 if (showlicence) {

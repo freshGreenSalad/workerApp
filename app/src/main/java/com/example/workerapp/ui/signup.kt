@@ -21,12 +21,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.viewModel.signUpViewModel
-import com.example.workerapp.destinations.MainHolderComposableDestination
 import com.example.workerapp.destinations.ProfileCreationPageDestination
-import com.example.workerapp.destinations.ProfilePageComposableDestination
-import com.example.workerapp.navgraphs.HomeViewNavGraph
 import com.example.workerapp.navgraphs.ProfileCreationNavGraph
-import com.example.workerapp.ui.homeUi.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineScope
@@ -50,7 +46,7 @@ fun Signup(
             when (result) {
                 is authResult.authorised -> navigate.navigate(ProfileCreationPageDestination)
                 is authResult.unauthorised -> {
-                    Log.d("login", "unothorised block")
+                    Log.d("signup", "unorthorised block")
                     Toast.makeText(context, "profile not created", Toast.LENGTH_LONG).show()
                 }
                 is authResult.unknownError -> {
