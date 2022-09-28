@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.authResult
-import com.example.workerapp.data.viewModel.signUpViewModel
+import com.example.workerapp.data.viewModel.SignupSigninViewModel
 import com.example.workerapp.destinations.ProfileCreationPageDestination
 import com.example.workerapp.data.navgraphs.ProfileCreationNavGraph
 import com.ramcosta.composedestinations.annotation.Destination
@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 @Destination
 @Composable
 fun Signup(
-    viewModel: signUpViewModel,
+    viewModel: SignupSigninViewModel,
     navigate: DestinationsNavigator
 ) {
     val scope = CoroutineScope(Dispatchers.IO)

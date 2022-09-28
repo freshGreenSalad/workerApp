@@ -21,7 +21,7 @@ import kotlin.reflect.KSuspendFunction0
 @Composable
 fun MainHolderComposable(
     navigator: DestinationsNavigator,
-    viewModel: MainViewModel
+    viewModel: SupervisorViewModel
 ) {
     val viewState by viewModel.state.collectAsState()
     

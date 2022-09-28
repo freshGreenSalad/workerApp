@@ -12,7 +12,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.dataClasses.Licence
 import com.example.workerapp.data.viewModel.EmployeerOrEmployee
-import com.example.workerapp.data.viewModel.signUpViewModel
+import com.example.workerapp.data.viewModel.SignupSigninViewModel
 import com.example.workerapp.data.navgraphs.ProfileCreationNavGraph
 import com.example.workerapp.ui.screens.general.profileCreation.employee.Employee
 import com.example.workerapp.ui.screens.general.profileCreation.scaffoldItems.TopBarProfileCreationPage
@@ -25,7 +25,7 @@ import kotlin.reflect.KSuspendFunction0
 @Destination
 @Composable
 fun ProfileCreationPage(
-    viewModel: signUpViewModel,
+    viewModel: SignupSigninViewModel,
     navigator: DestinationsNavigator
 ) {
     val viewState by viewModel.state.collectAsState()

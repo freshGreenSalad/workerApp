@@ -37,7 +37,7 @@ import kotlin.reflect.KSuspendFunction0
 @Destination
 fun ProfilePageComposable(
     navigator: DestinationsNavigator,
-    viewModel: MainViewModel,
+    viewModel: SupervisorViewModel,
 ) {
     var shouldShowCamera by remember { mutableStateOf(false) }
     val viewState by viewModel.state.collectAsState()

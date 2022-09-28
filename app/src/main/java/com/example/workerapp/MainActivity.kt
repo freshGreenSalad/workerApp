@@ -14,11 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.workerapp.data.viewModel.signUpViewModel
-import com.example.workerapp.data.viewModel.workerviewmodel
+import com.example.workerapp.data.viewModel.SignupSigninViewModel
+import com.example.workerapp.data.viewModel.WorkerViewModel
 import com.example.workerapp.ui.theme.WorkerAppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import com.example.workerapp.ui.screens.supervisor.supervisorHome.MainViewModel
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.SupervisorViewModel
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.NestedNavGraphDefaultAnimations
@@ -65,19 +65,19 @@ class MainActivity : ComponentActivity() {
                             val parentEntry = remember(navBackStackEntry) {
                                 navController.getBackStackEntry(NavGraphs.root.route)
                             }
-                            hiltViewModel<MainViewModel>(parentEntry)
+                            hiltViewModel<SupervisorViewModel>(parentEntry)
                         }
                         dependency(NavGraphs.profileCreation) {
                             val parentEntry = remember(navBackStackEntry) {
                                 navController.getBackStackEntry(NavGraphs.root.route)
                             }
-                            hiltViewModel<signUpViewModel>(parentEntry)
+                            hiltViewModel<SignupSigninViewModel>(parentEntry)
                         }
                         dependency(NavGraphs.worker) {
                             val parentEntry = remember(navBackStackEntry) {
                                 navController.getBackStackEntry(NavGraphs.root.route)
                             }
-                            hiltViewModel<workerviewmodel>(parentEntry)
+                            hiltViewModel<WorkerViewModel>(parentEntry)
                         }
                     }
                 )

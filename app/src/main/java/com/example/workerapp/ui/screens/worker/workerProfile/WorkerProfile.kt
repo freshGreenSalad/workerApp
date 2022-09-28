@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.example.workerapp.data.viewModel.workerviewmodel
+import com.example.workerapp.data.viewModel.WorkerViewModel
 import com.example.workerapp.data.navgraphs.WorkerNavGraph
 import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.TopBar
 import com.ramcosta.composedestinations.annotation.Destination
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 @Destination
 fun WorkerProfilePageComposable(
     navigator: DestinationsNavigator,
-    viewModel: workerviewmodel,
+    viewModel: WorkerViewModel,
 ) {
     val viewState by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()

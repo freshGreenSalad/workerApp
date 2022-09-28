@@ -16,11 +16,11 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class signUpViewModel @Inject constructor(
+class SignupSigninViewModel @Inject constructor(
     private val repository: YourRepository,
 ) : ViewModel() {
 
-    //dynamodbfunction
+    //dynamodb function
     suspend fun postAuthProfile() {
         val authresult = repository.postAuthProfile(
             ProfileLoginAuthRequest(

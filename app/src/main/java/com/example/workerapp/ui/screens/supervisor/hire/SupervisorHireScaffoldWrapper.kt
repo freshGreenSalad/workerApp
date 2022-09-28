@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.dataClasses.Worker
 import com.example.workerapp.data.navgraphs.HomeViewNavGraph
-import com.example.workerapp.ui.screens.supervisor.supervisorHome.MainViewModel
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.SupervisorViewModel
 import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.MainDrawer
 import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.TopBar
 import com.ramcosta.composedestinations.annotation.Destination
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 fun HireScafold(
     worker: Worker,
     navigator: DestinationsNavigator,
-    viewModel: MainViewModel
+    viewModel: SupervisorViewModel
 ){
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()

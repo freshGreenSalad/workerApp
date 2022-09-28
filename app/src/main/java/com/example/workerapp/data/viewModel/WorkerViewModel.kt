@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @HiltViewModel
-class workerviewmodel @Inject constructor(
+class WorkerViewModel @Inject constructor(
     private val repository: YourRepository,
     private val dataStore: DataStore<Preferences>
 ) : ViewModel() {

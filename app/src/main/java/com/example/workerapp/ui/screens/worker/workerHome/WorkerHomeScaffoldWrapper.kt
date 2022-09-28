@@ -14,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.workerapp.data.viewModel.workerviewmodel
+import com.example.workerapp.data.viewModel.WorkerViewModel
 import com.example.workerapp.data.navgraphs.WorkerNavGraph
 import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.TopBar
 import com.example.workerapp.ui.screens.worker.workerProfile.WorkerDrawer
@@ -29,7 +29,7 @@ import kotlin.reflect.KSuspendFunction1
 @Destination
 @Composable
 fun WorkerProfile(
-    viewmodel: workerviewmodel,
+    viewmodel: WorkerViewModel,
     navigator: DestinationsNavigator
 ) {
     val viewState by viewmodel.state.collectAsState()

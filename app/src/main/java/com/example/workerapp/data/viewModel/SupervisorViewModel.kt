@@ -30,7 +30,7 @@ val Context.dataStore by preferencesDataStore("user_preferences")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class SupervisorViewModel @Inject constructor(
     private val repository: YourRepository,
     private val dataStore: DataStore<Preferences>
 ) : ViewModel() {
@@ -54,7 +54,7 @@ class MainViewModel @Inject constructor(
     suspend fun getProfile(): Profile = repository.getProfile()
 
     //aws functions --------------------------
-    //dynamodbfunctions
+    //dynamodb functions
 
     suspend fun login(authRequest: ProfileLoginAuthRequest) {
         val result = repository.login(authRequest)
@@ -62,7 +62,7 @@ class MainViewModel @Inject constructor(
     }
 
     //s3functions?
-    suspend fun postprofile(profile: Profile) = repository.postprofile(profile)
+    suspend fun postProfile(profile: Profile) = repository.postprofile(profile)
 
     //updating datastore entries---------------------
     suspend fun saveToDataStore(key: String, value: String) {

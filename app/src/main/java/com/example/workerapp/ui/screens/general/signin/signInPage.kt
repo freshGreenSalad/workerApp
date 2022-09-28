@@ -28,7 +28,7 @@ import com.example.workerapp.destinations.MainHolderComposableDestination
 import com.example.workerapp.destinations.SignupDestination
 import com.example.workerapp.destinations.WorkerProfileDestination
 import com.example.workerapp.data.navgraphs.HomeViewNavGraph
-import com.example.workerapp.ui.screens.supervisor.supervisorHome.MainViewModel
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.SupervisorViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
@@ -39,7 +39,7 @@ import kotlin.reflect.KSuspendFunction1
 @Composable
 fun SignInPage(
     navigator: DestinationsNavigator,
-    viewModel: MainViewModel
+    viewModel: SupervisorViewModel
 ) {
     Box(
         modifier = Modifier
@@ -60,7 +60,7 @@ fun SignInPage(
 fun SignInBox(
     navigator: DestinationsNavigator,
     login: KSuspendFunction1<ProfileLoginAuthRequest, Unit>,
-    viewModel: MainViewModel
+    viewModel: SupervisorViewModel
 ) {
     val scope = rememberCoroutineScope()
 

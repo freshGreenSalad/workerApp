@@ -7,7 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.dataClasses.Worker
 import com.example.workerapp.data.navgraphs.HomeViewNavGraph
-import com.example.workerapp.ui.screens.supervisor.supervisorHome.MainViewModel
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.SupervisorViewModel
 import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.MainDrawer
 import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.TopBar
 import com.example.workerapp.ui.workerInfoPage.workerUITabs.WorkerPhotoTab
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun WorkerPage(
     SelectedClickThroughWorker: Worker,
-    viewModel: MainViewModel,
+    viewModel: SupervisorViewModel,
     navigator: DestinationsNavigator,
 ) {
     val viewstate by viewModel.state.collectAsState()
