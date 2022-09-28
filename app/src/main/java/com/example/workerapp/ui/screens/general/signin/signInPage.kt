@@ -28,7 +28,7 @@ import com.example.workerapp.destinations.MainHolderComposableDestination
 import com.example.workerapp.destinations.SignupDestination
 import com.example.workerapp.destinations.WorkerProfileDestination
 import com.example.workerapp.data.navgraphs.HomeViewNavGraph
-import com.example.workerapp.ui.screens.supervisor.homeUi.MainViewModel
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch

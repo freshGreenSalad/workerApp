@@ -1,4 +1,4 @@
-package com.example.workerapp.ui.screens.supervisor.homeUi.homeUiTabs
+package com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUiTabs
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues

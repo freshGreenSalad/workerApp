@@ -1,4 +1,4 @@
-package com.example.workerapp.ui.screens.supervisor.homeUi.homeUIScafoldItems
+package com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -6,7 +6,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import com.example.workerapp.ui.screens.supervisor.homeUi.HomeBottomAppBarTabs
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.HomeBottomAppBarTabs
 
 
 @Composable

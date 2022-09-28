@@ -1,4 +1,4 @@
-package com.example.workerapp.ui.screens.supervisor.homeUi
+package com.example.workerapp.ui.screens.supervisor.supervisorHome
 
 
 import android.content.Context

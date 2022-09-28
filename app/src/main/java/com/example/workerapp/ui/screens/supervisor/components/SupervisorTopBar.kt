@@ -1,4 +1,4 @@
-package com.example.workerapp.ui.screens.supervisor.homeUi.homeUIScafoldItems
+package com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu

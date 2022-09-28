@@ -1,4 +1,4 @@
-package com.example.workerapp.ui.screens.supervisor.homeUi.homeUIScafoldItems
+package com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

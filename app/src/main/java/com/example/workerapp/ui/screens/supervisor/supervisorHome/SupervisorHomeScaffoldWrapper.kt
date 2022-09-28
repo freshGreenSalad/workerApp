@@ -1,4 +1,4 @@
-package com.example.workerapp.ui.screens.supervisor.homeUi.homeUIScafoldItems
+package com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -6,9 +6,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.navgraphs.HomeViewNavGraph
-import com.example.workerapp.ui.screens.supervisor.homeUi.*
-import com.example.workerapp.ui.screens.supervisor.homeUi.homeUiTabs.Main
-import com.example.workerapp.ui.screens.supervisor.homeUi.homeUiTabs.WorkerSearch
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.*
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUiTabs.Main
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUiTabs.WorkerSearch
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch

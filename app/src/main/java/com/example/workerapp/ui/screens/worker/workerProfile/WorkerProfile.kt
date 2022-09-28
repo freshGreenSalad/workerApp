@@ -6,7 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.example.workerapp.data.viewModel.workerviewmodel
 import com.example.workerapp.data.navgraphs.WorkerNavGraph
-import com.example.workerapp.ui.screens.supervisor.homeUi.homeUIScafoldItems.TopBar
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.TopBar
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.example.workerapp.ui.screens.supervisor.homeUi.homeUiTabs
+package com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUiTabs
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.dataClasses.blankWorker
 import com.example.workerapp.R
-import com.example.workerapp.ui.screens.supervisor.homeUi.Workercard
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.Workercard
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString

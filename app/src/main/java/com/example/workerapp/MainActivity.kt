@@ -18,7 +18,7 @@ import com.example.workerapp.data.viewModel.signUpViewModel
 import com.example.workerapp.data.viewModel.workerviewmodel
 import com.example.workerapp.ui.theme.WorkerAppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import com.example.workerapp.ui.screens.supervisor.homeUi.MainViewModel
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.MainViewModel
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.NestedNavGraphDefaultAnimations

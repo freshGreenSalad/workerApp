@@ -26,7 +26,7 @@ import coil.request.ImageRequest
 import com.example.workerapp.data.dataClasses.Worker
 import com.example.workerapp.R
 import com.example.workerapp.destinations.HireScafoldDestination
-import com.example.workerapp.ui.screens.supervisor.homeUi.WatchlistedCardIcon
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.WatchlistedCardIcon
 import com.example.workerapp.ui.workerInfoPage.WorkerChipGroup
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 

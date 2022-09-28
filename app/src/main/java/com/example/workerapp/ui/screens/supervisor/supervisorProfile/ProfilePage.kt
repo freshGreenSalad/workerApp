@@ -22,9 +22,9 @@ import com.example.workerapp.R
 import com.example.workerapp.data.dataClasses.Profile
 import com.example.workerapp.data.dataClasses.testProfile
 import com.example.workerapp.data.navgraphs.HomeViewNavGraph
-import com.example.workerapp.ui.screens.supervisor.homeUi.*
-import com.example.workerapp.ui.screens.supervisor.homeUi.homeUIScafoldItems.MainDrawer
-import com.example.workerapp.ui.screens.supervisor.homeUi.homeUIScafoldItems.TopBar
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.*
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.MainDrawer
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.TopBar
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
