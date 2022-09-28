@@ -9,7 +9,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
-import com.example.workerapp.data.ktor.AWSInterface
+import com.example.workerapp.data.apiCallsToServer.AWSInterface
 import com.example.workerapp.data.room.RoomDatabase
 import dagger.Module
 import dagger.Provides

@@ -31,7 +31,6 @@ fun Main(
     removeFromWatchlist: (Int) -> Unit,
     addToWatchList: (Int) -> Unit,
     getworker: KSuspendFunction1<Int, String>,
-    authenticate: KSuspendFunction0<Unit>
 ) {
     val scope = rememberCoroutineScope()
 
@@ -39,16 +38,6 @@ fun Main(
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
 
         item {
-            Box(modifier = Modifier
-                .size(50.dp)
-                .background(color = MaterialTheme.colorScheme.primary)
-                .clickable {
-                    scope.launch {
-                        authenticate()
-                    }
-                }) {
-
-            }
             Text(
                 modifier = Modifier.padding(10.dp),
                 style = MaterialTheme.typography.bodyLarge,

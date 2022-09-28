@@ -1,8 +1,7 @@
 package com.example.workerapp.data.room
 
-import android.content.Context
 import com.example.workerapp.data.authResult
-import com.example.workerapp.data.ktor.AWSRequest
+import com.example.workerapp.data.apiCallsToServer.AWSRequest
 import com.example.workerapp.data.models.Profile
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
 import com.example.workerapp.data.models.ProfileInformation
@@ -19,9 +18,7 @@ class YourRepository @Inject constructor(
     //Dynamodb
     suspend fun postAuthProfile(profileLoginAuthRequest: ProfileLoginAuthRequest):authResult<Unit> = service.postProfileAuth(profileLoginAuthRequest)
 
-    suspend fun login(authRequest: ProfileLoginAuthRequest, context: Context): authResult<Unit> = service.getauthtokin(authRequest)
-
-    suspend fun authenticate() = service.authenticate()
+    suspend fun login(authRequest: ProfileLoginAuthRequest): authResult<Boolean?> = service.getauthtokin(authRequest)
 
     suspend fun PostProfileInformation(profileInformation: ProfileInformation) = service.postProfileInformation(profileInformation)
 

@@ -55,10 +55,9 @@ class MainViewModel @Inject constructor(
 
     //aws functions --------------------------
     //dynamodbfunctions
-    suspend fun authenticate() = repository.authenticate()
 
-    suspend fun login(authRequest: ProfileLoginAuthRequest, context: Context) {
-        val result = repository.login(authRequest, context = context)
+    suspend fun login(authRequest: ProfileLoginAuthRequest) {
+        val result = repository.login(authRequest)
         resultChannel.send(result)
     }
 
@@ -85,7 +84,7 @@ class MainViewModel @Inject constructor(
 
     //Auth state--------------------------------------
 
-    private val resultChannel = Channel<authResult<Unit>>()
+    private val resultChannel = Channel<authResult<Boolean?>>()
     val authResults = resultChannel.receiveAsFlow()
 
     //state-------------------------------------------

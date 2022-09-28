@@ -53,6 +53,5 @@ fun spalshScreen(
             contentDescription = "logo",
             modifier = Modifier.scale(scale.value)
         )
-        
     }
 }

@@ -37,9 +37,7 @@ fun MainHolderComposable(
             removeFromWatchlist = viewModel::removeFromWatchlist,
             addToWatchList = viewModel::addToWatchList,
             getWorker = viewModel::getworker,
-            readFromDataStore = viewModel::readFromDataStore,
             deleteFromDataStore = viewModel::deleteAllFromDataStore,
-            authenticate = viewModel::authenticate
         )
     }
 }
@@ -56,9 +54,7 @@ fun HomeScreen(
     removeFromWatchlist: (Int) -> Unit,
     addToWatchList:(Int) -> Unit,
     getWorker: KSuspendFunction1<Int, String>,
-    readFromDataStore: KSuspendFunction1<String,String?>,
     deleteFromDataStore: KSuspendFunction0<Unit>,
-    authenticate: KSuspendFunction0<Unit>
 ) {
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
@@ -104,7 +100,6 @@ fun HomeScreen(
                                 removeFromWatchlist = removeFromWatchlist,
                                 addToWatchList = addToWatchList,
                                 getworker = getWorker,
-                                authenticate = authenticate
                             )
                         }
                         HomeBottomAppBarTabs.Search -> {

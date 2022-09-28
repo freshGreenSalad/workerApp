@@ -1,4 +1,4 @@
-package com.example.workerapp.data.ktor
+package com.example.workerapp.data.apiCallsToServer
 
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.models.Profile
@@ -14,9 +14,7 @@ interface AWSInterface {
     suspend fun postProfileAuth(profileLoginAuthRequest: ProfileLoginAuthRequest): authResult<Unit>
 
     //sends login details, returns authorisation and saves jwt at lower level
-    suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest): authResult<Unit>
-
-    suspend fun authenticate()
+    suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest): authResult<Boolean?>
 
     //posts the rest of the workers profile infomation once they hav completed there signup progress
     suspend fun postProfileInformation(profileInformation: ProfileInformation)

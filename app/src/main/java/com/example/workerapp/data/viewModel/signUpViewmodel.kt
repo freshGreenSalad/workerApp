@@ -1,21 +1,20 @@
 package com.example.workerapp.data.viewModel
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.models.Licence
 import com.example.workerapp.data.models.ProfileLoginAuthRequest
 import com.example.workerapp.data.models.ProfileInformation
 import com.example.workerapp.data.room.YourRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @HiltViewModel
 class signUpViewModel @Inject constructor(
     private val repository: YourRepository,

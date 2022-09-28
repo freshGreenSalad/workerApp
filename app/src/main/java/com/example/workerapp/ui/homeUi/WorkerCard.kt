@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -87,8 +88,28 @@ fun Workercard(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Bottom
         ) {
-            Text(text = worker.value.name)
-            Text(text = if (worker.value.hourlyRate == null) "" else worker.value.hourlyRate.toString())
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    //.background(color = MaterialTheme.colorScheme.background)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .alpha(0.75f)
+                        .height(40.dp)
+                        .background(color = MaterialTheme.colorScheme.background)
+                )
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = worker.value.name,)
+                    Text(text = if (worker.value.hourlyRate == null) "" else worker.value.hourlyRate.toString(),)
+                }
+            }
         }
     }
 }
