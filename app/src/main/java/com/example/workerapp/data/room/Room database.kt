@@ -2,8 +2,7 @@ package com.example.workerapp.data.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.workerapp.data.models.Profile
-import com.example.workerapp.data.models.Worker
+import com.example.workerapp.data.dataClasses.Profile
 
 @Database(
     entities = [Profile::class],

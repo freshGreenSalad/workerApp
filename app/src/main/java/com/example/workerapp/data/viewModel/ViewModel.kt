@@ -1,4 +1,4 @@
-package com.example.workerapp.ui.homeUi
+package com.example.workerapp.ui.screens.supervisor.homeUi
 
 
 import android.content.Context
@@ -23,8 +23,8 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.room.*
 import com.example.workerapp.data.cashing.WorkerCasheMap
-import com.example.workerapp.data.models.Profile
-import com.example.workerapp.data.models.ProfileLoginAuthRequest
+import com.example.workerapp.data.dataClasses.Profile
+import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
 
 val Context.dataStore by preferencesDataStore("user_preferences")
 

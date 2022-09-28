@@ -7,7 +7,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.workerapp.data.authResult
-import com.example.workerapp.data.models.*
+import com.example.workerapp.data.dataClasses.*
+import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
+import com.example.workerapp.data.dataClasses.auth.jwtTokin
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*

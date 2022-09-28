@@ -2,9 +2,7 @@ package com.example.workerapp.data.room
 
 import androidx.room.*
 import androidx.room.Dao
-import com.example.workerapp.data.models.Profile
-import com.example.workerapp.data.models.Worker
-import kotlinx.coroutines.flow.Flow
+import com.example.workerapp.data.dataClasses.Profile
 
 @Dao
 interface DataAccessObject {

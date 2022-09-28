@@ -1,9 +1,9 @@
 package com.example.workerapp.data.apiCallsToServer
 
 import com.example.workerapp.data.authResult
-import com.example.workerapp.data.models.Profile
-import com.example.workerapp.data.models.ProfileLoginAuthRequest
-import com.example.workerapp.data.models.ProfileInformation
+import com.example.workerapp.data.dataClasses.Profile
+import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
+import com.example.workerapp.data.dataClasses.ProfileInformation
 
 interface AWSInterface {
     suspend fun getWorkerString(key: Int): String

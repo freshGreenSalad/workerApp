@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.workerapp.data.authResult
-import com.example.workerapp.data.models.Licence
-import com.example.workerapp.data.models.ProfileLoginAuthRequest
-import com.example.workerapp.data.models.ProfileInformation
+import com.example.workerapp.data.dataClasses.Licence
+import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
+import com.example.workerapp.data.dataClasses.ProfileInformation
 import com.example.workerapp.data.room.YourRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
