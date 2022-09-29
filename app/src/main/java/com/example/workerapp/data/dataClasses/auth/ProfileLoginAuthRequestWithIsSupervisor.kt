@@ -3,8 +3,8 @@ package com.example.workerapp.data.dataClasses.auth
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProfileLoginAuthRequest(
+data class ProfileLoginAuthRequestWithIsSupervisor(
     val email:String,
     val password: String,
+    val isSupervisor: Boolean
 )
-

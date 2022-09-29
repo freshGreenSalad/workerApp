@@ -8,6 +8,8 @@ import com.example.workerapp.data.authResult
 import com.example.workerapp.data.dataClasses.Licence
 import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
 import com.example.workerapp.data.dataClasses.ProfileInformation
+import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequestWithIsSupervisor
+import com.example.workerapp.data.dataClasses.jwtTokinWithIsSupervisor
 import com.example.workerapp.data.room.YourRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -23,9 +25,10 @@ class SignupSigninViewModel @Inject constructor(
     //dynamodb function
     suspend fun postAuthProfile() {
         val authresult = repository.postAuthProfile(
-            ProfileLoginAuthRequest(
+            ProfileLoginAuthRequestWithIsSupervisor(
                 emailPassword.value.email,
-                emailPassword.value.password
+                emailPassword.value.password,
+                emailPassword.value.isSupervisor
             )
         )
         resultChannel.send(authresult)
@@ -62,7 +65,8 @@ class SignupSigninViewModel @Inject constructor(
     private val emailPassword = MutableStateFlow(
         EmailPassword(
             email = "sdfg",
-            password = "sdfg"
+            password = "sdfg",
+            isSupervisor = true
         )
     )
 
@@ -153,9 +157,12 @@ class SignupSigninViewModel @Inject constructor(
     }
 
     //state updating functions
-    fun updateStateEmailPassword(email: String, password: String) {
-        emailPassword.value = emailPassword.value.copy(email = email)
-        emailPassword.value = emailPassword.value.copy(password = password)
+    fun updateStateEmailPassword(email: String, password: String, isSupervisor: Boolean) {
+        emailPassword.value = emailPassword.value.copy(
+            email = email,
+            password = password,
+            isSupervisor = isSupervisor
+        )
     }
 
     fun removeFromSpecilisedLicence(key: String) {
@@ -244,10 +251,11 @@ data class ProfileCreationPageState constructor(
         class4 = false,
         class5 = false
     ),
-    val emailPassword: EmailPassword = EmailPassword(email = "email", password = "password"),
+    val emailPassword: EmailPassword = EmailPassword(email = "email", password = "password", isSupervisor = true),
 )
 
 data class EmailPassword(
     val email: String,
-    val password: String
+    val password: String,
+    val isSupervisor: Boolean
 )

@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.dataClasses.*
 import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
+import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequestWithIsSupervisor
 import com.example.workerapp.data.dataClasses.auth.jwtTokin
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -57,16 +58,16 @@ class AWSRequest @Inject constructor(
     // putDatesWorked
     // putWorkerPersonalData
     // putWorkerExperience
-    override suspend fun postProfileAuth(profileLoginAuthRequest: ProfileLoginAuthRequest):authResult<Unit> {
+    override suspend fun postProfileAuth(profileLoginAuthRequest: ProfileLoginAuthRequestWithIsSupervisor):authResult<Unit> {
         return try {
             if (!profileLoginAuthRequest.email.isEmailValid()) {throw Exception ("email not valid")}
             if (profileLoginAuthRequest.password.length < 8) {throw Exception ("password to small")}
             val response = client.post(Routes.putWorkerSignupInfo) {
                 contentType(ContentType.Application.Json)
-                setBody(Json.encodeToString<ProfileLoginAuthRequest>(profileLoginAuthRequest))
+                setBody(Json.encodeToString<ProfileLoginAuthRequestWithIsSupervisor>(profileLoginAuthRequest))
             }
             dataStore.edit { settings ->
-                settings[stringPreferencesKey( name = "JWT")] = Json.decodeFromString<jwtTokin>(response.body<String>()).token.toString()
+                settings[stringPreferencesKey( name = "JWT")] = Json.decodeFromString<jwtTokinWithIsSupervisor>(response.body<String>()).token.toString()
             }
             authResult.authorised()
         } catch (e: Exception) {

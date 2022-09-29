@@ -5,6 +5,7 @@ import com.example.workerapp.data.apiCallsToServer.AWSRequest
 import com.example.workerapp.data.dataClasses.Profile
 import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
 import com.example.workerapp.data.dataClasses.ProfileInformation
+import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequestWithIsSupervisor
 import javax.inject.Inject
 
 class YourRepository @Inject constructor(
@@ -16,7 +17,7 @@ class YourRepository @Inject constructor(
     suspend fun postprofile(profile: Profile) = service.postProfile(profile)
 
     //Dynamodb
-    suspend fun postAuthProfile(profileLoginAuthRequest: ProfileLoginAuthRequest):authResult<Unit> = service.postProfileAuth(profileLoginAuthRequest)
+    suspend fun postAuthProfile(profileLoginAuthRequest: ProfileLoginAuthRequestWithIsSupervisor):authResult<Unit> = service.postProfileAuth(profileLoginAuthRequest)
 
     suspend fun login(authRequest: ProfileLoginAuthRequest): authResult<Boolean?> = service.getauthtokin(authRequest)
 

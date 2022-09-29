@@ -28,6 +28,7 @@ import com.example.workerapp.data.authResult
 import com.example.workerapp.data.viewModel.SignupSigninViewModel
 import com.example.workerapp.destinations.ProfileCreationPageDestination
 import com.example.workerapp.data.navgraphs.ProfileCreationNavGraph
+import com.example.workerapp.destinations.WorkerSignupScaffoldDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineScope
@@ -56,7 +57,7 @@ fun Signup(
     LaunchedEffect(viewModel, context) {
         viewModel.authResults.collect { result ->
             when (result) {
-                is authResult.authorised -> navigate.navigate(ProfileCreationPageDestination)
+                is authResult.authorised -> navigate.navigate(WorkerSignupScaffoldDestination)
                 is authResult.unauthorised -> {
                     Log.d("signup", "unauthorised block")
                     Toast.makeText(context, "profile not created", Toast.LENGTH_LONG).show()
@@ -95,7 +96,7 @@ fun Signup(
                             modifier = Modifier
                                 .height(60.dp)
                                 .width(280.dp)
-                                .clickable { isSupervisor = !isSupervisor }
+                                .clickable { isSupervisor = true }
                                 .background(
                                     shape = RoundedCornerShape(5.dp),
                                     color = MaterialTheme.colorScheme.primary
@@ -127,7 +128,7 @@ fun Signup(
                                     shape = RoundedCornerShape(5.dp),
                                     color = MaterialTheme.colorScheme.primaryContainer
                                 )
-                                .clickable { isSupervisor = !isSupervisor },
+                                .clickable { isSupervisor = true },
                             contentAlignment = Alignment.Center
                         ) {
 
@@ -154,7 +155,7 @@ fun Signup(
                             modifier = Modifier
                                 .height(60.dp)
                                 .width(280.dp)
-                                .clickable { isSupervisor = !isSupervisor }
+                                .clickable { isSupervisor = false }
                                 .background(
                                     shape = RoundedCornerShape(5.dp),
                                     color = MaterialTheme.colorScheme.primary
@@ -186,7 +187,7 @@ fun Signup(
                                     shape = RoundedCornerShape(5.dp),
                                     color = MaterialTheme.colorScheme.primaryContainer
                                 )
-                                .clickable { isSupervisor = !isSupervisor },
+                                .clickable { isSupervisor = false },
                             contentAlignment = Alignment.Center
                         ) {
 
@@ -231,7 +232,7 @@ fun Signup(
                     )
                     .clickable {
                         scope.launch {
-                            (viewModel::updateStateEmailPassword)(email.text, password.text)
+                            (viewModel::updateStateEmailPassword)(email.text, password.text, isSupervisor)
                             (viewModel::postAuthProfile)()
                         }
                     },
