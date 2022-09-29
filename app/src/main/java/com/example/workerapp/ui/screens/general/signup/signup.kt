@@ -3,11 +3,16 @@ package com.example.workerapp.ui.screens.general.signup
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -29,7 +34,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalComposeUiApi::class)
+
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
 @ProfileCreationNavGraph
 @Destination
 @Composable
@@ -42,6 +48,8 @@ fun Signup(
     var email by remember { mutableStateOf(TextFieldValue("")) }
 
     var password by remember { mutableStateOf(TextFieldValue("")) }
+
+    var isSupervisor by remember { mutableStateOf(true) }
 
     val context = LocalContext.current
 
@@ -73,6 +81,126 @@ fun Signup(
             }
         )
         Column {
+
+            AnimatedContent(
+                targetState = isSupervisor,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(150, delayMillis = 150))
+                        .with(fadeOut(animationSpec = tween(150)))
+                }
+            ) { targetState ->
+                when (targetState) {
+                    true -> {
+                        Box(
+                            modifier = Modifier
+                                .height(60.dp)
+                                .width(280.dp)
+                                .clickable { isSupervisor = !isSupervisor }
+                                .background(
+                                    shape = RoundedCornerShape(5.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                ),
+                            contentAlignment = Alignment.Center,
+                        ) {Row(modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+
+                            ) {
+                            Text(
+                                text = "Supervisor",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = MaterialTheme.colorScheme.background
+                            )
+                            Icon(
+                                imageVector = Icons.Outlined.Done,
+                                contentDescription = ""
+                            )
+                        }
+                        }
+                    }
+                    false -> {
+                        Box(
+                            modifier = Modifier
+                                .height(60.dp)
+                                .width(280.dp)
+                                .background(
+                                    shape = RoundedCornerShape(5.dp),
+                                    color = MaterialTheme.colorScheme.primaryContainer
+                                )
+                                .clickable { isSupervisor = !isSupervisor },
+                            contentAlignment = Alignment.Center
+                        ) {
+
+                            Text(
+                                text = "Supervisor",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(15.dp))
+            AnimatedContent(
+                targetState = isSupervisor,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(150, delayMillis = 150))
+                        .with(fadeOut(animationSpec = tween(150)))
+                }
+            ) { targetState ->
+                when (targetState) {
+                    false -> {
+                        Box(
+                            modifier = Modifier
+                                .height(60.dp)
+                                .width(280.dp)
+                                .clickable { isSupervisor = !isSupervisor }
+                                .background(
+                                    shape = RoundedCornerShape(5.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                ),
+                            contentAlignment = Alignment.Center,
+                        ) {Row(modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+
+                        ) {
+                            Text(
+                                text = "Worker",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = MaterialTheme.colorScheme.background
+                            )
+                            Icon(
+                                imageVector = Icons.Outlined.Done,
+                                contentDescription = ""
+                            )
+                        }
+                        }
+                    }
+                    true -> {
+                        Box(
+                            modifier = Modifier
+                                .height(60.dp)
+                                .width(280.dp)
+                                .background(
+                                    shape = RoundedCornerShape(5.dp),
+                                    color = MaterialTheme.colorScheme.primaryContainer
+                                )
+                                .clickable { isSupervisor = !isSupervisor },
+                            contentAlignment = Alignment.Center
+                        ) {
+
+                            Text(
+                                text = "Worker",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(15.dp))
             TextField(
                 value = email,
                 onValueChange = {
@@ -96,7 +224,7 @@ fun Signup(
             Box(
                 modifier = Modifier
                     .width(280.dp)
-                    .height(50.dp)
+                    .height(60.dp)
                     .background(
                         shape = RoundedCornerShape(5.dp),
                         color = MaterialTheme.colorScheme.primary
