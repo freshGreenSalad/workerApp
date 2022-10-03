@@ -25,6 +25,7 @@ import com.ramcosta.composedestinations.animations.defaults.NestedNavGraphDefaul
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.navigation.dependency
+import java.io.File
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -103,13 +104,7 @@ class MainActivity : ComponentActivity() {
             else -> requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
-    /*fun getOutputDirectory(): File {
-        val mediaDir = externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply {  mkdirs() }
-        }
 
-        return if (mediaDir != null && mediaDir.exists()) mediaDir else filesDir
-    }*/
 
     /*override fun onDestroy() {
         super.onDestroy()

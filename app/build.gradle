@@ -93,6 +93,9 @@ dependencies {
     //accompanist
     implementation "com.google.accompanist:accompanist-pager:0.22.0-rc"
 
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.14.1'
+
     //coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
 

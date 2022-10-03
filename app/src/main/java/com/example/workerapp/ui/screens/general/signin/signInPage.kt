@@ -28,6 +28,7 @@ import com.example.workerapp.destinations.MainHolderComposableDestination
 import com.example.workerapp.destinations.SignupDestination
 import com.example.workerapp.destinations.WorkerProfileDestination
 import com.example.workerapp.data.navgraphs.HomeViewNavGraph
+import com.example.workerapp.destinations.testScreenDestination
 import com.example.workerapp.ui.screens.supervisor.supervisorHome.SupervisorViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -180,7 +181,8 @@ fun SignInBox(
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
-        /*Box(
+        Spacer(modifier = Modifier.height(15.dp))
+        Box(
             modifier = Modifier
                 .width(280.dp)
                 .height(50.dp)
@@ -189,7 +191,7 @@ fun SignInBox(
                     color = MaterialTheme.colorScheme.primary
                 )
                 .clickable {
-                    navigator.navigate(WorkerProfileDestination)
+                    navigator.navigate(testScreenDestination)
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -198,6 +200,6 @@ fun SignInBox(
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onPrimary
             )
-        }*/
+        }
     }
 }

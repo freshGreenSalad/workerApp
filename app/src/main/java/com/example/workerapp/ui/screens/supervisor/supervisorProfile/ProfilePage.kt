@@ -1,4 +1,4 @@
-package com.example.workerapp.ui
+package com.example.workerapp.ui.screens.supervisor.supervisorProfile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,9 +40,13 @@ fun ProfilePageComposable(
     viewModel: SupervisorViewModel,
 ) {
     var shouldShowCamera by remember { mutableStateOf(false) }
+
     val viewState by viewModel.state.collectAsState()
+
     val scope = rememberCoroutineScope()
+
     val drawerState = viewState.drawerState
+
     fun showCamera() {
         shouldShowCamera = !shouldShowCamera
     }
@@ -67,23 +71,23 @@ fun ProfilePageComposable(
                     }
                 )
             }
-        ) {
-            if (shouldShowCamera) {
-                profilecamera(shouldShowCamera, { showCamera() })
+        ) {Box(modifier = Modifier.padding(it)){}
+            /*if (shouldShowCamera) {
+                ProfileCamera(shouldShowCamera) { showCamera() }
             } else {
-                profile(it, { showCamera() }, viewModel::getProfile)
-            }
+                Profile(it, { showCamera() }, viewModel::getProfile)
+            }*/
         }
     }
 }
 
 @Composable
-fun profile(
+fun Profile(
     padding: PaddingValues,
     showCamera: () -> Unit,
     profile: KSuspendFunction0<Profile>
 ) {
-    val profile = produceState(
+    val profileState = produceState(
         initialValue = testProfile,
         producer = {
             value = try {

@@ -2,7 +2,6 @@ package com.example.workerapp.ui
 
 import android.content.Context
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -32,35 +31,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import java.io.File
-import java.nio.file.Files
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.Executor
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @Composable
 fun CameraView(
+    outputDirectory: File,
     executor: Executor,
     onImageCaptured: (Uri) -> Unit,
     onError: (ImageCaptureException) -> Unit
 ) {
-    // 1
-    val context = LocalContext.current
-    val file = File(context.filesDir, "fileName")
-
     val lensFacing = CameraSelector.LENS_FACING_BACK
+
+    val context = LocalContext.current
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val preview = Preview.Builder().build()
+
     val previewView = remember { PreviewView(context) }
+
     val imageCapture: ImageCapture = remember { ImageCapture.Builder().build() }
+
     val cameraSelector = CameraSelector.Builder()
         .requireLensFacing(lensFacing)
         .build()
 
-    // 2
     LaunchedEffect(lensFacing) {
         val cameraProvider = context.getCameraProvider()
         cameraProvider.unbindAll()
@@ -74,8 +71,8 @@ fun CameraView(
         preview.setSurfaceProvider(previewView.surfaceProvider)
     }
 
-    // 3
     Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
+
         AndroidView({ previewView }, modifier = Modifier.fillMaxSize())
 
         IconButton(
@@ -83,9 +80,9 @@ fun CameraView(
             onClick = {
                 Log.i("kilo", "ON CLICK")
                 takePhoto(
-                    filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
+                    //filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS",
                     imageCapture = imageCapture,
-                    outputDirectory = file,
+                    outputDirectory = outputDirectory,
                     executor = executor,
                     onImageCaptured = onImageCaptured,
                     onError = onError
@@ -107,17 +104,12 @@ fun CameraView(
 }
 
 private fun takePhoto(
-    filenameFormat: String,
     imageCapture: ImageCapture,
     outputDirectory: File,
     executor: Executor,
     onImageCaptured: (Uri) -> Unit,
     onError: (ImageCaptureException) -> Unit
 ) {
-    val photoFile = File(
-        outputDirectory,
-        SimpleDateFormat(filenameFormat, Locale.US).format(System.currentTimeMillis()) + ".jpg"
-    )
 
     val outputOptions = ImageCapture.OutputFileOptions.Builder(outputDirectory).build()
 
@@ -128,7 +120,7 @@ private fun takePhoto(
         }
 
         override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-            val savedUri = Uri.fromFile(photoFile)
+            val savedUri = Uri.fromFile(outputDirectory)
             onImageCaptured(savedUri)
         }
     })
