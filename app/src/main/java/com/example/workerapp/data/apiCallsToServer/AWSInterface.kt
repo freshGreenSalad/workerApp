@@ -3,7 +3,6 @@ package com.example.workerapp.data.apiCallsToServer
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.dataClasses.Profile
 import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
-import com.example.workerapp.data.dataClasses.ProfileInformation
 import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequestWithIsSupervisor
 
 interface AWSInterface {
@@ -17,7 +16,5 @@ interface AWSInterface {
     //sends login details, returns authorisation and saves jwt at lower level
     suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest): authResult<Boolean?>
 
-    //posts the rest of the workers profile infomation once they hav completed there signup progress
-    suspend fun postProfileInformation(profileInformation: ProfileInformation)
 }
 

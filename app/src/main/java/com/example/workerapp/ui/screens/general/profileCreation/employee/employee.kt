@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.dataClasses.Licence
 import com.example.workerapp.ui.screens.general.profileCreation.*
 
+/*
 @Composable
 fun Employee(
     listoflicences: List<String>,
@@ -126,3 +127,4 @@ fun switchIcon(
         null
     }
 }
+*/

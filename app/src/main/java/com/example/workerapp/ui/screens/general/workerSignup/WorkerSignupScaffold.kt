@@ -1,5 +1,6 @@
 package com.example.workerapp.ui.screens.general.workerSignup
 
+import android.net.Uri
 import androidx.compose.animation.*
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
@@ -32,11 +33,21 @@ fun WorkerSignupScaffold(
     navigator: DestinationsNavigator
 ) {
     val viewState by viewModel.state.collectAsState()
+
+    val viewStateName by viewModel.stateName.collectAsState()
+
+    val viewStateCamera by viewModel.stateCamera.collectAsState()
+
     Box(modifier = Modifier.fillMaxSize()) {
         WorkerProfileScaffold(
             navigator = navigator,
             workerSignupPoint = viewState.workerSignUpPoint,
-            nextScreen = viewModel::nextScreen
+            nextScreen = viewModel::nextScreen,
+            firstname = viewStateName.firstname,
+            lastname = viewStateName.lastname,
+            UpdateFirstname = viewModel::updateFirstname,
+            UpdateLastname = viewModel::updateLastname,
+            photoUri = viewStateCamera.photoUri,
         )
     }
 }
@@ -46,7 +57,12 @@ fun WorkerSignupScaffold(
 fun WorkerProfileScaffold(
     navigator: DestinationsNavigator,
     workerSignupPoint: WorkerSignUpPoint,
-    nextScreen: () -> Unit
+    nextScreen: () -> Unit,
+    firstname: String,
+    lastname: String,
+    UpdateFirstname: (String) -> Unit,
+    UpdateLastname: (String) -> Unit,
+    photoUri: Uri,
 ) {
     Scaffold(
         modifier = Modifier.padding(.4.dp),
@@ -104,7 +120,14 @@ fun WorkerProfileScaffold(
                 ) { targetState ->
                     when (targetState) {
                         WorkerSignUpPoint.basicinformation -> {
-                            BasicInformation()
+                            BasicInformation(
+                                firstname = firstname,
+                                lastname = lastname,
+                                UpdateFirstname = UpdateFirstname,
+                                UpdateLastname = UpdateLastname,
+                                photoUri = photoUri,
+                                navigator = navigator
+                            )
                         }
                         WorkerSignUpPoint.Experience -> {
                             Text(text = "Experience")

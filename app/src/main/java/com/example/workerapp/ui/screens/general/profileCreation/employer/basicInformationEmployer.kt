@@ -1,3 +1,4 @@
+
 package com.example.workerapp.ui.screens.general.profileCreation.employer
 
 import androidx.compose.foundation.layout.Column
@@ -15,7 +16,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalComposeUiApi::class)
+/*@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun basicInformationEmployer() {
     var firstName by remember { mutableStateOf(TextFieldValue("")) }
@@ -60,4 +61,4 @@ fun basicInformationEmployer() {
             keyboardActions = keyboardActions
         )
     }
-}
+}*/

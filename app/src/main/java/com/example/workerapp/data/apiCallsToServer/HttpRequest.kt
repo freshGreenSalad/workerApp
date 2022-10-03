@@ -25,16 +25,6 @@ class AWSRequest @Inject constructor(
     private val client: HttpClient,
     private val dataStore: DataStore<Preferences>
 ) :AWSInterface{
-    override suspend fun postProfileInformation(profileInformation: ProfileInformation) {
-        val jwt = dataStore.data.first()[stringPreferencesKey(name = "JWT")]
-        client.post(Routes.postProfileInformation) {
-            contentType(ContentType.Application.Json)
-            setBody(Json.encodeToString<ProfileInformation>(profileInformation))
-            headers {
-                append("Authorization", "Bearer $jwt")
-            }
-        }
-    }
 
     override suspend fun getWorkerString(key:Int): String {
         return try {

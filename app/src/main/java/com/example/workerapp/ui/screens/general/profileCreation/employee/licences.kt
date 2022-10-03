@@ -9,9 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.dataClasses.Licence
-import com.example.workerapp.ui.screens.general.profileCreation.employee.switchrow
+//import com.example.workerapp.ui.screens.general.profileCreation.employee.switchrow
 
-@Composable
+/*@Composable
 fun licence(
     licence: Licence,
     UpdateLicencefullLicence: (String)-> Unit
@@ -46,4 +46,4 @@ fun licence(
             switchrow("class 5",licence.class5,{UpdateLicencefullLicence("class5")})
         }
     }
-}
+}*/

@@ -4,18 +4,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.example.workerapp.ui.screens.general.profileCreation.employee.switchrow
-import com.example.workerapp.ui.screens.general.profileCreation.employer.basicInformationEmployer
+//import com.example.workerapp.ui.screens.general.profileCreation.employee.switchrow
+//import com.example.workerapp.ui.screens.general.profileCreation.employer.basicInformationEmployer
 
-@Composable
+/*@Composable
 fun Employer(){
-    var showBasicInformation by remember { mutableStateOf(false) }
+    //var showBasicInformation by remember { mutableStateOf(false) }
     LazyColumn(
         modifier = Modifier.fillMaxWidth()
     ){
-        item {
+        *//*item {
             switchrow("basic information", showBasicInformation, { showBasicInformation = !showBasicInformation })
             if (showBasicInformation) { basicInformationEmployer() }
-        }
+        }*//*
     }
-}
+}*/

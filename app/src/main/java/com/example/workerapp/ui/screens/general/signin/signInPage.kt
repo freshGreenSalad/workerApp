@@ -24,11 +24,8 @@ import androidx.compose.ui.unit.dp
 import com.example.workerapp.R
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
-import com.example.workerapp.destinations.MainHolderComposableDestination
-import com.example.workerapp.destinations.SignupDestination
-import com.example.workerapp.destinations.WorkerProfileDestination
 import com.example.workerapp.data.navgraphs.HomeViewNavGraph
-import com.example.workerapp.destinations.testScreenDestination
+import com.example.workerapp.destinations.*
 import com.example.workerapp.ui.screens.supervisor.supervisorHome.SupervisorViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -191,7 +188,7 @@ fun SignInBox(
                     color = MaterialTheme.colorScheme.primary
                 )
                 .clickable {
-                    navigator.navigate(testScreenDestination)
+                    navigator.navigate(WorkerSignupScaffoldDestination)
                 },
             contentAlignment = Alignment.Center
         ) {

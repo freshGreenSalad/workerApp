@@ -14,7 +14,7 @@ import com.example.workerapp.data.dataClasses.Licence
 import com.example.workerapp.data.viewModel.EmployeerOrEmployee
 import com.example.workerapp.data.viewModel.SignupSigninViewModel
 import com.example.workerapp.data.navgraphs.ProfileCreationNavGraph
-import com.example.workerapp.ui.screens.general.profileCreation.employee.Employee
+//import com.example.workerapp.ui.screens.general.profileCreation.employee.Employee
 import com.example.workerapp.ui.screens.general.profileCreation.scaffoldItems.TopBarProfileCreationPage
 import com.example.workerapp.ui.screens.general.profileCreation.scaffoldItems.bottomAppBarComposable
 import com.ramcosta.composedestinations.annotation.Destination
@@ -28,7 +28,7 @@ fun ProfileCreationPage(
     viewModel: SignupSigninViewModel,
     navigator: DestinationsNavigator
 ) {
-    val viewState by viewModel.state.collectAsState()
+    /*val viewState by viewModel.state.collectAsState()
     val selectedtab = viewState.selectedEmployerOrEmployee
     ProfileCreation(
         navigator,
@@ -45,8 +45,9 @@ fun ProfileCreationPage(
         viewModel::PostProfileInformation,
         viewModel::updatefirstname,
         viewModel::updatelastname,
-    )
+    )*/
 }
+/*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -164,6 +165,7 @@ fun radiobuttonGroup(
 }
 
 
+*/
 
 
 

@@ -6,23 +6,31 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import java.util.concurrent.Executors
-import coil.compose.rememberImagePainter
 import java.io.File
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.rememberAsyncImagePainter
+import com.example.workerapp.destinations.DirectionDestination
 import com.example.workerapp.ui.CameraView
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
 fun ProfileCamera(
     shouldShowCamera: Boolean,
     shouldShowPhoto: Boolean,
-    shouldShowPho: ()->Unit,
-    shouldShowCam: ()->Unit,
     photoUri: Uri,
-    updatePhotoURI: (Uri)->Unit
+    shouldShowCam: (Boolean) -> Unit,
+    shouldShowPho: (Boolean) -> Unit,
+    updatePhotoURI: (Uri) -> Unit,
+    navigator: DestinationsNavigator,
+    destination: DirectionDestination
 ) {
     val mediaDir = File.createTempFile("filename", null, LocalContext.current.cacheDir)
 
@@ -31,8 +39,8 @@ fun ProfileCamera(
     fun handleImageCapture(uri: Uri) {
         Log.i("kilo", "Image captured: $uri")
         updatePhotoURI(uri)
-        shouldShowCam()
-        shouldShowPho()
+        shouldShowCam(false)
+        shouldShowPho(true)
     }
 
     if (shouldShowCamera) {
@@ -46,16 +54,20 @@ fun ProfileCamera(
 
     if (shouldShowPhoto) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Text(text = "image screen")
-            Image(
-                painter = rememberAsyncImagePainter(photoUri),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize()
-            )
-            val file = File(photoUri.path)
-            println(file.totalSpace)
-            println(file.isFile)
-            println(file.name)
+            Box(contentAlignment = Alignment.BottomCenter) {
+                Image(
+                    painter = rememberAsyncImagePainter(photoUri),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize()
+                )
+                Button(onClick = { navigator.navigate(direction = destination) }) {
+                    Text(
+                        text = "Confirm",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
         }
     }
 }

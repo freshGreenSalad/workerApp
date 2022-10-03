@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
+/*
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun basicInformationEmployee(
@@ -52,4 +53,4 @@ fun basicInformationEmployee(
             keyboardActions = keyboardActions
         )
     }
-}
+}*/
