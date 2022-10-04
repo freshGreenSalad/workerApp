@@ -18,9 +18,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import com.example.workerapp.data.navgraphs.ProfileCreationNavGraph
-import com.example.workerapp.data.viewModel.SignupSigninViewModel
-import com.example.workerapp.data.viewModel.WorkerSignUpPoint
+import com.example.workerapp.data.viewModel.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -38,6 +38,8 @@ fun WorkerSignupScaffold(
 
     val viewStateCamera by viewModel.stateCamera.collectAsState()
 
+    val viewStateTickets by viewModel.stateTickets.collectAsState()
+
     Box(modifier = Modifier.fillMaxSize()) {
         WorkerProfileScaffold(
             navigator = navigator,
@@ -48,6 +50,14 @@ fun WorkerSignupScaffold(
             UpdateFirstname = viewModel::updateFirstname,
             UpdateLastname = viewModel::updateLastname,
             photoUri = viewStateCamera.photoUri,
+            ticketType = viewStateTickets.ticketType,
+            ChangeTicketType = viewModel::changeTicketType,
+            LicenceType = viewStateTickets.licenceType,
+            ChangeLicenceType = viewModel::changeLicenceType,
+            licenceMap = viewStateTickets.licenceMap,
+            updateLicenceEntry = viewModel::updateLicenceMap,
+            highestClass = viewStateTickets.highestClass,
+            UpdateHighestClass = viewModel::changeHighestClass
         )
     }
 }
@@ -63,6 +73,14 @@ fun WorkerProfileScaffold(
     UpdateFirstname: (String) -> Unit,
     UpdateLastname: (String) -> Unit,
     photoUri: Uri,
+    ticketType: TicketType,
+    ChangeTicketType: (TicketType)->Unit,
+    LicenceType: TypeOfLicence,
+    ChangeLicenceType: (TypeOfLicence) -> Unit,
+    licenceMap: Map<String, Boolean>,
+    updateLicenceEntry:(String)->Unit,
+    highestClass: HighestClass,
+    UpdateHighestClass: (HighestClass) -> Unit
 ) {
     Scaffold(
         modifier = Modifier.padding(.4.dp),
@@ -119,7 +137,7 @@ fun WorkerProfileScaffold(
                     }
                 ) { targetState ->
                     when (targetState) {
-                        WorkerSignUpPoint.basicinformation -> {
+                        WorkerSignUpPoint.BasicInformation -> {
                             BasicInformation(
                                 firstname = firstname,
                                 lastname = lastname,
@@ -132,8 +150,17 @@ fun WorkerProfileScaffold(
                         WorkerSignUpPoint.Experience -> {
                             Text(text = "Experience")
                         }
-                        WorkerSignUpPoint.tickets -> {
-                            Text(text = "tickets")
+                        WorkerSignUpPoint.Tickets -> {
+                            WorkerSignupTickets(
+                                ticketType = ticketType,
+                                ChangeTicketType = ChangeTicketType,
+                                LicenceType = LicenceType,
+                                ChangeLicenceType = ChangeLicenceType,
+                                licenceMap = licenceMap,
+                                updateLicenceEntry = updateLicenceEntry,
+                                highestClass = highestClass,
+                                UpdateHighestClass = UpdateHighestClass
+                            )
                         }
                     }
                 }

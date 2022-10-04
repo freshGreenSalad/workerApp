@@ -14,14 +14,8 @@ fun testScreen(
     viewModel: SignupSigninViewModel,
     navigator: DestinationsNavigator
 ) {
-    val viewStateCamera by viewModel.stateCamera.collectAsState()
-
-    /*ProfileCamera(
-        shouldShowCamera = viewStateCamera.shouldShowCamera,
-        shouldShowPhoto = viewStateCamera.shouldShowPhoto,
-        shouldShowCam = viewModel::shouldshowcam,
-        shouldShowPho = viewModel::shouldshowPho,
-        photoUri = viewStateCamera.photoUri,
-        updatePhotoURI = viewModel::updatePhotoURI,
-    )*/
+    val state by viewModel.stateMap.collectAsState()
+    MapScreen(
+        map = state.map
+    )
 }

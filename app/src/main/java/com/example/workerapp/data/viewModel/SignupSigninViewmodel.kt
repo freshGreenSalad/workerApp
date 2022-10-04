@@ -9,6 +9,7 @@ import com.example.workerapp.data.authResult
 import com.example.workerapp.data.dataClasses.Licence
 import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequestWithIsSupervisor
 import com.example.workerapp.data.room.YourRepository
+import com.google.maps.android.compose.MapProperties
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -35,6 +36,33 @@ class SignupSigninViewModel @Inject constructor(
     private val resultChannel = Channel<authResult<Unit>>()
     val authResults = resultChannel.receiveAsFlow()
 
+    //______________________________________________________________________________________________________________________________________________
+    private val _stateMap = MutableStateFlow(MapState())
+
+    val stateMap: StateFlow<MapState>
+        get() = _stateMap
+
+    private var map = MutableStateFlow(MapDataClass())
+    private var holder = MutableStateFlow("")
+
+    init {
+        viewModelScope.launch {
+            combine(
+                map,
+                holder,
+            ) { map, holder ->
+                MapState(
+                    map,
+                    holder,
+                )
+            }.catch { throwable ->
+                // TODO: emit a UI error here. For now we'll just rethrow
+                throw throwable
+            }.collect {
+                _stateMap.value = it
+            }
+        }
+    }
     //______________________________________________________________________________________________________________________________________________
 
     private val _stateName = MutableStateFlow(NameState())
@@ -74,7 +102,69 @@ class SignupSigninViewModel @Inject constructor(
     }
 
     //______________________________________________________________________________________________________________________________________________
+    private val _stateTickets = MutableStateFlow(TicketState())
 
+    val stateTickets: StateFlow<TicketState>
+        get() = _stateTickets
+
+    private var ticketTypeState = MutableStateFlow(TicketType.DriversLicence)
+
+    private var licenceType = MutableStateFlow(TypeOfLicence.Empty)
+
+    private var licenceMap = MutableStateFlow(
+        mutableStateMapOf(
+            Pair("forks", false),
+            Pair("wheels", false),
+            Pair("rollers", false),
+            Pair("dangerousGoods", false),
+            Pair("tracks", false)
+        )
+    )
+
+    private var highestClassState = MutableStateFlow(HighestClass.Class1)
+
+    init {
+        viewModelScope.launch {
+            combine(
+                ticketTypeState,
+                licenceType,
+                licenceMap,
+                highestClassState
+
+            ) { ticketType, licenceType, licenceMap, highestClass ->
+                TicketState(
+                    ticketType = ticketType,
+                    licenceType = licenceType,
+                    licenceMap = licenceMap,
+                    highestClass = highestClass
+                )
+            }.catch { throwable ->
+                // TODO: emit a UI error here. For now we'll just rethrow
+                throw throwable
+            }.collect {
+                _stateTickets.value = it
+            }
+        }
+    }
+
+    fun changeHighestClass(highestClass: HighestClass){
+        highestClassState.value = highestClass
+    }
+
+    fun changeTicketType(ticketType: TicketType) {
+        ticketTypeState.value = ticketType
+    }
+
+    fun changeLicenceType(chosenLicenceType: TypeOfLicence) {
+        licenceType.value = chosenLicenceType
+    }
+
+    fun updateLicenceMap(licenceVar: String) {
+        licenceMap.value[licenceVar] = !licenceMap.value[licenceVar]!!
+        println(licenceMap.value[licenceVar])
+    }
+
+    //______________________________________________________________________________________________________________________________________________
     private val _stateCamera = MutableStateFlow(CameraState())
 
     val stateCamera: StateFlow<CameraState>
@@ -107,11 +197,11 @@ class SignupSigninViewModel @Inject constructor(
         }
     }
 
-    fun shouldshowcam(bool:Boolean) {
+    fun shouldshowcam(bool: Boolean) {
         shouldShowCamera.value = bool
     }
 
-    fun shouldshowPho(bool:Boolean) {
+    fun shouldshowPho(bool: Boolean) {
         shouldShowPhoto.value = bool
     }
 
@@ -151,7 +241,7 @@ class SignupSigninViewModel @Inject constructor(
 
     private val userTypeSelected = MutableStateFlow(EmployeerOrEmployee.Employee)
 
-    private val workerSignUpPoint = MutableStateFlow(WorkerSignUpPoint.basicinformation)
+    private val workerSignUpPoint = MutableStateFlow(WorkerSignUpPoint.BasicInformation)
 
     private var listOfLicences = MutableStateFlow(mutableStateListOf("licence"))
 
@@ -165,16 +255,14 @@ class SignupSigninViewModel @Inject constructor(
                 userTypeSelected,
                 listOfLicences,
                 experience,
-                licence,
                 emailPassword,
                 workerSignUpPoint
-            ) {   userTypeSelected, listOfLicences, experience, licence, emailPassword, workerSignUpPoint ->
+            ) { userTypeSelected, listOfLicences, experience, emailPassword, workerSignUpPoint ->
                 ProfileCreationPageState(
                     selectedEmployerOrEmployee = userTypeSelected,
                     workerSignUpPoint = workerSignUpPoint,
                     listOfLicences = listOfLicences,
                     experience = experience,
-                    licence = licence,
                     emailPassword = emailPassword,
                 )
             }.catch { throwable ->
@@ -185,6 +273,7 @@ class SignupSigninViewModel @Inject constructor(
             }
         }
     }
+    //______________________________________________________________________________________________________________________________________________
 
     //extention of combine function as combine maxs out at 5 variables
     private fun <T1, T2, T3, T4, T5, T6, R> combine(
@@ -253,11 +342,11 @@ class SignupSigninViewModel @Inject constructor(
 
     fun nextScreen() {
         when (workerSignUpPoint.value) {
-            WorkerSignUpPoint.basicinformation -> workerSignUpPoint.value =
-                WorkerSignUpPoint.tickets
-            WorkerSignUpPoint.tickets -> workerSignUpPoint.value = WorkerSignUpPoint.Experience
+            WorkerSignUpPoint.BasicInformation -> workerSignUpPoint.value =
+                WorkerSignUpPoint.Tickets
+            WorkerSignUpPoint.Tickets -> workerSignUpPoint.value = WorkerSignUpPoint.Experience
             WorkerSignUpPoint.Experience -> workerSignUpPoint.value =
-                WorkerSignUpPoint.basicinformation
+                WorkerSignUpPoint.BasicInformation
         }
     }
 
@@ -293,25 +382,6 @@ class SignupSigninViewModel @Inject constructor(
             }
         }
     }
-
-    fun updateLicencefullLicence(licenceValue: String) {
-        when (licenceValue) {
-            "learners" -> licence.value = licence.value.copy(learners = !licence.value.learners)
-            "restricted" -> licence.value =
-                licence.value.copy(restricted = !licence.value.restricted)
-            "fullLicence" -> licence.value =
-                licence.value.copy(fullLicence = !licence.value.fullLicence)
-            "wheels" -> licence.value = licence.value.copy(wheels = !licence.value.wheels)
-            "tracks" -> licence.value = licence.value.copy(tracks = !licence.value.tracks)
-            "rollers" -> licence.value = licence.value.copy(rollers = !licence.value.rollers)
-            "forks" -> licence.value = licence.value.copy(forks = !licence.value.forks)
-            "hazardus" -> licence.value = licence.value.copy(hazardus = !licence.value.hazardus)
-            "class2" -> licence.value = licence.value.copy(class2 = !licence.value.class2)
-            "class3" -> licence.value = licence.value.copy(class3 = !licence.value.class3)
-            "class4" -> licence.value = licence.value.copy(class4 = !licence.value.class4)
-            "class5" -> licence.value = licence.value.copy(class5 = !licence.value.class5)
-        }
-    }
 }
 
 //state data classes
@@ -320,7 +390,19 @@ enum class EmployeerOrEmployee {
 }
 
 enum class WorkerSignUpPoint {
-    basicinformation, Experience, tickets
+    BasicInformation, Experience, Tickets
+}
+
+enum class TypeOfLicence {
+    Learners, Restricted, Full, Empty
+}
+
+enum class HighestClass {
+    Class1, Class2, Class3, Class4, Class5
+}
+
+enum class TicketType {
+    Crane, DangerousSpaces, DriversLicence, Lifts, Empty
 }
 
 data class CameraState constructor(
@@ -328,31 +410,26 @@ data class CameraState constructor(
     val shouldShowPhoto: Boolean = false,
     val photoUri: Uri = Uri.EMPTY
 )
+
 data class NameState constructor(
     val firstname: String = "",
     val lastname: String = "",
+)
+
+data class TicketState constructor(
+    val ticketType: TicketType = TicketType.DriversLicence,
+    val licenceType: TypeOfLicence = TypeOfLicence.Empty,
+    val licenceMap: MutableMap<String, Boolean> = mutableMapOf(Pair("", true)),
+    val highestClass: HighestClass = HighestClass.Class1
 )
 
 data class ProfileCreationPageState constructor(
     //val userType: List<EmployeerOrEmployee> = emptyList(),
     val selectedEmployerOrEmployee: EmployeerOrEmployee = EmployeerOrEmployee.Employer,
     val listOfLicences: MutableList<String> = mutableListOf("Licence"),
-    val workerSignUpPoint: WorkerSignUpPoint = WorkerSignUpPoint.basicinformation,
+    val workerSignUpPoint: WorkerSignUpPoint = WorkerSignUpPoint.BasicInformation,
     val experience: MutableList<String> = mutableListOf("formworker 2 years"),
-    val licence: Licence = Licence(
-        fullLicence = false,
-        learners = false,
-        restricted = false,
-        wheels = false,
-        tracks = false,
-        rollers = false,
-        forks = false,
-        hazardus = false,
-        class2 = false,
-        class3 = false,
-        class4 = false,
-        class5 = false
-    ),
+
     val emailPassword: EmailPassword = EmailPassword(
         email = "email",
         password = "password",
@@ -364,4 +441,13 @@ data class EmailPassword(
     val email: String,
     val password: String,
     val isSupervisor: Boolean
+)
+
+data class MapDataClass(
+    val properties: MapProperties = MapProperties(),
+)
+
+data class MapState(
+    val map: MapDataClass = MapDataClass(),
+    val holder: String = ""
 )
