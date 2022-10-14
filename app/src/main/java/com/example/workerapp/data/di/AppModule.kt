@@ -66,14 +66,6 @@ object AppModule {
                 json(Json { prettyPrint = true
                     isLenient = true }
                 )
-                //for future install of auth
-                /*install(Auth) {
-                    bearer {
-                        loadTokens {
-                            BearerTokens("abc123", "xyz111")
-                        }
-                    }
-                }*/
             }
         }
 

@@ -1,19 +1,22 @@
-package com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems
+package com.example.workerapp.ui.screens.supervisor.supervisorHome
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
 import com.example.workerapp.data.navgraphs.HomeViewNavGraph
-import com.example.workerapp.ui.screens.supervisor.supervisorHome.*
-import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUiTabs.Main
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.BottomAppBarHomePage
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.MainDrawer
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.TopBar
+import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUiTabs.SupervisorHome
 import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUiTabs.WorkerSearch
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
-import kotlin.reflect.KSuspendFunction1
 import kotlin.reflect.KSuspendFunction0
+import kotlin.reflect.KSuspendFunction1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @HomeViewNavGraph
@@ -35,8 +38,11 @@ fun MainHolderComposable(
             ListOfSavedWorkers = viewState.savedWorkers,
             removeFromWatchlist = viewModel::removeFromWatchlist,
             addToWatchList = viewModel::addToWatchList,
-            getWorker = viewModel::getworker,
             deleteFromDataStore = viewModel::deleteAllFromDataStore,
+            getWorkerProfile = viewModel::getWorkerByEmail,
+            workerListSize = viewState.workerListSize,
+            workerList = viewState.workerList,
+            deleteAccount = viewModel::deleteAccount
         )
     }
 }
@@ -49,11 +55,14 @@ fun HomeScreen(
     homeSelectedTab: HomeBottomAppBarTabs,
     onclickHomeBottomAppTab: (HomeBottomAppBarTabs) -> Unit,
     drawerState: DrawerState,
-    ListOfSavedWorkers: MutableList<Int>,
-    removeFromWatchlist: (Int) -> Unit,
-    addToWatchList:(Int) -> Unit,
-    getWorker: KSuspendFunction1<Int, String>,
+    ListOfSavedWorkers: MutableList<String>,
+    removeFromWatchlist: (String) -> Unit,
+    addToWatchList:(String) -> Unit,
     deleteFromDataStore: KSuspendFunction0<Unit>,
+    getWorkerProfile: KSuspendFunction1<String, WorkerProfile>,
+    workerListSize: Int,
+    workerList: List<WorkerProfile>,
+    deleteAccount: KSuspendFunction0< Unit>
 ) {
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
@@ -62,7 +71,8 @@ fun HomeScreen(
             MainDrawer(
                 navigator,
                 deleteFromDataStore,
-                closeDrawer = {scope.launch { drawerState.close() }}
+                closeDrawer = {scope.launch { drawerState.close() }},
+                deleteAccount
             )
         }
     ) {
@@ -92,13 +102,14 @@ fun HomeScreen(
                 ) {
                     when (homeSelectedTab) {
                         HomeBottomAppBarTabs.Home -> {
-                            Main(
+                            SupervisorHome(
                                 paddingValues = it,
                                 navigator = navigator,
                                 watchlistedWorkers = ListOfSavedWorkers,
                                 removeFromWatchlist = removeFromWatchlist,
                                 addToWatchList = addToWatchList,
-                                getworker = getWorker,
+                                workerListSize = workerListSize,
+                                workerList = workerList
                             )
                         }
                         HomeBottomAppBarTabs.Search -> {
@@ -113,7 +124,7 @@ fun HomeScreen(
                                 navigator = navigator,
                                 removeFromWatchlist = removeFromWatchlist,
                                 addToWatchList = addToWatchList,
-                                getworker = getWorker
+                                getWorkerProfile = getWorkerProfile
                             )
                         }
                     }

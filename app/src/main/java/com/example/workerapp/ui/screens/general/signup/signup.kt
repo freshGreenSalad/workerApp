@@ -26,8 +26,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.viewModel.SignupSigninViewModel
-import com.example.workerapp.destinations.ProfileCreationPageDestination
 import com.example.workerapp.data.navgraphs.ProfileCreationNavGraph
+import com.example.workerapp.destinations.SupervisorSignupScaffoldDestination
 import com.example.workerapp.destinations.WorkerSignupScaffoldDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
-@ProfileCreationNavGraph
+@ProfileCreationNavGraph(start = true)
 @Destination
 @Composable
 fun Signup(
@@ -57,7 +57,7 @@ fun Signup(
     LaunchedEffect(viewModel, context) {
         viewModel.authResults.collect { result ->
             when (result) {
-                is authResult.authorised -> navigate.navigate(WorkerSignupScaffoldDestination)
+                is authResult.authorised -> navigate.navigate(if (isSupervisor) SupervisorSignupScaffoldDestination else WorkerSignupScaffoldDestination)
                 is authResult.unauthorised -> {
                     Log.d("signup", "unauthorised block")
                     Toast.makeText(context, "profile not created", Toast.LENGTH_LONG).show()

@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.sp
 import com.example.workerapp.R
 import com.example.workerapp.destinations.DirectionDestination
 import com.example.workerapp.destinations.MainHolderComposableDestination
-import com.example.workerapp.destinations.ProfilePageComposableDestination
 import com.example.workerapp.destinations.SignInPageDestination
+import com.example.workerapp.destinations.SupervisorProfilePageDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Job
 
@@ -28,8 +28,9 @@ import kotlin.reflect.KSuspendFunction0
 @Composable
 fun MainDrawer(
     navigator: DestinationsNavigator,
-    deleteFromDataStore: KSuspendFunction0< Unit>,
-    closeDrawer: () -> Job
+    deleteFromDataStore: KSuspendFunction0<Unit>,
+    closeDrawer: () -> Job,
+    deleteAccount: KSuspendFunction0<Unit>
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -51,7 +52,7 @@ fun MainDrawer(
         )
         DrawerItem(
             navigator = navigator,
-            destination = ProfilePageComposableDestination,
+            destination = SupervisorProfilePageDestination,
             title = stringResource(id = R.string.drawer_item_profile)
         )
         signoutDrawerItem(
@@ -61,6 +62,14 @@ fun MainDrawer(
             destination = SignInPageDestination,
             closeDrawer = closeDrawer
         )
+        DeleteDrawerItem(
+            navigator = navigator,
+            destination = SignInPageDestination,
+            title = "Delete Account",
+            deleteAccount = deleteAccount,
+            closeDrawer = closeDrawer
+        )
+
     }
 }
 
@@ -78,6 +87,44 @@ fun DrawerItem(
             .clip(RoundedCornerShape(4.dp))
             .background(MaterialTheme.colorScheme.secondary)
             .clickable {
+                navigator.navigate(destination)
+            }
+    ) {
+        Text(
+            text = title,
+            color = MaterialTheme.colorScheme.onSecondary,
+            fontSize = 22.sp,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+            style = MaterialTheme.typography.bodyMedium,
+
+            )
+    }
+}
+
+@Composable
+fun DeleteDrawerItem(
+    navigator: DestinationsNavigator,
+    destination: DirectionDestination,
+    title: String,
+    deleteAccount: KSuspendFunction0<Unit>,
+    closeDrawer: () -> Job
+) {
+
+    val scope = rememberCoroutineScope()
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .height(40.dp)
+            .clip(RoundedCornerShape(4.dp))
+            .background(MaterialTheme.colorScheme.secondary)
+            .clickable {
+                scope.launch {
+                    deleteAccount()
+                }
+                closeDrawer()
                 navigator.navigate(destination)
             }
     ) {

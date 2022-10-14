@@ -12,21 +12,20 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
-import com.example.workerapp.data.dataClasses.blankWorker
+import com.example.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
+import com.example.workerapp.data.dataClasses.workerDataClasses.workerProfileFail
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import kotlin.reflect.KSuspendFunction1
 
 
 @Composable
 fun SavedWorkers(
     paddingValues: PaddingValues,
-    ListOfSavedWorkers: MutableList<Int>,
+    ListOfSavedWorkers: MutableList<String>,
     navigator: DestinationsNavigator,
-    removeFromWatchlist: (Int) -> Unit,
-    addToWatchList: (Int) -> Unit,
-    getworker: KSuspendFunction1<Int, String>
+    removeFromWatchlist: (String) -> Unit,
+    addToWatchList: (String) -> Unit,
+    getWorkerProfile: KSuspendFunction1<String, WorkerProfile>
 ) {
     if (ListOfSavedWorkers.size == 0) {
         Text(
@@ -46,24 +45,24 @@ fun SavedWorkers(
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(10.dp)
         ) {
-            items(ListOfSavedWorkers.size) { index ->
-                val worker = produceState(
-                    initialValue = blankWorker,
-                    producer = {
-                        value = try {
-                            Json.decodeFromString(getworker(ListOfSavedWorkers[index]))
-                        } catch (e: Exception) {
-                            blankWorker
+            items(ListOfSavedWorkers.size) { size ->
+                for (index in 0..size) {
+                    val email = ListOfSavedWorkers[index]
+
+                    val worker = produceState(
+                        initialValue = workerProfileFail,
+                        producer = {
+                            value = getWorkerProfile(email)
                         }
-                    }
-                )
-                Workercard(
-                    worker = worker,
-                    navigator = navigator,
-                    watchlistedWorkers = ListOfSavedWorkers,
-                    removeFromWatchlist = removeFromWatchlist,
-                    addToWatchList = addToWatchList
-                )
+                    )
+                    Workercard(
+                        worker = worker.value,
+                        navigator = navigator,
+                        watchlistedWorkers = ListOfSavedWorkers,
+                        removeFromWatchlist = removeFromWatchlist,
+                        addToWatchList = addToWatchList
+                    )
+                }
             }
         }
     }

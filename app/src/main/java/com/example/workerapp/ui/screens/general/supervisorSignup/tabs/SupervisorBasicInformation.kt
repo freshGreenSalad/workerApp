@@ -1,11 +1,10 @@
-package com.example.workerapp.ui.screens.general.workerSignup
+package com.example.workerapp.ui.screens.general.supervisorSignup
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,7 +13,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -23,15 +25,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.example.workerapp.destinations.WorkerSignupCameraDestination
-import com.example.workerapp.ui.screens.general.camera.ProfileCamera
+import com.example.workerapp.destinations.SupervisorSignupCameraDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.launch
-import kotlin.reflect.KSuspendFunction0
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun BasicInformation(
+fun SupervisorBasicInformation(
     firstname: String,
     lastname: String,
     UpdateFirstname: (String) -> Unit,
@@ -41,6 +40,7 @@ fun BasicInformation(
 ) {
     val context = LocalContext.current
     val imageData = remember { mutableStateOf<Uri?>(null) }
+
     val launcher = rememberLauncherForActivityResult(
         contract = (ActivityResultContracts.GetContent()),
         onResult = { uri ->
@@ -93,7 +93,7 @@ fun BasicInformation(
                         keyboardActions = keyboardActions
                     )
                     Spacer(modifier = Modifier.height(15.dp))
-                    Button(onClick = { navigator.navigate(WorkerSignupCameraDestination) })
+                    Button(onClick = { navigator.navigate(SupervisorSignupCameraDestination) })
                     {
                         Text(
                             text = "Take A Photo of Yourself!",
@@ -118,7 +118,7 @@ fun BasicInformation(
                         )
                     }
                     //temp button to test s3 photo update
-                    Button(onClick = { launcher.launch("image/jpeg")}){Text("clicking this button takes you to your own photos")}
+                    Button(onClick = { launcher.launch("image/jpeg")}){ Text("clicking this button takes you to your own photos") }
                 }
             }
         }

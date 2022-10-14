@@ -38,19 +38,19 @@ fun WorkerPhotoTab(
     workerhistory: List<Pair<Int, String>>,
     workerSkill: List<String>,
     workerTools: List<String>,
-    ListOfSavedWorkers: MutableList<Int>,
-    removeFromWatchlist: (Int) -> Unit,
-    addToWatchList: (Int) -> Unit,
+    ListOfSavedWorkers: MutableList<String>,
+    removeFromWatchlist: (String) -> Unit,
+    addToWatchList: (String) -> Unit,
 ) {
     Column(
         modifier = Modifier.padding(paddingValues)
     ) {
-        ProfileImageHeaderWithoutCamera(
+        /*ProfileImageHeaderWithoutCamera(
             worker = worker,
             ListOfSavedWorkers = ListOfSavedWorkers,
             removeFromWatchlist = removeFromWatchlist,
             addToWatchList = addToWatchList,
-        )
+        )*/
         Box(
             modifier = Modifier
                 .width(200.dp)
@@ -82,10 +82,10 @@ fun WorkerPhotoTab(
     }
 }
 
-@Composable
+/*@Composable
 fun ProfileImageHeaderWithoutCamera(
     worker: Worker,
-    ListOfSavedWorkers: MutableList<Int>,
+    ListOfSavedWorkers: MutableList<String>,
     removeFromWatchlist: (Int) -> Unit,
     addToWatchList: (Int) -> Unit,
 ) {
@@ -153,7 +153,7 @@ fun ProfileImageHeaderWithoutCamera(
         }
     }
     }
-}
+}*/
 
 @Composable
 fun WorkerStats(

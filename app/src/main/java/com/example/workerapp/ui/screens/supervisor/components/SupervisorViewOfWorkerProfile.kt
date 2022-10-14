@@ -22,6 +22,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.workerapp.data.dataClasses.Worker
 import com.example.workerapp.R
+import com.example.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
 import com.example.workerapp.destinations.WorkerPageDestination
 import com.example.workerapp.ui.theme.customShapes.TriangleShape
 import com.example.workerapp.ui.theme.customShapes.TriangleShapeRounded
@@ -31,20 +32,20 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Workercard(
-    worker: State<Worker>,
+    worker: WorkerProfile,
     navigator: DestinationsNavigator,
-    watchlistedWorkers: MutableList<Int>,
-    removeFromWatchlist: (Int) -> Unit,
-    addToWatchList: (Int) -> Unit
+    watchlistedWorkers: MutableList<String>,
+    removeFromWatchlist: (String) -> Unit,
+    addToWatchList: (String) -> Unit
 ) {
-    val inWatchlist = worker.value.key in watchlistedWorkers
+    val inWatchlist = true // TODO: change this to a check for in watchlist
     Surface(
         onClick = {
-            navigator.navigate(
+            /*navigator.navigate(
                 WorkerPageDestination(
                     worker.value,
                 )
-            )
+            )*/
         },
         shape = if (inWatchlist) {
             WorkerCardShape(40f)
@@ -64,7 +65,7 @@ fun Workercard(
             horizontalArrangement = Arrangement.End
         ) {
             WatchlistedCardIcon(
-                worker = worker.value,
+                worker = worker,
                 inWatchlist = inWatchlist,
                 removeFromWatchlist = removeFromWatchlist,
                 addToWatchList = addToWatchList
@@ -74,7 +75,7 @@ fun Workercard(
             modifier = Modifier.size(200.dp),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(
-                    "https://testbucketletshopeitsfree.s3.ap-southeast-2.amazonaws.com/WorkerImages/" + worker.value.imageURL
+                    worker.personalPhoto
                 )
                 .crossfade(true)
                 .build(),
@@ -106,8 +107,8 @@ fun Workercard(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = worker.value.name)
-                    Text(text = if (worker.value.hourlyRate == null) "" else worker.value.hourlyRate.toString())
+                    Text(text = worker.firstName)
+                    Text(text = if (worker.rate == 0) "" else worker.rate.toString())
                 }
             }
         }
@@ -116,10 +117,10 @@ fun Workercard(
 
 @Composable
 fun WatchlistedCardIcon(
-    worker: Worker,
+    worker: WorkerProfile,
     inWatchlist: Boolean,
-    removeFromWatchlist: (Int) -> Unit,
-    addToWatchList: (Int) -> Unit
+    removeFromWatchlist: (String) -> Unit,
+    addToWatchList: (String) -> Unit
 ) {
     if (!inWatchlist) {
         Box(
@@ -131,7 +132,7 @@ fun WatchlistedCardIcon(
                     shape = TriangleShape()
                 )
                 .clickable {
-                    addToWatchList(worker.key)
+                    addToWatchList(worker.email)
                 },
             contentAlignment = Alignment.TopEnd
         ) {
@@ -152,7 +153,7 @@ fun WatchlistedCardIcon(
                 )
                 .background(color = MaterialTheme.colorScheme.primary)
                 .clickable {
-                    removeFromWatchlist(worker.key)
+                    removeFromWatchlist(worker.email)
                 },
             contentAlignment = Alignment.BottomStart
         ) {

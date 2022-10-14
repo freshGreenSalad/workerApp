@@ -6,22 +6,40 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.workerapp.data.authResult
-import com.example.workerapp.data.dataClasses.Licence
+import com.example.workerapp.data.dataClasses.*
 import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequestWithIsSupervisor
 import com.example.workerapp.data.room.YourRepository
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapType
+import com.google.maps.android.compose.MarkerState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.workerapp.data.dataClasses.general.Location
+import com.example.workerapp.data.dataClasses.supervisorDataClasses.SupervisorProfile
+import com.example.workerapp.data.dataClasses.workerDataClasses.DriversLicence
+import com.example.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
 
 @HiltViewModel
 class SignupSigninViewModel @Inject constructor(
     private val repository: YourRepository,
+    private val dataStore: DataStore<Preferences>
 ) : ViewModel() {
+    private val resultChannelSignup = Channel<authResult<Unit>>()
 
-    //dynamodb function
+    val authResults = resultChannelSignup.receiveAsFlow()
+
     suspend fun postAuthProfile() {
+        dataStore.edit { settings ->
+            settings[stringPreferencesKey(name = "email")] = emailPassword.value.email
+        }
+
         val authResult = repository.postAuthProfile(
             ProfileLoginAuthRequestWithIsSupervisor(
                 emailPassword.value.email,
@@ -29,12 +47,69 @@ class SignupSigninViewModel @Inject constructor(
                 emailPassword.value.isSupervisor
             )
         )
-        resultChannel.send(authResult)
+        resultChannelSignup.send(authResult)
     }
 
-    //result of profile creation
-    private val resultChannel = Channel<authResult<Unit>>()
-    val authResults = resultChannel.receiveAsFlow()
+    private val resultChannelProfileBuild = Channel<authResult<Unit>>()
+
+    val profileBuild = resultChannelProfileBuild.receiveAsFlow()
+
+    suspend fun postPersonalWorker(){
+        dataStore.edit { settings ->
+            settings[stringPreferencesKey(name = "email")] = emailPassword.value.email
+        }
+
+        val personalPhotoLink = repository.presigns3(photoUri.value)
+
+        val licence = DriversLicence(
+            typeOfLicence = licenceType.value,
+            licenceMap = licenceMap.value,
+            highestClass = highestClassState.value
+        )
+
+        val workerProfile = WorkerProfile(
+            email = emailPassword.value.email,
+            firstName = firstname.value,
+            lastName = lastname.value,
+            personalPhoto = personalPhotoLink,
+            rate = 35
+        )
+
+        repository.postWorkerDriversLicence(licence = licence)
+
+        val postWorkerProfileResult = repository.postWorkerProfile(workerProfile)
+
+
+        resultChannelProfileBuild.send(postWorkerProfileResult)
+    }
+
+    suspend fun postSupervisorPersonalAndSite(){
+
+        dataStore.edit { settings ->
+            settings[stringPreferencesKey(name = "email")] = emailPassword.value.email
+        }
+
+        val personalPhotoLink = repository.presigns3(photoUriSupervisor.value)
+
+        val site = SupervisorSite(
+            email = emailPassword.value.email,
+            address = siteAddress.value,
+            location = Location (Lat = latLngAddress.value.position.latitude, Lng= latLngAddress.value.position.longitude)
+        )
+
+        val supervisorProfile = SupervisorProfile(
+            email = emailPassword.value.email,
+            firstName = supervisorFirstName.value,
+            lastName = supervisorLastName.value,
+            personalPhoto = personalPhotoLink,
+        )
+
+        repository.postSupervisorSite(site)
+
+        val postSupervisorProfileResult = repository.postSupervisorProfile(supervisorProfile)
+
+        resultChannelProfileBuild.send(postSupervisorProfileResult)
+    }
 
     //______________________________________________________________________________________________________________________________________________
     private val _stateMap = MutableStateFlow(MapState())
@@ -43,28 +118,130 @@ class SignupSigninViewModel @Inject constructor(
         get() = _stateMap
 
     private var map = MutableStateFlow(MapDataClass())
-    private var holder = MutableStateFlow("")
+
+    private var siteAddress = MutableStateFlow("")
+
+    private var latLngAddress = MutableStateFlow(MarkerState(LatLng(1.35, 103.87)))
 
     init {
         viewModelScope.launch {
             combine(
                 map,
-                holder,
-            ) { map, holder ->
+                siteAddress,
+                latLngAddress
+            ) { map, siteAddress, latLngAddress->
                 MapState(
                     map,
-                    holder,
+                    siteAddress,
+                    latLngAddress
                 )
             }.catch { throwable ->
-                // TODO: emit a UI error here. For now we'll just rethrow
                 throw throwable
             }.collect {
                 _stateMap.value = it
             }
         }
     }
-    //______________________________________________________________________________________________________________________________________________
 
+    fun updateSiteAddress(address:String){
+        siteAddress.value = address
+    }
+
+    fun updateSitelatlng(latLng: LatLng) {
+        latLngAddress.value.position = latLng
+    }
+
+    //______________________________________________________________________________________________________________________________________________
+    private val _stateExperience = MutableStateFlow(Experience())
+
+    val stateExperience: StateFlow<Experience>
+        get() = _stateExperience
+
+    private var experienceTypeState = MutableStateFlow(ExperienceType.Formwork)
+
+    private var formworkMap = MutableStateFlow(
+        mutableStateMapOf(
+            Pair("Docka", false),
+        )
+    )
+
+    init {
+        viewModelScope.launch {
+            combine(
+                experienceTypeState,
+                formworkMap,
+            ) { experienceType, formworkMap ->
+                Experience(
+                    experienceType,
+                    formworkMap,
+                )
+            }.catch { throwable ->
+                throw throwable
+            }.collect {
+                _stateExperience.value = it
+            }
+        }
+    }
+
+    fun updateExperienceType(experienceType: ExperienceType) {
+        experienceTypeState.value = experienceType
+    }
+
+    fun updateFormworkMap(FormworkVar: String) {
+        formworkMap.value[FormworkVar] = !formworkMap.value[FormworkVar]!!
+    }
+    //______________________________________________________________________________________________________________________________________________
+    private val _stateSupervisorScaffold = MutableStateFlow(SupervisorState())
+
+    val stateSupervisorScaffold : StateFlow<SupervisorState>
+        get() = _stateSupervisorScaffold
+
+    private var supervisorSignUpScreenState = MutableStateFlow(SupervisorSignupPoint.BasicInformation)
+
+    private val currentSupervisorStep = MutableStateFlow(0)
+
+    private val supervisorFirstName = MutableStateFlow("")
+
+    private val supervisorLastName = MutableStateFlow("")
+
+    init {
+        viewModelScope.launch {
+            combine(
+                supervisorFirstName,
+                supervisorLastName,
+                supervisorSignUpScreenState,
+                currentSupervisorStep,
+            ) { supervisorFirstName, supervisorLastName, supervisorSignUpScreenState, currentSupervisorStep ->
+                SupervisorState(
+                    supervisorFirstName,
+                    supervisorLastName,
+                    supervisorSignUpScreenState,
+                    currentSupervisorStep,
+                )
+            }.catch { throwable ->
+                throw throwable
+            }.collect {
+                _stateSupervisorScaffold.value = it
+            }
+        }
+    }
+
+    private val supervisorSignUpPoint = listOf(SupervisorSignupPoint.BasicInformation, SupervisorSignupPoint.Map)
+
+    fun nextSupervisorScreen(add:Int) {
+        supervisorSignUpScreenState.value = supervisorSignUpPoint[currentSupervisorStep.value + add]
+        currentSupervisorStep.value = currentSupervisorStep.value + add
+    }
+
+    fun updateSupervisorFirstName(name:String){
+        supervisorFirstName.value = name
+    }
+    fun updateSupervisorLastName(name:String){
+        supervisorLastName.value = name
+    }
+
+
+    //______________________________________________________________________________________________________________________________________________
     private val _stateName = MutableStateFlow(NameState())
 
     val stateName: StateFlow<NameState>
@@ -85,7 +262,6 @@ class SignupSigninViewModel @Inject constructor(
                     lastname,
                 )
             }.catch { throwable ->
-                // TODO: emit a UI error here. For now we'll just rethrow
                 throw throwable
             }.collect {
                 _stateName.value = it
@@ -139,7 +315,6 @@ class SignupSigninViewModel @Inject constructor(
                     highestClass = highestClass
                 )
             }.catch { throwable ->
-                // TODO: emit a UI error here. For now we'll just rethrow
                 throw throwable
             }.collect {
                 _stateTickets.value = it
@@ -147,7 +322,7 @@ class SignupSigninViewModel @Inject constructor(
         }
     }
 
-    fun changeHighestClass(highestClass: HighestClass){
+    fun changeHighestClass(highestClass: HighestClass) {
         highestClassState.value = highestClass
     }
 
@@ -161,7 +336,6 @@ class SignupSigninViewModel @Inject constructor(
 
     fun updateLicenceMap(licenceVar: String) {
         licenceMap.value[licenceVar] = !licenceMap.value[licenceVar]!!
-        println(licenceMap.value[licenceVar])
     }
 
     //______________________________________________________________________________________________________________________________________________
@@ -189,7 +363,6 @@ class SignupSigninViewModel @Inject constructor(
                     photoUri
                 )
             }.catch { throwable ->
-                // TODO: emit a UI error here. For now we'll just rethrow
                 throw throwable
             }.collect {
                 _stateCamera.value = it
@@ -207,6 +380,53 @@ class SignupSigninViewModel @Inject constructor(
 
     fun updatePhotoURI(uri: Uri) {
         photoUri.value = uri
+        println(photoUri.value.path)
+    }
+
+    //______________________________________________________________________________________________________________________________________________
+
+    private val _stateSupervisorCamera = MutableStateFlow(CameraSupervisorState())
+
+    val stateSupervisorCamera: StateFlow<CameraSupervisorState>
+        get() = _stateSupervisorCamera
+
+    private val shouldShowSupervisorCamera = MutableStateFlow(true)
+
+    private val shouldShowSupervisorPhoto = MutableStateFlow(false)
+
+    private val photoUriSupervisor = MutableStateFlow(Uri.EMPTY)
+
+    init {
+        viewModelScope.launch {
+            combine(
+                shouldShowSupervisorCamera,
+                shouldShowSupervisorPhoto,
+                photoUriSupervisor
+            ) { shouldShowSupervisorCamera, shouldShowSupervisorPhoto, photoUriSupervisor ->
+                CameraSupervisorState(
+                    shouldShowSupervisorCamera,
+                    shouldShowSupervisorPhoto,
+                    photoUriSupervisor
+                )
+            }.catch { throwable ->
+                throw throwable
+            }.collect {
+                _stateSupervisorCamera.value = it
+            }
+        }
+    }
+
+    fun shouldshowSupervisorcam(bool: Boolean) {
+        shouldShowSupervisorCamera.value = bool
+    }
+
+    fun shouldshowSupervisorPho(bool: Boolean) {
+        shouldShowSupervisorPhoto.value = bool
+    }
+
+    fun updateSupervisorPhotoURI(uri: Uri) {
+        photoUriSupervisor.value = uri
+        println(photoUriSupervisor.value.path)
     }
 
     //______________________________________________________________________________________________________________________________________________
@@ -215,22 +435,6 @@ class SignupSigninViewModel @Inject constructor(
     val state: StateFlow<ProfileCreationPageState>
         get() = _state
 
-    private val licence = MutableStateFlow(
-        Licence(
-            fullLicence = false,
-            learners = false,
-            restricted = false,
-            wheels = false,
-            tracks = false,
-            rollers = false,
-            forks = false,
-            hazardus = false,
-            class2 = false,
-            class3 = false,
-            class4 = false,
-            class5 = false
-        )
-    )
     private val emailPassword = MutableStateFlow(
         EmailPassword(
             email = "sdfg",
@@ -239,99 +443,30 @@ class SignupSigninViewModel @Inject constructor(
         )
     )
 
-    private val userTypeSelected = MutableStateFlow(EmployeerOrEmployee.Employee)
-
     private val workerSignUpPoint = MutableStateFlow(WorkerSignUpPoint.BasicInformation)
 
-    private var listOfLicences = MutableStateFlow(mutableStateListOf("licence"))
-
-    private var experience = MutableStateFlow(mutableStateListOf("formworker 2 years"))
-
-    private var isSupervisor = false
+    private val currentStep = MutableStateFlow(0)
 
     init {
         viewModelScope.launch {
             combine(
-                userTypeSelected,
-                listOfLicences,
-                experience,
                 emailPassword,
-                workerSignUpPoint
-            ) { userTypeSelected, listOfLicences, experience, emailPassword, workerSignUpPoint ->
+                workerSignUpPoint,
+                currentStep
+            ) { emailPassword, workerSignUpPoint, currentStep ->
                 ProfileCreationPageState(
-                    selectedEmployerOrEmployee = userTypeSelected,
                     workerSignUpPoint = workerSignUpPoint,
-                    listOfLicences = listOfLicences,
-                    experience = experience,
                     emailPassword = emailPassword,
+                    currentStep = currentStep
                 )
             }.catch { throwable ->
-                // TODO: emit a UI error here. For now we'll just rethrow
                 throw throwable
             }.collect {
                 _state.value = it
             }
         }
     }
-    //______________________________________________________________________________________________________________________________________________
 
-    //extention of combine function as combine maxs out at 5 variables
-    private fun <T1, T2, T3, T4, T5, T6, R> combine(
-        flow: Flow<T1>,
-        flow2: Flow<T2>,
-        flow3: Flow<T3>,
-        flow4: Flow<T4>,
-        flow5: Flow<T5>,
-        flow6: Flow<T6>,
-        transform: suspend (T1, T2, T3, T4, T5, T6) -> R
-    ): Flow<R> = combine(
-        combine(flow, flow2, flow3, ::Triple),
-        combine(flow4, flow5, flow6, ::Triple),
-    ) { t1, t2 ->
-        transform(
-            t1.first,
-            t1.second,
-            t1.third,
-            t2.first,
-            t2.second,
-            t2.third,
-        )
-    }
-
-    private fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> combine(
-        flow: Flow<T1>,
-        flow2: Flow<T2>,
-        flow3: Flow<T3>,
-        flow4: Flow<T4>,
-        flow5: Flow<T5>,
-        flow6: Flow<T6>,
-        flow7: Flow<T7>,
-        flow8: Flow<T8>,
-        flow9: Flow<T9>,
-        transform: suspend (T1, T2, T3, T4, T5, T6, T7, T8, T9) -> R
-    ): Flow<R> = combine(
-        combine(flow, flow2, flow3, ::Triple),
-        combine(flow4, flow5, flow6, ::Triple),
-        combine(flow7, flow8, flow9, ::Triple),
-    ) { t1, t2, t3 ->
-        transform(
-            t1.first,
-            t1.second,
-            t1.third,
-            t2.first,
-            t2.second,
-            t2.third,
-            t3.first,
-            t3.second,
-            t3.third
-        )
-    }
-
-    //state updating functions
-    //camera state updating functions
-
-
-    //__________________________
     fun updateStateEmailPassword(email: String, password: String, isSupervisor: Boolean) {
         emailPassword.value = emailPassword.value.copy(
             email = email,
@@ -339,54 +474,13 @@ class SignupSigninViewModel @Inject constructor(
             isSupervisor = isSupervisor
         )
     }
+    private val signUpPoint = listOf(WorkerSignUpPoint.BasicInformation, WorkerSignUpPoint.Tickets, WorkerSignUpPoint.Experience)
 
-    fun nextScreen() {
-        when (workerSignUpPoint.value) {
-            WorkerSignUpPoint.BasicInformation -> workerSignUpPoint.value =
-                WorkerSignUpPoint.Tickets
-            WorkerSignUpPoint.Tickets -> workerSignUpPoint.value = WorkerSignUpPoint.Experience
-            WorkerSignUpPoint.Experience -> workerSignUpPoint.value =
-                WorkerSignUpPoint.BasicInformation
-        }
+    fun nextScreen(add:Int) {
+        workerSignUpPoint.value = signUpPoint[currentStep.value + add]
+        currentStep.value = currentStep.value + add
     }
-
-    fun removeFromSpecilisedLicence(key: String) {
-        listOfLicences.value.remove(key)
-        println(listOfLicences.value.toString())
-    }
-
-    fun addSpecilizedLicence(key: String) {
-        listOfLicences.value.add(key)
-        println(listOfLicences.value.toString())
-    }
-
-    fun removeFromExperience(key: String) {
-        experience.value.remove(key)
-        println(listOfLicences.value.toString())
-    }
-
-    fun addExperience(key: String) {
-        experience.value.add(key)
-        println(listOfLicences.value.toString())
-    }
-
-    fun changeUserType(tab: String) {
-        when (tab) {
-            "Employer" -> {
-                userTypeSelected.value = EmployeerOrEmployee.Employer
-                isSupervisor = true
-            }
-            "Employee" -> {
-                userTypeSelected.value = EmployeerOrEmployee.Employee
-                isSupervisor = false
-            }
-        }
-    }
-}
-
-//state data classes
-enum class EmployeerOrEmployee {
-    Employer, Employee
+    //______________________________________________________________________________________________________________________________________________
 }
 
 enum class WorkerSignUpPoint {
@@ -411,6 +505,12 @@ data class CameraState constructor(
     val photoUri: Uri = Uri.EMPTY
 )
 
+data class CameraSupervisorState constructor(
+    val shouldShowCamera: Boolean = true,
+    val shouldShowPhoto: Boolean = false,
+    val photoUri: Uri = Uri.EMPTY
+)
+
 data class NameState constructor(
     val firstname: String = "",
     val lastname: String = "",
@@ -424,17 +524,13 @@ data class TicketState constructor(
 )
 
 data class ProfileCreationPageState constructor(
-    //val userType: List<EmployeerOrEmployee> = emptyList(),
-    val selectedEmployerOrEmployee: EmployeerOrEmployee = EmployeerOrEmployee.Employer,
-    val listOfLicences: MutableList<String> = mutableListOf("Licence"),
     val workerSignUpPoint: WorkerSignUpPoint = WorkerSignUpPoint.BasicInformation,
-    val experience: MutableList<String> = mutableListOf("formworker 2 years"),
-
     val emailPassword: EmailPassword = EmailPassword(
         email = "email",
         password = "password",
         isSupervisor = true
     ),
+    val currentStep: Int = 0
 )
 
 data class EmailPassword(
@@ -444,10 +540,41 @@ data class EmailPassword(
 )
 
 data class MapDataClass(
-    val properties: MapProperties = MapProperties(),
+    val properties: MapProperties = MapProperties(
+        isBuildingEnabled = false,
+        isIndoorEnabled = false,
+        isMyLocationEnabled = false,
+        isTrafficEnabled = false,
+        latLngBoundsForCameraTarget = null,
+        mapType = MapType.NORMAL,
+        maxZoomPreference = 20f,
+        minZoomPreference = 0f
+    ),
 )
 
 data class MapState(
     val map: MapDataClass = MapDataClass(),
-    val holder: String = ""
+    val siteAddress: String = "",
+    val latLngAddress: MarkerState = MarkerState(LatLng(1.35, 103.87))
 )
+
+data class Experience(
+    val experienceType: ExperienceType = ExperienceType.Formwork,
+    val formworkMap: MutableMap<String, Boolean> = mutableMapOf(Pair("", true))
+)
+
+enum class ExperienceType {
+    Formwork, Machinery, Reinforcing, Rigging
+}
+
+enum class SupervisorSignupPoint{
+    BasicInformation, Map
+}
+
+data class SupervisorState(
+    val supervisorFirstName: String= "",
+    val supervisorLastName: String = "",
+    val supervisorSignupPoint: SupervisorSignupPoint = SupervisorSignupPoint.BasicInformation,
+    val currentSupervisorStep:Int = 0
+)
+

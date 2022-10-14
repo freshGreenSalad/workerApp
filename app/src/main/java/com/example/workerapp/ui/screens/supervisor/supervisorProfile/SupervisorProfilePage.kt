@@ -1,5 +1,6 @@
 package com.example.workerapp.ui.screens.supervisor.supervisorProfile
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.workerapp.R
-import com.example.workerapp.data.dataClasses.Profile
-import com.example.workerapp.data.dataClasses.testProfile
+import com.example.workerapp.data.dataClasses.supervisorDataClasses.SupervisorProfile
+import com.example.workerapp.data.dataClasses.supervisorDataClasses.supervisorProfileFail
 import com.example.workerapp.data.navgraphs.HomeViewNavGraph
 import com.example.workerapp.ui.screens.supervisor.supervisorHome.*
 import com.example.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.MainDrawer
@@ -35,28 +36,24 @@ import kotlin.reflect.KSuspendFunction0
 @HomeViewNavGraph
 @Composable
 @Destination
-fun ProfilePageComposable(
+fun SupervisorProfilePage(
     navigator: DestinationsNavigator,
     viewModel: SupervisorViewModel,
 ) {
-    var shouldShowCamera by remember { mutableStateOf(false) }
-
     val viewState by viewModel.state.collectAsState()
 
     val scope = rememberCoroutineScope()
 
     val drawerState = viewState.drawerState
 
-    fun showCamera() {
-        shouldShowCamera = !shouldShowCamera
-    }
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             MainDrawer(
                 navigator,
                 viewModel::deleteAllFromDataStore,
-                closeDrawer = {scope.launch { drawerState.close() }}
+                closeDrawer = { scope.launch { drawerState.close() } },
+                deleteAccount = viewModel::deleteAccount
             )
         }
     ) {
@@ -71,38 +68,40 @@ fun ProfilePageComposable(
                     }
                 )
             }
-        ) {Box(modifier = Modifier.padding(it)){}
-            /*if (shouldShowCamera) {
-                ProfileCamera(shouldShowCamera) { showCamera() }
-            } else {
-                Profile(it, { showCamera() }, viewModel::getProfile)
-            }*/
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            ) {
+                ProfileImageHeader(
+                    viewModel::getSupervisorProfile
+                )
+                SupervisorProfile(
+                    viewModel::getSupervisorProfile
+                )
+            }
         }
     }
 }
 
 @Composable
-fun Profile(
-    padding: PaddingValues,
-    showCamera: () -> Unit,
-    profile: KSuspendFunction0<Profile>
+fun SupervisorProfile(
+    getSupervisorProfile: KSuspendFunction0<SupervisorProfile>
 ) {
     val profileState = produceState(
-        initialValue = testProfile,
+        initialValue = supervisorProfileFail,
         producer = {
             value = try {
-                profile()
+                getSupervisorProfile()
             } catch (e: Exception) {
-                testProfile
+                supervisorProfileFail
             }
         }
     )
     Column(
-        modifier = Modifier.padding(padding)
+        modifier = Modifier.fillMaxSize()
     ) {
-        ProfileImageHeader(
-            showCamera = showCamera
-        )
 
         LazyColumn(
             modifier = Modifier
@@ -111,7 +110,7 @@ fun Profile(
 
             item {
                 Text(
-                    text = "Name:",
+                    text = "Name:" + profileState.value.firstName + profileState.value.lastName,
                     modifier = Modifier
                         .padding(5.dp)
                         .alpha(.7f), style = MaterialTheme.typography.headlineSmall
@@ -122,7 +121,7 @@ fun Profile(
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
-                    "Email: ", modifier = Modifier
+                    "Email: " + profileState.value.email, modifier = Modifier
                         .padding(5.dp)
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
@@ -148,24 +147,29 @@ fun Profile(
 
 @Composable
 fun ProfileImageHeader(
-    showCamera: () -> Unit
+    getSupervisorProfile: KSuspendFunction0<SupervisorProfile>
 ) {
     val configuration = LocalConfiguration.current
+
     val screenWidth = configuration.screenWidthDp.dp
+
+    val profileState = produceState(
+        initialValue = supervisorProfileFail,
+        producer = {
+            value = try {
+                getSupervisorProfile()
+            } catch (e: Exception) {
+                supervisorProfileFail
+            }
+        }
+    )
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(220.dp)
             .shadow(1.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(115.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.primaryContainer
-                )
-        ) {}
         Surface(
             shadowElevation = 5.dp,
             shape = CircleShape,
@@ -186,7 +190,7 @@ fun ProfileImageHeader(
                     ),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(
-                        "https://testbucketletshopeitsfree.s3.ap-southeast-2.amazonaws.com/WorkerImages/" + "1"
+                        data = profileState.value.personalPhoto
                     )
                     .crossfade(true)
                     .build(),
@@ -194,19 +198,6 @@ fun ProfileImageHeader(
                 contentScale = ContentScale.FillBounds,
                 contentDescription = ""
             )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Image(
-                modifier = Modifier.clickable {
-                    showCamera()
-                },
-                painter = painterResource(id = R.drawable.ic_add),
-                contentDescription = "",
-            )
-
         }
     }
 }

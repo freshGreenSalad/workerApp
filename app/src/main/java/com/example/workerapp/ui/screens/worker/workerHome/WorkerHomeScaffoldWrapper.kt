@@ -1,6 +1,5 @@
 package com.example.workerapp.ui
 
-import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,7 +21,7 @@ import com.example.workerapp.ui.screens.worker.workerProfile.WorkerHomeProfile
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
-import kotlin.reflect.KSuspendFunction1
+import kotlin.reflect.KSuspendFunction0
 
 @OptIn(ExperimentalMaterial3Api::class)
 @WorkerNavGraph(start = true)
@@ -37,7 +36,8 @@ fun WorkerProfile(
         workerProfileScaffold(
             drawerState = viewState.drawerState,
             navigator = navigator,
-            deleteFromDataStore = viewmodel::delete,
+            deleteFromDataStore = viewmodel::deleteAllFromDataStore,
+            deleteAccount = viewmodel::deleteAccount
         )
     }
 }
@@ -47,8 +47,8 @@ fun WorkerProfile(
 fun workerProfileScaffold (
     drawerState: DrawerState,
     navigator: DestinationsNavigator,
-    deleteFromDataStore: KSuspendFunction1<Context, Unit>
-
+    deleteFromDataStore: KSuspendFunction0< Unit>,
+    deleteAccount: KSuspendFunction0< Unit>
 ){
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
@@ -57,7 +57,8 @@ fun workerProfileScaffold (
             WorkerDrawer(
                 navigator,
                 deleteFromDataStore,
-                closeDrawer = {scope.launch { drawerState.close() }}
+                closeDrawer = {scope.launch { drawerState.close() }},
+                deleteAccount = deleteAccount
             )
         }
     ) {

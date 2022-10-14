@@ -1,6 +1,5 @@
 package com.example.workerapp.ui.screens.supervisor.supervisorHome
 
-
 import android.content.Context
 import android.util.Log
 import androidx.compose.material3.DrawerState
@@ -13,18 +12,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.material3.DrawerValue.Closed
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.room.*
-import com.example.workerapp.data.cashing.WorkerCasheMap
-import com.example.workerapp.data.dataClasses.Profile
 import com.example.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
+import com.example.workerapp.data.dataClasses.supervisorDataClasses.SupervisorProfile
+import com.example.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
 
 val Context.dataStore by preferencesDataStore("user_preferences")
 
@@ -35,23 +34,23 @@ class SupervisorViewModel @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : ViewModel() {
 
-    //caching block for worker info-------- s3
-    suspend fun getworker(key: Int): String {
-        val index = key + 1
-        val cashedcharacter = WorkerCasheMap.workerCashMap[index]
-        return if (cashedcharacter != null) {
-            cashedcharacter
-        } else {
-            val response = repository.getworkerstring(index)
-            WorkerCasheMap.workerCashMap[index] = response
-            response
-        }
+    suspend fun getSupervisorProfile(): SupervisorProfile {
+        return repository.getSupervisorProfile()
     }
 
-    //Room functions --------------------------
-    suspend fun upsert(profile: Profile) = repository.upsert(profile)
+    suspend fun getListOfWorkerAccountsForSupervisor(): List<WorkerProfile> {
+        val list = repository.getListOfWorkerAccountsForSupervisor()
+        Log.d("main", list.toString())
+        return  list
+    }
 
-    suspend fun getProfile(): Profile = repository.getProfile()
+    suspend fun getWorkerByEmail(email: String): WorkerProfile {
+        return repository.getWorkerProfile(email)
+    }
+
+    suspend fun deleteAccount(){
+        repository.deleteAccount()
+    }
 
     //aws functions --------------------------
     //dynamodb functions
@@ -61,63 +60,41 @@ class SupervisorViewModel @Inject constructor(
         resultChannel.send(result)
     }
 
-    //s3functions?
-    suspend fun postProfile(profile: Profile) = repository.postprofile(profile)
-
-    //updating datastore entries---------------------
-    suspend fun saveToDataStore(key: String, value: String) {
-        val dataStoreKey = stringPreferencesKey(name = key)
-        dataStore.edit { settings ->
-            settings[dataStoreKey] = value
-        }
-    }
-
-    suspend fun readFromDataStore(key: String): String? {
-        val dataStoreKey = stringPreferencesKey(name = key)
-        val preferences = dataStore.data.first()
-        return preferences[dataStoreKey]
-    }
-
     suspend fun deleteAllFromDataStore() {
         dataStore.edit { it.clear() }
     }
 
-    //Auth state--------------------------------------
-
+    //Auth state----------------------------------------------------------------------------------------------
     private val resultChannel = Channel<authResult<Boolean?>>()
+
     val authResults = resultChannel.receiveAsFlow()
 
-    //state-------------------------------------------
-    @OptIn(ExperimentalMaterial3Api::class)
+    //---------------------------------------------------------------------------------------------------------
+    private val _state = MutableStateFlow(HomeViewState())
+
+    val state: StateFlow<HomeViewState>
+        get() = _state
+
     private val drawerState = MutableStateFlow(DrawerState(initialValue = Closed))
 
     private val homeBottomAppBarTabs = MutableStateFlow(HomeBottomAppBarTabs.values().asList())
 
     private val selectedHomeBottomAppBarTab = MutableStateFlow(HomeBottomAppBarTabs.Home)
 
-    private val savedWorkers = MutableStateFlow(mutableStateListOf<Int>())
+    private val savedWorkers = MutableStateFlow(mutableStateListOf<String>())
 
-    private val _state = MutableStateFlow(HomeViewState())
+    private val workerList = MutableStateFlow(mutableStateListOf<WorkerProfile>())
 
-    val state: StateFlow<HomeViewState>
-        get() = _state
-    //state altering functions------------------------------------
-    fun removeFromWatchlist(key: Int) {
-        savedWorkers.value.remove(key)
-        Log.d("main", "removed from watchlist at viewmodel level")
-        println(savedWorkers.value.toString())
+    private val workerListSize = MutableStateFlow(0)
+
+    init {
+        viewModelScope.launch {
+            val list = getListOfWorkerAccountsForSupervisor()
+            workerListSize.value = list.size
+            workerList.value = list.toMutableStateList()
+            Log.d("main", list.toString())
+        }
     }
-
-    fun addToWatchList(key: Int) {
-        savedWorkers.value.add(key)
-        Log.d("main", "added to wathclist at viewmodel level")
-        println(savedWorkers.value.toString())
-    }
-
-    fun onClickHomeBottomAppTab(tab: HomeBottomAppBarTabs) {
-        selectedHomeBottomAppBarTab.value = tab
-    }
-    //State init block-----------------------------------
 
     init {
         viewModelScope.launch {
@@ -125,13 +102,17 @@ class SupervisorViewModel @Inject constructor(
                 homeBottomAppBarTabs,
                 selectedHomeBottomAppBarTab,
                 drawerState,
-                savedWorkers
-            ) { homeBottomAppBarTabs, SelectedHomeBottomAppBarTab, drawerState, savedWorkers ->
+                savedWorkers,
+                workerList,
+                workerListSize
+            ) { homeBottomAppBarTabs, SelectedHomeBottomAppBarTab, drawerState, savedWorkers, _workerList, _workerListSize ->
                 HomeViewState(
                     homeAppBarTabs = homeBottomAppBarTabs,
                     selectedHomeBarTab = SelectedHomeBottomAppBarTab,
                     drawerState = drawerState,
-                    savedWorkers = savedWorkers
+                    savedWorkers = savedWorkers,
+                    workerList = _workerList,
+                    workerListSize = _workerListSize
                 )
             }.catch { throwable ->
                 // TODO: emit a UI error here. For now we'll just rethrow
@@ -139,19 +120,62 @@ class SupervisorViewModel @Inject constructor(
             }.collect {
                 _state.value = it
             }
+            Log.d("",workerList.toString())
         }
     }
+
+    fun <T1, T2, T3, T4, T5, T6, R> combine(
+        flow: Flow<T1>,
+        flow2: Flow<T2>,
+        flow3: Flow<T3>,
+        flow4: Flow<T4>,
+        flow5: Flow<T5>,
+        flow6: Flow<T6>,
+        transform: suspend (T1, T2, T3, T4, T5, T6) -> R
+    ): Flow<R> = kotlinx.coroutines.flow.combine(
+        kotlinx.coroutines.flow.combine(flow, flow2, flow3, ::Triple),
+        kotlinx.coroutines.flow.combine(flow4, flow5, flow6, ::Triple),
+    ) { t1, t2 ->
+        transform(
+            t1.first,
+            t1.second,
+            t1.third,
+            t2.first,
+            t2.second,
+            t2.third,
+        )
+    }
+
+
+
+
+
+fun removeFromWatchlist(email: String) {
+    savedWorkers.value.remove(email)
+    Log.d("main", "removed from watchlist at viewmodel level")
+    println(savedWorkers.value.toString())
 }
 
-//state holding classes ---------------
+fun addToWatchList(email: String) {
+    savedWorkers.value.add(email)
+    Log.d("main", "added to wathclist at viewmodel level")
+    println(savedWorkers.value.toString())
+}
+
+fun onClickHomeBottomAppTab(tab: HomeBottomAppBarTabs) {
+    selectedHomeBottomAppBarTab.value = tab
+}
+}
+
 data class HomeViewState @OptIn(ExperimentalMaterial3Api::class) constructor(
     val homeAppBarTabs: List<HomeBottomAppBarTabs> = emptyList(),
     val selectedHomeBarTab: HomeBottomAppBarTabs = HomeBottomAppBarTabs.Home,
     val drawerState: DrawerState = DrawerState(initialValue = Closed),
-    val savedWorkers: MutableList<Int> = mutableListOf(1, 2)
+    val savedWorkers: MutableList<String> = mutableListOf(),
+    val workerList: List<WorkerProfile> = mutableListOf(),
+    val workerListSize: Int = 0
 )
 
 enum class HomeBottomAppBarTabs {
     Home, Watchlisted, Search
 }
-//--------------------------------------

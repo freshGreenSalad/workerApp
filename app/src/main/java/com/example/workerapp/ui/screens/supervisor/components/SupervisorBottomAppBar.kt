@@ -14,7 +14,7 @@ fun BottomAppBarHomePage(
     selectedItem: HomeBottomAppBarTabs,
     onclick: (HomeBottomAppBarTabs) -> Unit,
     homeAppBarTabs: List<HomeBottomAppBarTabs>,
-    ListOfSavedWorkers: MutableList<Int>
+    ListOfSavedWorkers: MutableList<String>
 ) {
     val titles = homeAppBarTabs.map { it.name }
     NavigationBar()

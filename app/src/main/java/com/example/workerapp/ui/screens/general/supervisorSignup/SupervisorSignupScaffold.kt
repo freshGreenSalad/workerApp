@@ -1,4 +1,4 @@
-package com.example.workerapp.ui.screens.general.workerSignup
+package com.example.workerapp.ui.screens.general.supervisorSignup
 
 import android.net.Uri
 import android.util.Log
@@ -22,18 +22,17 @@ import androidx.compose.ui.unit.dp
 import com.example.workerapp.data.authResult
 import com.example.workerapp.data.navgraphs.ProfileCreationNavGraph
 import com.example.workerapp.data.viewModel.*
-import com.example.workerapp.destinations.WorkerProfileDestination
-import com.example.workerapp.ui.screens.general.workerSignup.tabs.WorkerSignupExperience
+import com.example.workerapp.destinations.MainHolderComposableDestination
+import com.example.workerapp.ui.screens.general.AddressScreen
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import kotlin.reflect.KSuspendFunction0
 
-
 @ProfileCreationNavGraph
 @Destination
 @Composable
-fun WorkerSignupScaffold(
+fun SupervisorSignupScaffold(
     viewModel: SignupSigninViewModel,
     navigator: DestinationsNavigator
 ) {
@@ -42,7 +41,7 @@ fun WorkerSignupScaffold(
     LaunchedEffect(viewModel, context) {
         viewModel.profileBuild.collect { result ->
             when (result) {
-                is authResult.authorised<Unit> -> navigator.navigate(WorkerProfileDestination)
+                is authResult.authorised<Unit> -> navigator.navigate(MainHolderComposableDestination)
                 is authResult.unauthorised<Unit> -> {
                     Log.d("signup", "unauthorised block")
                     Toast.makeText(context, "profile not created", Toast.LENGTH_LONG).show()
@@ -51,46 +50,37 @@ fun WorkerSignupScaffold(
                     Toast.makeText(context, "profile not created", Toast.LENGTH_LONG).show()
                 }
                 else -> {
-                    Log.d("else block","of the worker signup scafold result direction launched effect block ")
+                    Log.d(
+                        "else block",
+                        "of the worker signup scafold result direction launched effect block "
+                    )
                 }
             }
 
         }
     }
-    val viewState by viewModel.state.collectAsState()
 
-    val viewStateName by viewModel.stateName.collectAsState()
+    val mapState by viewModel.stateMap.collectAsState()
 
-    val viewStateCamera by viewModel.stateCamera.collectAsState()
+    val viewSupervisorStateCamera by viewModel.stateSupervisorCamera.collectAsState()
 
-    val viewStateTickets by viewModel.stateTickets.collectAsState()
-
-    val viewStateExperience by viewModel.stateExperience.collectAsState()
+    val supervisorState by viewModel.stateSupervisorScaffold.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         WorkerProfileScaffold(
             navigator = navigator,
-            workerSignupPoint = viewState.workerSignUpPoint,
-            nextScreen = viewModel::nextScreen,
-            firstname = viewStateName.firstname,
-            lastname = viewStateName.lastname,
-            UpdateFirstname = viewModel::updateFirstname,
-            UpdateLastname = viewModel::updateLastname,
-            photoUri = viewStateCamera.photoUri,
-            ticketType = viewStateTickets.ticketType,
-            ChangeTicketType = viewModel::changeTicketType,
-            LicenceType = viewStateTickets.licenceType,
-            ChangeLicenceType = viewModel::changeLicenceType,
-            licenceMap = viewStateTickets.licenceMap,
-            updateLicenceEntry = viewModel::updateLicenceMap,
-            highestClass = viewStateTickets.highestClass,
-            UpdateHighestClass = viewModel::changeHighestClass,
-            ExperienceType = viewStateExperience.experienceType,
-            ChangeExperienceType = viewModel::updateExperienceType,
-            FormworkMap = viewStateExperience.formworkMap,
-            updateFormworkMap = viewModel::updateFormworkMap,
-            currentStep = viewState.currentStep,
-            postWorkerProfile = viewModel::postPersonalWorker
+            supervisorSignUpPoint = supervisorState.supervisorSignupPoint,
+            nextScreen = viewModel::nextSupervisorScreen,
+            firstname = supervisorState.supervisorFirstName,
+            lastname = supervisorState.supervisorLastName,
+            UpdateFirstname = viewModel::updateSupervisorFirstName,
+            UpdateLastname = viewModel::updateSupervisorLastName,
+            photoUri = viewSupervisorStateCamera.photoUri,
+            currentStep = supervisorState.currentSupervisorStep,
+            mapState = mapState.map,
+            siteAddress = mapState.siteAddress,
+            updateSiteAddress = viewModel::updateSiteAddress,
+            postSupervisorProfile = viewModel::postSupervisorPersonalAndSite
         )
     }
 }
@@ -100,28 +90,18 @@ fun WorkerSignupScaffold(
 fun WorkerProfileScaffold(
     currentStep: Int,
     navigator: DestinationsNavigator,
-    workerSignupPoint: WorkerSignUpPoint,
+    supervisorSignUpPoint: SupervisorSignupPoint,
     nextScreen: (Int) -> Unit,
     firstname: String,
     lastname: String,
     UpdateFirstname: (String) -> Unit,
     UpdateLastname: (String) -> Unit,
     photoUri: Uri,
-    ticketType: TicketType,
-    ChangeTicketType: (TicketType) -> Unit,
-    LicenceType: TypeOfLicence,
-    ChangeLicenceType: (TypeOfLicence) -> Unit,
-    licenceMap: Map<String, Boolean>,
-    updateLicenceEntry: (String) -> Unit,
-    highestClass: HighestClass,
-    UpdateHighestClass: (HighestClass) -> Unit,
-    ExperienceType: ExperienceType,
-    ChangeExperienceType: (ExperienceType) -> Unit,
-    FormworkMap: Map<String, Boolean>,
-    updateFormworkMap: (String) -> Unit,
-    postWorkerProfile: KSuspendFunction0<Unit>
+    mapState: MapDataClass,
+    siteAddress: String,
+    updateSiteAddress:(String)->Unit,
+    postSupervisorProfile: KSuspendFunction0<Unit>
 ) {
-
     val scope = rememberCoroutineScope()
     Scaffold(
         modifier = Modifier.padding(.4.dp),
@@ -144,7 +124,7 @@ fun WorkerProfileScaffold(
                 ) {
                     StepProgressBar(
                         modifier = Modifier.fillMaxWidth(),
-                        numberOfSteps = 2,
+                        numberOfSteps = 1,
                         currentStep = currentStep
                     )
                     Spacer(modifier = Modifier.height(5.dp))
@@ -154,23 +134,22 @@ fun WorkerProfileScaffold(
                     ) {
                         Button(
                             onClick = {
-                                if (currentStep == 0) { } else nextScreen(-1)
+                                if (currentStep == 0) {
+                                } else nextScreen(-1)
                             }
                         ) {
                             Text(text = "Back")
                         }
                         Button(
                             onClick = {
-                                if (workerSignupPoint == WorkerSignUpPoint.Experience) {
+                                if (supervisorSignUpPoint == SupervisorSignupPoint.Map) {
                                     scope.launch {
-                                        Log.d("button at the top of signup page", "button clicked")
-                                        postWorkerProfile()
-                                        Log.d("button at the bottom of signup page", "button clicked")
+                                        postSupervisorProfile()
                                     }
                                 } else nextScreen(1)
                             }
                         ) {
-                            Text(text = if (workerSignupPoint == WorkerSignUpPoint.Experience) "Done" else "Next")
+                            Text(text = if (supervisorSignUpPoint == SupervisorSignupPoint.Map) "Done" else "Next")
                         }
                     }
                 }
@@ -184,7 +163,7 @@ fun WorkerProfileScaffold(
                     .fillMaxSize()
             ) {
                 AnimatedContent(
-                    targetState = workerSignupPoint,
+                    targetState = supervisorSignUpPoint,
                     transitionSpec = {
                         val direction = if (initialState.ordinal < targetState.ordinal)
                             AnimatedContentScope.SlideDirection.Left else AnimatedContentScope
@@ -206,34 +185,22 @@ fun WorkerProfileScaffold(
                     }
                 ) { targetState ->
                     when (targetState) {
-                        WorkerSignUpPoint.BasicInformation -> {
-                            BasicInformation(
+                        SupervisorSignupPoint.BasicInformation -> {
+                            SupervisorBasicInformation(
                                 firstname = firstname,
                                 lastname = lastname,
                                 UpdateFirstname = UpdateFirstname,
                                 UpdateLastname = UpdateLastname,
                                 photoUri = photoUri,
+                                navigator = navigator
+                            )
+                        }
+                        SupervisorSignupPoint.Map -> {
+                            AddressScreen(
                                 navigator = navigator,
-                            )
-                        }
-                        WorkerSignUpPoint.Experience -> {
-                            WorkerSignupExperience(
-                                experienceType = ExperienceType,
-                                ChangeExperienceType = ChangeExperienceType,
-                                FormworkMap = FormworkMap,
-                                updateFormworkMap = updateFormworkMap,
-                            )
-                        }
-                        WorkerSignUpPoint.Tickets -> {
-                            WorkerSignupTickets(
-                                ticketType = ticketType,
-                                ChangeTicketType = ChangeTicketType,
-                                LicenceType = LicenceType,
-                                ChangeLicenceType = ChangeLicenceType,
-                                licenceMap = licenceMap,
-                                updateLicenceEntry = updateLicenceEntry,
-                                highestClass = highestClass,
-                                UpdateHighestClass = UpdateHighestClass
+                                map = mapState,
+                                siteAddress = siteAddress,
+                                updateSiteAddress = updateSiteAddress
                             )
                         }
                     }

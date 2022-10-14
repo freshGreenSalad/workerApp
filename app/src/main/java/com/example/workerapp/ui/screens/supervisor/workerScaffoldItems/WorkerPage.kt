@@ -41,7 +41,8 @@ fun WorkerPage(
             MainDrawer(
                 navigator,
                 viewModel::deleteAllFromDataStore,
-                closeDrawer = {scope.launch { drawerState.close() }}
+                closeDrawer = {scope.launch { drawerState.close() }},
+                deleteAccount = viewModel::deleteAccount
             )
         }
     ) {
