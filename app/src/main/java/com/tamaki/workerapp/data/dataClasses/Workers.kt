@@ -18,5 +18,3 @@ data class Worker(
     val hourlyRate: Int?,
     val imageURL: String
 ) : Parcelable
-
-val blankWorker = Worker(0,"",null, null,"")

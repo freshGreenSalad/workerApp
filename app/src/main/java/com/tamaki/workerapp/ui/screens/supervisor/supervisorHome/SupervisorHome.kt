@@ -23,7 +23,6 @@ fun SupervisorHome(
     watchlistedWorkers: MutableList<String>,
     removeFromWatchlist: (String) -> Unit,
     addToWatchList: (String) -> Unit,
-    workerListSize: Int,
     workerList: List<WorkerProfile>
 ) {
     val scope = rememberCoroutineScope()
@@ -55,7 +54,6 @@ fun SupervisorHome(
                 watchlistedWorkers = watchlistedWorkers,
                 removeFromWatchlist = removeFromWatchlist,
                 addToWatchList = addToWatchList,
-                workerListSize = workerListSize,
                 workerList = workerList
             )
         }
@@ -126,12 +124,11 @@ fun WorkerLazyRowHome(
     watchlistedWorkers: MutableList<String>,
     removeFromWatchlist: (String) -> Unit,
     addToWatchList: (String) -> Unit,
-    workerListSize: Int,
     workerList: List<WorkerProfile>
 ) {
     LazyRow {
-        items(workerListSize) {
-            for (worker in workerList) {
+        for (worker in workerList) {
+            item {
                 Workercard(
                     worker = worker,
                     navigator = navigator,
@@ -143,8 +140,3 @@ fun WorkerLazyRowHome(
         }
     }
 }
-
-data class statelazyRow(
-    val count: Int = 0,
-    val workerList: List<WorkerProfile> = emptyList<WorkerProfile>()
-)

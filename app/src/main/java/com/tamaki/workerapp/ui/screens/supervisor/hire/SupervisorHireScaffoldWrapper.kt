@@ -13,6 +13,7 @@ import com.tamaki.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldIt
 import com.tamaki.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.TopBar
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.tamaki.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -20,7 +21,7 @@ import kotlinx.coroutines.launch
 @Destination
 @Composable
 fun HireScafold(
-    worker: Worker,
+    worker: WorkerProfile,
     navigator: DestinationsNavigator,
     viewModel: SupervisorViewModel
 ){
@@ -41,7 +42,7 @@ fun HireScafold(
             modifier = Modifier.padding(.4.dp),
             topBar = {
                 TopBar(
-                    title = "hire ${worker.name}",
+                    title = "hire ${worker.firstName}",
                     openDrawer = {
                         scope.launch {
                             drawerState.open()

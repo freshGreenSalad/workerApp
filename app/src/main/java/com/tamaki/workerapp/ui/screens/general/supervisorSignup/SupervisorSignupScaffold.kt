@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -81,7 +82,8 @@ fun SupervisorSignupScaffold(
             mapState = mapState.map,
             siteAddress = mapState.siteAddress,
             updateSiteAddress = viewModel::updateSiteAddress,
-            postSupervisorProfile = viewModel::postSupervisorPersonalAndSite
+            postSupervisorProfile = viewModel::postSupervisorPersonalAndSite,
+            mapPhotoUri = mapState.mapScreenShoturi
         )
     }
 }
@@ -101,8 +103,13 @@ fun WorkerProfileScaffold(
     mapState: MapDataClass,
     siteAddress: String,
     updateSiteAddress:(String)->Unit,
-    postSupervisorProfile: KSuspendFunction0<Unit>
+    postSupervisorProfile: KSuspendFunction0<Unit>,
+    mapPhotoUri:Uri
 ) {
+    val animatedProgress by animateFloatAsState(
+        targetValue = (currentStep.toFloat()+0.00001f),
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+    )
     val scope = rememberCoroutineScope()
     Scaffold(
         modifier = Modifier.padding(.4.dp),
@@ -123,10 +130,11 @@ fun WorkerProfileScaffold(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Bottom
                 ) {
+
+
                     StepProgressBar(
                         modifier = Modifier.fillMaxWidth(),
-                        numberOfSteps = 1,
-                        currentStep = currentStep
+                        currentStep = animatedProgress
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                     Row(
@@ -201,7 +209,8 @@ fun WorkerProfileScaffold(
                                 navigator = navigator,
                                 map = mapState,
                                 siteAddress = siteAddress,
-                                updateSiteAddress = updateSiteAddress
+                                updateSiteAddress = updateSiteAddress,
+                                photoUri = mapPhotoUri
                             )
                         }
                     }
@@ -253,22 +262,20 @@ fun Step(
 @Composable
 fun StepProgressBar(
     modifier: Modifier = Modifier,
-    numberOfSteps: Int,
-    currentStep: Int
+    currentStep: Float
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        for (step in 0..numberOfSteps) {
-            val isFirst = step == 0
-            Step(
-                isFirst = isFirst,
-                isComplete = step < currentStep,
-                isCurrent = step == currentStep,
-                modifier = Modifier.weight(if (isFirst) .3f else 2f)
-            )
-        }
+        LinearProgressIndicator(
+            progress = currentStep,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            color = MaterialTheme.colorScheme.primary,
+            trackColor = MaterialTheme.colorScheme.background
+        )
     }
 }
 

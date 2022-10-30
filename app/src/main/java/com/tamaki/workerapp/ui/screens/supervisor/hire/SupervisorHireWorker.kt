@@ -17,13 +17,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.tamaki.workerapp.data.dataClasses.Worker
+import com.tamaki.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
 import java.util.*
 
 @Composable
 fun HireWorker(
     paddingValues: PaddingValues,
-    worker: Worker
+    worker: WorkerProfile
 ){
     Surface(
         modifier = Modifier

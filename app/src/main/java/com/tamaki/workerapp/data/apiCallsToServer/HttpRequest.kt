@@ -20,6 +20,7 @@ import com.tamaki.workerapp.data.dataClasses.workerDataClasses.workerProfileFail
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.decodeFromString
@@ -57,8 +58,9 @@ class AWSRequest @Inject constructor(
         }
 
         try {
-            val bodydata = File(uri.path!!).readBytes()
-
+            val file = File(uri.path!!)
+            val bodydata = file.readBytes()
+            Log.d("main",file.totalSpace.toString())
             client.put(presign) {
                 contentType(ContentType.MultiPart.FormData)
                 setBody(bodydata)
@@ -80,22 +82,34 @@ class AWSRequest @Inject constructor(
     override suspend fun postProfileAuth(profileLoginAuthRequest: ProfileLoginAuthRequestWithIsSupervisor): authResult<Unit> {
         return try {
             if (!profileLoginAuthRequest.email.isEmailValid()) {
+                Log.d("main ","email not valid")
                 throw Exception("email not valid")
             }
             if (profileLoginAuthRequest.password.length < 8) {
+                Log.d("main ","password not valid")
+
                 throw Exception("password to small")
             }
-            val response = client.post(Routes.putWorkerSignupInfo) {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    Json.encodeToString(
-                        profileLoginAuthRequest
-                    )
+            var response: String = "HttpResponse"
+            val json = try {
+                Json.encodeToString(
+                    profileLoginAuthRequest
                 )
+            }catch (e:Exception){
+                ""
+            }
+
+            try {
+                response = client.post(Routes.putWorkerSignupInfo) {
+                    contentType(ContentType.Application.Json)
+                    setBody(json)
+                }.body()
+            } catch (e:Exception){
+                Log.d("main","failed in ktor block")
             }
             dataStore.edit { settings ->
                 settings[stringPreferencesKey(name = "JWT")] =
-                    Json.decodeFromString<jwtTokinWithIsSupervisor>(response.body()).token
+                    Json.decodeFromString<jwtTokinWithIsSupervisor>(response).token
             }
             authResult.authorised()
         } catch (e: Exception) {
@@ -218,7 +232,10 @@ class AWSRequest @Inject constructor(
 // putSupervisorPersonalData
 // putSupervisorExperience
     override suspend fun postSupervisorProfile(supervisorProfile: SupervisorProfile): authResult<Unit> {
+        val json = Json.encodeToString(supervisorProfile)
+        Log.d("json",json)
         return try {
+
             client.post(Routes.putSupervisorPersonalData) {
                 contentType(ContentType.Application.Json)
                 setBody(
@@ -233,6 +250,8 @@ class AWSRequest @Inject constructor(
     }
 
     override suspend fun postSupervisorSite(site: SupervisorSite): authResult<Unit> {
+        val json = Json.encodeToString(site)
+        Log.d("",json)
         return try {
             client.post(Routes.putSupervisorSiteInfo) {
                 contentType(ContentType.Application.Json)
@@ -284,7 +303,8 @@ class AWSRequest @Inject constructor(
 }
 
 object Routes {
-    private const val baseUrl = "https://tlc-nz.com/"
+    //private const val baseUrl = "https://tlc-nz.com/"
+    private const val baseUrl = "http://192.168.1.151:8080/"
 
     //presign put request
     const val presignPutRequest = baseUrl + "s3PresignPut"

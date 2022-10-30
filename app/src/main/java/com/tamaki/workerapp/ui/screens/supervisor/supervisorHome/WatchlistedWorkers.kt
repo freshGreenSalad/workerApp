@@ -18,7 +18,6 @@ import com.tamaki.workerapp.data.dataClasses.workerDataClasses.workerProfileFail
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlin.reflect.KSuspendFunction1
 
-
 @Composable
 fun SavedWorkers(
     paddingValues: PaddingValues,
@@ -36,7 +35,6 @@ fun SavedWorkers(
                 .alpha(0.5f),
             text = "No workers in your watchlist",
             style = MaterialTheme.typography.headlineSmall
-
         )
     } else {
         LazyVerticalGrid(
@@ -46,10 +44,8 @@ fun SavedWorkers(
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(10.dp)
         ) {
-            items(ListOfSavedWorkers.size) { size ->
-                for (index in 0..size) {
-                    val email = ListOfSavedWorkers[index]
-
+            for (email in ListOfSavedWorkers) {
+                item {
                     val worker = produceState(
                         initialValue = workerProfileFail,
                         producer = {

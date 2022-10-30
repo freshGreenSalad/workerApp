@@ -7,6 +7,7 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.serialization'
     id 'com.google.devtools.ksp' version '1.7.0-1.0.6'
 }
+
 kotlin {
     sourceSets {
         debug {
@@ -17,20 +18,31 @@ kotlin {
         }
     }
 }
+
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\conor small\\AndroidStudioProjects\\keyStore\\TlcKey.jks')
+            keyAlias 'tamaki-labour-key-2'
+            keyPassword 'FSw3pvhD'
+            storePassword 'FSw3pvhD'
+        }
+    }
+
     compileSdk 32
 
     defaultConfig {
         applicationId "com.tamaki.workerapp"
         minSdk 26
         targetSdk 32
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 4
+        versionName "1.0.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
+        signingConfig signingConfigs.debug
     }
 
     buildTypes {
@@ -99,6 +111,8 @@ dependencies {
     implementation 'io.github.raamcosta.compose-destinations:core:1.6.15-beta'
     ksp 'io.github.raamcosta.compose-destinations:ksp:1.6.15-beta'
 
+    implementation "androidx.startup:startup-runtime:1.1.1"
+
     //accompanist
     implementation "com.google.accompanist:accompanist-pager:0.22.0-rc"
 
@@ -159,8 +173,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
 
     //leak canary
-    implementation "com.squareup.leakcanary:leakcanary-android:2.9.1"
 
-    // serialization
-   // implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0"
 }

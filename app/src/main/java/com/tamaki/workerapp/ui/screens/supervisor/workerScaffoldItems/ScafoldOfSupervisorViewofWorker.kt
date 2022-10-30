@@ -1,12 +1,14 @@
 package com.tamaki.workerapp.ui.screens.supervisor.workerScaffoldItems
 
-import com.tamaki.workerapp.R
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
-import com.tamaki.workerapp.data.dataClasses.Worker
 import com.tamaki.workerapp.data.navgraphs.HomeViewNavGraph
 import com.tamaki.workerapp.ui.screens.supervisor.supervisorHome.SupervisorViewModel
 import com.tamaki.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldItems.MainDrawer
@@ -14,6 +16,7 @@ import com.tamaki.workerapp.ui.screens.supervisor.supervisorHome.homeUIScafoldIt
 import com.tamaki.workerapp.ui.workerInfoPage.workerUITabs.WorkerPhotoTab
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.tamaki.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,20 +24,12 @@ import kotlinx.coroutines.launch
 @Destination
 @Composable
 fun WorkerPage(
-    SelectedClickThroughWorker: Worker,
+    SelectedClickThroughWorker: WorkerProfile,
     viewModel: SupervisorViewModel,
     navigator: DestinationsNavigator,
 ) {
-    val viewstate by viewModel.state.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val workerhistory = listOf<Pair<Int, String>>(
-        Pair(2018, "quay street"),
-        Pair(2018, "resedential"),
-        Pair(2020, "build bridge"),
-    )
-    val workerSkill = listOf("formworker", "crane driver", "pie eater")
-    val workerTools = listOf("drill", "ute", "hammer")
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -42,7 +37,7 @@ fun WorkerPage(
             MainDrawer(
                 navigator,
                 viewModel::deleteAllFromDataStore,
-                closeDrawer = {scope.launch { drawerState.close() }},
+                closeDrawer = { scope.launch { drawerState.close() } },
                 deleteAccount = viewModel::deleteAccount
             )
         }
@@ -51,7 +46,7 @@ fun WorkerPage(
             modifier = Modifier.padding(.4.dp),
             topBar = {
                 TopBar(
-                    title = SelectedClickThroughWorker.name,
+                    title = SelectedClickThroughWorker.firstName,
                     openDrawer = {
                         scope.launch {
                             drawerState.open()
@@ -59,19 +54,39 @@ fun WorkerPage(
                     }
                 )
             },
+            floatingActionButtonPosition = FabPosition.Center,
+            floatingActionButton = {
+
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .background(
+                            shape = RoundedCornerShape(5.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        .clickable {
+                            //navigator.navigate(HireScafoldDestination(worker = worker))
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Hire ${SelectedClickThroughWorker.firstName}",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            },
             content = {
                 WorkerPhotoTab(
-                    navigator = navigator,
                     paddingValues = it,
                     worker = SelectedClickThroughWorker,
-                    workerhistory = workerhistory,
-                    workerTools = workerTools,
-                    workerSkill = workerSkill,
-                    addToWatchList = viewModel::addToWatchList,
-                    ListOfSavedWorkers = viewstate.savedWorkers,
-                    removeFromWatchlist = viewModel::removeFromWatchlist,
+                    getWorkerDriverLicenceviewModel = viewModel::getWorkerDriversLicence
                 )
-            }
+            },
+
         )
     }
 }
+

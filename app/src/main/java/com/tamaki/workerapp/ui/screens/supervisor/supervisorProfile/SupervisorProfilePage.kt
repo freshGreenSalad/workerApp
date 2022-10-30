@@ -66,16 +66,26 @@ fun SupervisorProfilePage(
                 )
             }
         ) {
+            val profileState = produceState(
+                initialValue = supervisorProfileFail,
+                producer = {
+                    value = try {
+                        (viewModel::getSupervisorProfile)()
+                    } catch (e: Exception) {
+                        supervisorProfileFail
+                    }
+                }
+            )
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(it)
             ) {
                 ProfileImageHeader(
-                    viewModel::getSupervisorProfile
+                    profileState.value
                 )
                 SupervisorProfile(
-                    viewModel::getSupervisorProfile
+                    profileState.value
                 )
             }
         }
@@ -84,18 +94,9 @@ fun SupervisorProfilePage(
 
 @Composable
 fun SupervisorProfile(
-    getSupervisorProfile: KSuspendFunction0<SupervisorProfile>
+    profileState: SupervisorProfile
 ) {
-    val profileState = produceState(
-        initialValue = supervisorProfileFail,
-        producer = {
-            value = try {
-                getSupervisorProfile()
-            } catch (e: Exception) {
-                supervisorProfileFail
-            }
-        }
-    )
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -107,7 +108,7 @@ fun SupervisorProfile(
 
             item {
                 Text(
-                    text = "Name:" + profileState.value.firstName + profileState.value.lastName,
+                    text = "Name:" + profileState.firstName + profileState.lastName,
                     modifier = Modifier
                         .padding(5.dp)
                         .alpha(.7f), style = MaterialTheme.typography.headlineSmall
@@ -118,7 +119,7 @@ fun SupervisorProfile(
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
-                    "Email: " + profileState.value.email, modifier = Modifier
+                    "Email: " + profileState.email, modifier = Modifier
                         .padding(5.dp)
                         .alpha(.5f), style = MaterialTheme.typography.headlineSmall
                 )
@@ -144,22 +145,11 @@ fun SupervisorProfile(
 
 @Composable
 fun ProfileImageHeader(
-    getSupervisorProfile: KSuspendFunction0<SupervisorProfile>
+    profileState: SupervisorProfile
 ) {
     val configuration = LocalConfiguration.current
 
     val screenWidth = configuration.screenWidthDp.dp
-
-    val profileState = produceState(
-        initialValue = supervisorProfileFail,
-        producer = {
-            value = try {
-                getSupervisorProfile()
-            } catch (e: Exception) {
-                supervisorProfileFail
-            }
-        }
-    )
 
     Box(
         modifier = Modifier
@@ -180,14 +170,10 @@ fun ProfileImageHeader(
         ) {
             AsyncImage(
                 modifier = Modifier
-                    .size(150.dp)
-                    .background(
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.primary
-                    ),
+                    .size(150.dp),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(
-                        data = profileState.value.personalPhoto
+                        data = profileState.personalPhoto
                     )
                     .crossfade(true)
                     .build(),

@@ -26,6 +26,7 @@ import com.tamaki.workerapp.ui.theme.customShapes.TriangleShape
 import com.tamaki.workerapp.ui.theme.customShapes.TriangleShapeRounded
 import com.tamaki.workerapp.ui.theme.customShapes.WorkerCardShape
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.tamaki.workerapp.destinations.WorkerPageDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,14 +37,14 @@ fun Workercard(
     removeFromWatchlist: (String) -> Unit,
     addToWatchList: (String) -> Unit
 ) {
-    val inWatchlist = true // TODO: change this to a check for in watchlist
+    val inWatchlist = worker.email in watchlistedWorkers
     Surface(
         onClick = {
-            /*navigator.navigate(
+            navigator.navigate(
                 WorkerPageDestination(
-                    worker.value,
+                    worker,
                 )
-            )*/
+            )
         },
         shape = if (inWatchlist) {
             WorkerCardShape(40f)

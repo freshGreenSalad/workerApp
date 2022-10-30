@@ -1,6 +1,5 @@
 package com.tamaki.workerapp.ui.screens.supervisor.supervisorHome
 
-import com.tamaki.workerapp.R
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -109,7 +108,6 @@ fun HomeScreen(
                                 watchlistedWorkers = ListOfSavedWorkers,
                                 removeFromWatchlist = removeFromWatchlist,
                                 addToWatchList = addToWatchList,
-                                workerListSize = workerListSize,
                                 workerList = workerList
                             )
                         }

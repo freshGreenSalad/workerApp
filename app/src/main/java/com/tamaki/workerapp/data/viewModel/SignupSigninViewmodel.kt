@@ -2,6 +2,7 @@ package com.tamaki.workerapp.data.viewModel
 
 import android.net.Uri
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,10 +22,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
 import com.tamaki.workerapp.data.dataClasses.general.Location
 import com.tamaki.workerapp.data.dataClasses.supervisorDataClasses.SupervisorProfile
 import com.tamaki.workerapp.data.dataClasses.workerDataClasses.DriversLicence
 import com.tamaki.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
+import java.io.File
 
 @HiltViewModel
 class SignupSigninViewModel @Inject constructor(
@@ -111,6 +114,14 @@ class SignupSigninViewModel @Inject constructor(
         resultChannelProfileBuild.send(postSupervisorProfileResult)
     }
 
+  /*  suspend fun login(authRequest: ProfileLoginAuthRequest) {
+        val result = repository.login(authRequest)
+        resultChannel.send(result)
+    }*/
+    //______________________________________________________________________________________________________________________________________________
+
+
+
     //______________________________________________________________________________________________________________________________________________
     private val _stateMap = MutableStateFlow(MapState())
 
@@ -123,17 +134,21 @@ class SignupSigninViewModel @Inject constructor(
 
     private var latLngAddress = MutableStateFlow(MarkerState(LatLng(1.35, 103.87)))
 
+    private var mapScreenShoturi = MutableStateFlow(Uri.EMPTY)
+
     init {
         viewModelScope.launch {
             combine(
                 map,
                 siteAddress,
-                latLngAddress
-            ) { map, siteAddress, latLngAddress->
+                latLngAddress,
+                mapScreenShoturi
+            ) { map, siteAddress, latLngAddress,mapScreenShoturi->
                 MapState(
                     map,
                     siteAddress,
-                    latLngAddress
+                    latLngAddress,
+                    mapScreenShoturi
                 )
             }.catch { throwable ->
                 throw throwable
@@ -141,6 +156,10 @@ class SignupSigninViewModel @Inject constructor(
                 _stateMap.value = it
             }
         }
+    }
+
+    fun returnUri (uri: Uri){
+        mapScreenShoturi.value = uri
     }
 
     fun updateSiteAddress(address:String){
@@ -555,7 +574,8 @@ data class MapDataClass(
 data class MapState(
     val map: MapDataClass = MapDataClass(),
     val siteAddress: String = "",
-    val latLngAddress: MarkerState = MarkerState(LatLng(1.35, 103.87))
+    val latLngAddress: MarkerState = MarkerState(LatLng(1.35, 103.87)),
+    val mapScreenShoturi: Uri = Uri.EMPTY
 )
 
 data class Experience(

@@ -20,6 +20,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.tamaki.workerapp.data.authResult
 import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
 import com.tamaki.workerapp.data.dataClasses.supervisorDataClasses.SupervisorProfile
+import com.tamaki.workerapp.data.dataClasses.workerDataClasses.DriversLicence
 import com.tamaki.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
 import com.tamaki.workerapp.data.datastore.DatastoreInterface
 import com.tamaki.workerapp.data.repositorys.RepositoryInterface
@@ -48,6 +49,10 @@ class SupervisorViewModel @Inject constructor(
 
     suspend fun deleteAccount(){
         repository.deleteAccount()
+    }
+
+    suspend fun getWorkerDriversLicence(email: String):DriversLicence{
+        return repository.getWorkerDriversLicence(email)
     }
 
     //aws functions --------------------------
@@ -128,9 +133,9 @@ class SupervisorViewModel @Inject constructor(
         flow5: Flow<T5>,
         flow6: Flow<T6>,
         transform: suspend (T1, T2, T3, T4, T5, T6) -> R
-    ): Flow<R> = kotlinx.coroutines.flow.combine(
-        kotlinx.coroutines.flow.combine(flow, flow2, flow3, ::Triple),
-        kotlinx.coroutines.flow.combine(flow4, flow5, flow6, ::Triple),
+    ): Flow<R> = combine(
+        combine(flow, flow2, flow3, ::Triple),
+        combine(flow4, flow5, flow6, ::Triple),
     ) { t1, t2 ->
         transform(
             t1.first,
@@ -142,18 +147,12 @@ class SupervisorViewModel @Inject constructor(
         )
     }
 
-
-
-
-
 fun removeFromWatchlist(email: String) {
     savedWorkers.value.remove(email)
-    println(savedWorkers.value.toString())
 }
 
 fun addToWatchList(email: String) {
     savedWorkers.value.add(email)
-    println(savedWorkers.value.toString())
 }
 
 fun onClickHomeBottomAppTab(tab: HomeBottomAppBarTabs) {

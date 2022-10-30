@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import com.tamaki.workerapp.data.SslSettings
 import com.tamaki.workerapp.data.apiCallsToServer.AWSInterface
 import com.tamaki.workerapp.data.datastore.DataStoreImplementaion
 import com.tamaki.workerapp.data.datastore.DatastoreInterface
@@ -52,29 +53,37 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideRepository(repository: YourRepository):RepositoryInterface = repository
+    fun provideRepository(repository: YourRepository): RepositoryInterface = repository
 
     @Singleton
     @Provides
-    fun provideDataStore(dataStore: DataStoreImplementaion):DatastoreInterface = dataStore
+    fun provideDataStore(dataStore: DataStoreImplementaion): DatastoreInterface = dataStore
 
     @Singleton
     @Provides
-    fun AWSRequest(client: HttpClient,dataStore: DataStore<Preferences>): AWSInterface = AWSRequest(client,dataStore)
+    fun AWSRequest(client: HttpClient, dataStore: DataStore<Preferences>): AWSInterface =
+        AWSRequest(client, dataStore)
 
     @Singleton
     @Provides
-    fun AWSclient():HttpClient = HttpClient(Android) {
-            install(Logging) {
-                level = LogLevel.ALL
+    fun AWSclient(@ApplicationContext appContext: Context): HttpClient = HttpClient(Android) {
+        /*engine {
+            sslManager = { httpsURLConnection ->
+                httpsURLConnection.sslSocketFactory = SslSettings.getSslContext(appContext)?.socketFactory
             }
-            install(ContentNegotiation) {
-                json(Json { prettyPrint = true
-                    isLenient = true }
-                )
-            }
+        }*/
+        install(Logging) {
+            level = LogLevel.ALL
         }
 
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+            }
+            )
+        }
+    }
 
     @Singleton
     @Provides

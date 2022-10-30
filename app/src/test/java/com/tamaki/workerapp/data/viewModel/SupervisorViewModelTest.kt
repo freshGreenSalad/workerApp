@@ -31,7 +31,6 @@ class SupervisorViewModelTest{
         supervisorViewModel = SupervisorViewModel(fakeRepository, fakeDataStore)
     }
 
-
     @Test
     fun `test get supervisor profile`(): Unit = runTest {
         val supervisor = supervisorViewModel.getSupervisorProfile()

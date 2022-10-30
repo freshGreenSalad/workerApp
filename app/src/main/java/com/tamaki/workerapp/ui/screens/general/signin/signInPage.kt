@@ -188,7 +188,7 @@ fun SignInBox(
                     color = MaterialTheme.colorScheme.primary
                 )
                 .clickable {
-                    navigator.navigate(MapScreenDestination)
+                    //navigator.navigate()//navigate(WorkerPageDestination)
                 },
             contentAlignment = Alignment.Center
         ) {
