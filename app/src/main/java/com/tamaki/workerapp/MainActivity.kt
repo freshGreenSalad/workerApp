@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.tamaki.workerapp.data.viewModel.SignupSigninViewModel
+import com.tamaki.workerapp.data.viewModel.SignupViewModel
 import com.tamaki.workerapp.data.viewModel.WorkerViewModel
 import com.tamaki.workerapp.ui.theme.WorkerAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +25,7 @@ import com.ramcosta.composedestinations.animations.defaults.NestedNavGraphDefaul
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.navigation.dependency
+import com.tamaki.workerapp.data.viewModel.SigninViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -71,7 +72,13 @@ class MainActivity : ComponentActivity() {
                             val parentEntry = remember(navBackStackEntry) {
                                 navController.getBackStackEntry(NavGraphs.root.route)
                             }
-                            hiltViewModel<SignupSigninViewModel>(parentEntry)
+                            hiltViewModel<SignupViewModel>(parentEntry)
+                        }
+                        dependency(NavGraphs.signin) {
+                            val parentEntry = remember(navBackStackEntry) {
+                                navController.getBackStackEntry(NavGraphs.root.route)
+                            }
+                            hiltViewModel<SigninViewModel>(parentEntry)
                         }
                         dependency(NavGraphs.worker) {
                             val parentEntry = remember(navBackStackEntry) {

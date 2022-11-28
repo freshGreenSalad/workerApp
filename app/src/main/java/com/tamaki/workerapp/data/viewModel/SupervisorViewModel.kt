@@ -13,6 +13,7 @@ import javax.inject.Inject
 import androidx.compose.material3.DrawerValue.Closed
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.text.input.TextFieldValue
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import androidx.datastore.preferences.core.edit
@@ -37,6 +38,9 @@ class SupervisorViewModel @Inject constructor(
     suspend fun getSupervisorProfile(): SupervisorProfile {
         return repository.getSupervisorProfile()
     }
+    /*fun updateTextField(newValue: TextFieldValue){
+        password = newValue
+    }*/
 
     suspend fun getListOfWorkerAccountsForSupervisor(): List<WorkerProfile> {
         val list = repository.getListOfWorkerAccountsForSupervisor()
@@ -58,10 +62,7 @@ class SupervisorViewModel @Inject constructor(
     //aws functions --------------------------
     //dynamodb functions
 
-    suspend fun login(authRequest: ProfileLoginAuthRequest) {
-        val result = repository.login(authRequest)
-        resultChannel.send(result)
-    }
+
 
     suspend fun deleteAllFromDataStore() {
         dataStore.deleteAccount()

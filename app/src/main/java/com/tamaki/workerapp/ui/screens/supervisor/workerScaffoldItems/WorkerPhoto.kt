@@ -9,11 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -30,11 +32,18 @@ fun WorkerPhotoTab(
     worker: WorkerProfile,
     getWorkerDriverLicenceviewModel: KSuspendFunction1<String, DriversLicence>
 ) {
-    Column(
+    LazyColumn(
         modifier = Modifier.padding(paddingValues)
     ) {
-        SupervisorViewOfWorkerImageHeader(worker)
-        DriversLicenceRecord(worker, getWorkerDriverLicenceviewModel)
+        item {
+            SupervisorViewOfWorkerImageHeader(worker)
+        }
+        item {
+            DriversLicenceRecord(worker, getWorkerDriverLicenceviewModel)
+        }
+        item{
+            WorkersExperience()
+        }
     }
 }
 
@@ -86,50 +95,84 @@ fun DriversLicenceRecord(
     worker: WorkerProfile,
     getWorkerDriverLicenceviewModel: KSuspendFunction1<String, DriversLicence>
 
-){
-    
-val Licence = produceState(
-    initialValue = DriversLicence(
-        typeOfLicence = TypeOfLicence.Empty,
-        licenceMap = emptyMap<String, Boolean>(),
-        highestClass = HighestClass.Class1,
-    ) ,
-    producer = {
-        value = getWorkerDriverLicenceviewModel(worker.email)
-    }
-        ).value
+) {
+
+    val Licence = produceState(
+        initialValue = DriversLicence(
+            typeOfLicence = TypeOfLicence.Empty,
+            licenceMap = emptyMap<String, Boolean>(),
+            highestClass = HighestClass.Class1,
+        ),
+        producer = {
+            value = getWorkerDriverLicenceviewModel(worker.email)
+        }
+    ).value
 
     val licenceMap = Licence.licenceMap
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        item {
+    if (Licence.typeOfLicence == TypeOfLicence.Empty) {
+
+        Text(
+            modifier = Modifier
+                .padding(5.dp)
+                .alpha(.7f), style = MaterialTheme.typography.headlineSmall,
+            text = worker.firstName + " Does Not Have A Licence"
+        )
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .alpha(.7f), style = MaterialTheme.typography.headlineSmall,
+                text = worker.firstName + "'s Licence"
+            )
+            Divider(
+                modifier = Modifier
+                    .padding(end = 30.dp)
+                    .fillMaxWidth()
+                    .height(2.dp)
+            )
+            Text(
+                text = "Type Of Licence:" + Licence.typeOfLicence.toString(),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .alpha(.7f), style = MaterialTheme.typography.headlineSmall
+            )
+            Text(
+                text = "Class:" + Licence.highestClass.toString(),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .alpha(.7f), style = MaterialTheme.typography.headlineSmall
+            )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 licenceMap["forks"]?.let {
                     Checkbox(
                         checked = true,
                         enabled = false,
                         onCheckedChange = {}
-                        )
+                    )
                 }
                 Text(
                     text = "Forks",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .alpha(.7f), style = MaterialTheme.typography.headlineSmall
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 licenceMap["wheels"]?.let {
                     Checkbox(
                         checked = it,
-                        enabled = false,
-                        onCheckedChange = {})
+                        onCheckedChange = {}
+                    )
                 }
                 Text(
                     text = "Wheels",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .alpha(.7f), style = MaterialTheme.typography.headlineSmall
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -142,8 +185,9 @@ val Licence = produceState(
                 }
                 Text(
                     text = "Rollers",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .alpha(.7f), style = MaterialTheme.typography.headlineSmall
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -156,8 +200,9 @@ val Licence = produceState(
                 }
                 Text(
                     text = "Dangerous Goods",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .alpha(.7f), style = MaterialTheme.typography.headlineSmall
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -170,11 +215,23 @@ val Licence = produceState(
                 }
                 Text(
                     text = "Tracks",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .alpha(.7f), style = MaterialTheme.typography.headlineSmall
                 )
             }
         }
     }
 }
 
+@Composable
+fun WorkersExperience(
+
+){
+    Text(
+        text = "Tracks",
+        modifier = Modifier
+            .padding(5.dp)
+            .alpha(.7f), style = MaterialTheme.typography.headlineSmall
+    )
+}

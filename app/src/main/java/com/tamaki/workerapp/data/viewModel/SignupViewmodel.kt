@@ -30,7 +30,7 @@ import com.tamaki.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
 import java.io.File
 
 @HiltViewModel
-class SignupSigninViewModel @Inject constructor(
+class SignupViewModel @Inject constructor(
     private val repository: YourRepository,
     private val dataStore: DataStore<Preferences>
 ) : ViewModel() {

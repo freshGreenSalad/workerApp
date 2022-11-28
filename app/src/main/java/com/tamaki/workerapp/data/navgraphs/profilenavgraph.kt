@@ -24,6 +24,12 @@ annotation class WorkerNavGraph(
     val start: Boolean = false
 )
 
+@RootNavGraph
+@NavGraph
+annotation class SigninNavGraph(
+    val start:Boolean = false
+)
+
 
 
 @ProfileCreationNavGraph

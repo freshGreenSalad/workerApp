@@ -1,7 +1,6 @@
 package com.tamaki.workerapp.ui.screens.general.supervisorSignup.components
 
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,11 +14,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.core.graphics.applyCanvas
-import androidx.core.graphics.createBitmap
-import com.google.android.gms.maps.GoogleMap
 import com.tamaki.workerapp.data.navgraphs.ProfileCreationNavGraph
-import com.tamaki.workerapp.data.viewModel.SignupSigninViewModel
+import com.tamaki.workerapp.data.viewModel.SignupViewModel
 import com.tamaki.workerapp.destinations.SupervisorSignupScaffoldDestination
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -34,7 +30,7 @@ import java.io.File
 @Composable
 fun MapScreen(
     navigator: DestinationsNavigator,
-    viewModel: SignupSigninViewModel,
+    viewModel: SignupViewModel,
 ) {
     val mediaDir = File.createTempFile("filename", null, LocalContext.current.cacheDir)
     val view = LocalView.current

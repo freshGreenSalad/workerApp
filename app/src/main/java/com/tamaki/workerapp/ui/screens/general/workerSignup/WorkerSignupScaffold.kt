@@ -1,6 +1,5 @@
 package com.tamaki.workerapp.ui.screens.general.workerSignup
 
-import com.tamaki.workerapp.R
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -36,7 +35,7 @@ import kotlin.reflect.KSuspendFunction0
 @Destination
 @Composable
 fun WorkerSignupScaffold(
-    viewModel: SignupSigninViewModel,
+    viewModel: SignupViewModel,
     navigator: DestinationsNavigator
 ) {
     val context = LocalContext.current

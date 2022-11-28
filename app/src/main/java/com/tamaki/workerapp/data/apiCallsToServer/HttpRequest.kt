@@ -303,8 +303,12 @@ class AWSRequest @Inject constructor(
 }
 
 object Routes {
+    //server
     //private const val baseUrl = "https://tlc-nz.com/"
-    private const val baseUrl = "http://192.168.1.151:8080/"
+    //home
+    //private const val baseUrl = "http://192.168.1.151:8080/"
+    //nat and stus
+    private const val baseUrl = "http://192.168.68.106:8080/"
 
     //presign put request
     const val presignPutRequest = baseUrl + "s3PresignPut"
