@@ -3,6 +3,13 @@ package com.tamaki.workerapp.data.viewModel
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,14 +48,14 @@ class SignupViewModel @Inject constructor(
 
     suspend fun postAuthProfile() {
         dataStore.edit { settings ->
-            settings[stringPreferencesKey(name = "email")] = emailPassword.value.email
+            settings[stringPreferencesKey(name = "email")] = email.value
         }
 
         val authResult = repository.postAuthProfile(
             ProfileLoginAuthRequestWithIsSupervisor(
-                emailPassword.value.email,
-                emailPassword.value.password,
-                emailPassword.value.isSupervisor
+                email.value,
+                password.value,
+                isSupervisor.value
             )
         )
         resultChannelSignup.send(authResult)
@@ -58,9 +65,9 @@ class SignupViewModel @Inject constructor(
 
     val profileBuild = resultChannelProfileBuild.receiveAsFlow()
 
-    suspend fun postPersonalWorker(){
+    suspend fun postPersonalWorker() {
         dataStore.edit { settings ->
-            settings[stringPreferencesKey(name = "email")] = emailPassword.value.email
+            settings[stringPreferencesKey(name = "email")] = email.value
         }
 
         val personalPhotoLink = repository.presigns3(photoUri.value)
@@ -72,9 +79,9 @@ class SignupViewModel @Inject constructor(
         )
 
         val workerProfile = WorkerProfile(
-            email = emailPassword.value.email,
-            firstName = firstname.value,
-            lastName = lastname.value,
+            email = email.value,
+            firstName = WorkerFirstname.value,
+            lastName = WorkerLastname.value,
             personalPhoto = personalPhotoLink,
             rate = 35
         )
@@ -87,22 +94,25 @@ class SignupViewModel @Inject constructor(
         resultChannelProfileBuild.send(postWorkerProfileResult)
     }
 
-    suspend fun postSupervisorPersonalAndSite(){
+    suspend fun postSupervisorPersonalAndSite() {
 
         dataStore.edit { settings ->
-            settings[stringPreferencesKey(name = "email")] = emailPassword.value.email
+            settings[stringPreferencesKey(name = "email")] = email.value
         }
 
         val personalPhotoLink = repository.presigns3(photoUriSupervisor.value)
 
         val site = SupervisorSite(
-            email = emailPassword.value.email,
+            email = email.value,
             address = siteAddress.value,
-            location = Location (Lat = latLngAddress.value.position.latitude, Lng= latLngAddress.value.position.longitude)
+            location = Location(
+                Lat = latLngAddress.value.position.latitude,
+                Lng = latLngAddress.value.position.longitude
+            )
         )
 
         val supervisorProfile = SupervisorProfile(
-            email = emailPassword.value.email,
+            email = email.value,
             firstName = supervisorFirstName.value,
             lastName = supervisorLastName.value,
             personalPhoto = personalPhotoLink,
@@ -114,14 +124,6 @@ class SignupViewModel @Inject constructor(
 
         resultChannelProfileBuild.send(postSupervisorProfileResult)
     }
-
-  /*  suspend fun login(authRequest: ProfileLoginAuthRequest) {
-        val result = repository.login(authRequest)
-        resultChannel.send(result)
-    }*/
-    //______________________________________________________________________________________________________________________________________________
-
-
 
     //______________________________________________________________________________________________________________________________________________
     private val _stateMap = MutableStateFlow(MapState())
@@ -144,7 +146,7 @@ class SignupViewModel @Inject constructor(
                 siteAddress,
                 latLngAddress,
                 mapScreenShoturi
-            ) { map, siteAddress, latLngAddress,mapScreenShoturi->
+            ) { map, siteAddress, latLngAddress, mapScreenShoturi ->
                 MapState(
                     map,
                     siteAddress,
@@ -159,11 +161,11 @@ class SignupViewModel @Inject constructor(
         }
     }
 
-    fun returnUri (uri: Uri){
+    fun returnUri(uri: Uri) {
         mapScreenShoturi.value = uri
     }
 
-    fun updateSiteAddress(address:String){
+    fun updateSiteAddress(address: String) {
         siteAddress.value = address
     }
 
@@ -210,13 +212,15 @@ class SignupViewModel @Inject constructor(
     fun updateFormworkMap(FormworkVar: String) {
         formworkMap.value[FormworkVar] = !formworkMap.value[FormworkVar]!!
     }
+
     //______________________________________________________________________________________________________________________________________________
     private val _stateSupervisorScaffold = MutableStateFlow(SupervisorState())
 
-    val stateSupervisorScaffold : StateFlow<SupervisorState>
+    val stateSupervisorScaffold: StateFlow<SupervisorState>
         get() = _stateSupervisorScaffold
 
-    private var supervisorSignUpScreenState = MutableStateFlow(SupervisorSignupPoint.BasicInformation)
+    private var supervisorSignUpScreenState =
+        MutableStateFlow(SupervisorSignupPoint.BasicInformation)
 
     private val currentSupervisorStep = MutableStateFlow(0)
 
@@ -246,20 +250,21 @@ class SignupViewModel @Inject constructor(
         }
     }
 
-    private val supervisorSignUpPoint = listOf(SupervisorSignupPoint.BasicInformation, SupervisorSignupPoint.Map)
+    private val supervisorSignUpPoint =
+        listOf(SupervisorSignupPoint.BasicInformation, SupervisorSignupPoint.Map)
 
-    fun nextSupervisorScreen(add:Int) {
+    fun nextSupervisorScreen(add: Int) {
         supervisorSignUpScreenState.value = supervisorSignUpPoint[currentSupervisorStep.value + add]
         currentSupervisorStep.value = currentSupervisorStep.value + add
     }
 
-    fun updateSupervisorFirstName(name:String){
+    fun updateSupervisorFirstName(name: String) {
         supervisorFirstName.value = name
     }
-    fun updateSupervisorLastName(name:String){
+
+    fun updateSupervisorLastName(name: String) {
         supervisorLastName.value = name
     }
-
 
     //______________________________________________________________________________________________________________________________________________
     private val _stateName = MutableStateFlow(NameState())
@@ -267,15 +272,15 @@ class SignupViewModel @Inject constructor(
     val stateName: StateFlow<NameState>
         get() = _stateName
 
-    private var firstname = MutableStateFlow("")
+    private var WorkerFirstname = MutableStateFlow("")
 
-    private var lastname = MutableStateFlow("")
+    private var WorkerLastname = MutableStateFlow("")
 
     init {
         viewModelScope.launch {
             combine(
-                firstname,
-                lastname,
+                WorkerFirstname,
+                WorkerLastname,
             ) { firstname, lastname ->
                 NameState(
                     firstname,
@@ -289,12 +294,12 @@ class SignupViewModel @Inject constructor(
         }
     }
 
-    fun updateFirstname(name: String) {
-        firstname.value = name
+    fun updateWorkerFirstname(name: String) {
+        WorkerFirstname.value = name
     }
 
-    fun updateLastname(name: String) {
-        lastname.value = name
+    fun updateWorkerLastname(name: String) {
+        WorkerLastname.value = name
     }
 
     //______________________________________________________________________________________________________________________________________________
@@ -455,28 +460,27 @@ class SignupViewModel @Inject constructor(
     val state: StateFlow<ProfileCreationPageState>
         get() = _state
 
-    private val emailPassword = MutableStateFlow(
-        EmailPassword(
-            email = "sdfg",
-            password = "sdfg",
-            isSupervisor = true
-        )
-    )
-
     private val workerSignUpPoint = MutableStateFlow(WorkerSignUpPoint.BasicInformation)
 
     private val currentStep = MutableStateFlow(0)
+    private val email = MutableStateFlow("")
+    private val password = MutableStateFlow("")
+    private val isSupervisor = MutableStateFlow(false)
 
     init {
         viewModelScope.launch {
             combine(
-                emailPassword,
+                email,
+                password,
+                isSupervisor,
                 workerSignUpPoint,
                 currentStep
-            ) { emailPassword, workerSignUpPoint, currentStep ->
+            ) { email, password, isSupervisor, workerSignUpPoint, currentStep ->
                 ProfileCreationPageState(
+                    email = email,
+                    password = password,
+                    isSupervisor = isSupervisor,
                     workerSignUpPoint = workerSignUpPoint,
-                    emailPassword = emailPassword,
                     currentStep = currentStep
                 )
             }.catch { throwable ->
@@ -487,21 +491,23 @@ class SignupViewModel @Inject constructor(
         }
     }
 
-    fun updateStateEmailPassword(email: String, password: String, isSupervisor: Boolean) {
-        emailPassword.value = emailPassword.value.copy(
-            email = email,
-            password = password,
-            isSupervisor = isSupervisor
-        )
-    }
-    private val signUpPoint = listOf(WorkerSignUpPoint.BasicInformation, WorkerSignUpPoint.Tickets, WorkerSignUpPoint.Experience)
 
-    fun nextScreen(add:Int) {
+    private val signUpPoint = listOf(
+        WorkerSignUpPoint.BasicInformation,
+        WorkerSignUpPoint.Tickets,
+        WorkerSignUpPoint.Experience
+    )
+
+    fun nextScreen(add: Int) {
         workerSignUpPoint.value = signUpPoint[currentStep.value + add]
         currentStep.value = currentStep.value + add
     }
 
-    fun handleSupervisorSignupRequest(result: authResult<Unit>, navigator: DestinationsNavigator, context: Context){
+    fun handleSupervisorSignupRequest(
+        result: authResult<Unit>,
+        navigator: DestinationsNavigator,
+        context: Context
+    ) {
         when (result) {
             is authResult.authorised<Unit> -> navigator.navigate(MainHolderComposableDestination)
             is authResult.unauthorised<Unit> -> {
@@ -513,7 +519,20 @@ class SignupViewModel @Inject constructor(
             else -> {}
         }
     }
+
+    fun updatePassword(newPassword: String) {
+        password.value = newPassword
+    }
+
+    fun updateEmail(newEmail: String) {
+        email.value = newEmail
+    }
+
+    fun updateIsSupervisor(newIsSupervisor: Boolean) {
+        isSupervisor.value = newIsSupervisor
+    }
     //______________________________________________________________________________________________________________________________________________
+
 }
 
 enum class WorkerSignUpPoint {
@@ -558,18 +577,10 @@ data class TicketState constructor(
 
 data class ProfileCreationPageState constructor(
     val workerSignUpPoint: WorkerSignUpPoint = WorkerSignUpPoint.BasicInformation,
-    val emailPassword: EmailPassword = EmailPassword(
-        email = "email",
-        password = "password",
-        isSupervisor = true
-    ),
+    val email: String = "",
+    val password: String = "",
+    val isSupervisor: Boolean = true,
     val currentStep: Int = 0
-)
-
-data class EmailPassword(
-    val email: String,
-    val password: String,
-    val isSupervisor: Boolean
 )
 
 data class MapDataClass(
@@ -601,14 +612,14 @@ enum class ExperienceType {
     Formwork, Machinery, Reinforcing, Rigging
 }
 
-enum class SupervisorSignupPoint{
+enum class SupervisorSignupPoint {
     BasicInformation, Map
 }
 
 data class SupervisorState(
-    val supervisorFirstName: String= "",
+    val supervisorFirstName: String = "",
     val supervisorLastName: String = "",
     val supervisorSignupPoint: SupervisorSignupPoint = SupervisorSignupPoint.BasicInformation,
-    val currentSupervisorStep:Int = 0
+    val currentSupervisorStep: Int = 0
 )
 

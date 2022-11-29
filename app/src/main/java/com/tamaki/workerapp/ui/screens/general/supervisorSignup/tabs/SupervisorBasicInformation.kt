@@ -30,11 +30,11 @@ fun SupervisorBasicInformation(
     LazyColumnOfOrganisedComposables() {
         StandardTextHeading("Basic Information")
         Spacer(modifier = Modifier.height(15.dp))
-        TextFieldWithKeyboardActions("Firstname", viewModel::updateFirstname, viewState.supervisorFirstName)
+        TextFieldWithKeyboardActions("Firstname", viewModel::updateSupervisorFirstName, viewState.supervisorFirstName)
         Spacer(modifier = Modifier.height(15.dp))
-        TextFieldWithKeyboardActions("Lastname", viewModel::updateLastname, viewState.supervisorLastName)
+        TextFieldWithKeyboardActions("Lastname", viewModel::updateSupervisorLastName, viewState.supervisorLastName)
         Spacer(modifier = Modifier.height(15.dp))
-        StandardButton("Take A Photo of Yourself!", {navigator.navigate(SupervisorSignupCameraDestination)})
+        StandardButton("Take A Photo of Yourself!"){navigator.navigate(SupervisorSignupCameraDestination)}
         Spacer(modifier = Modifier.height(15.dp))
         ScreenShotImageHolder(viewSupervisorStateCamera.photoUri)
         StandardButton("clicking this button takes you to your own photos",{ launcher.launch("image/jpeg") })

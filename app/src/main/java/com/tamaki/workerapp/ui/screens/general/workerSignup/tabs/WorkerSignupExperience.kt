@@ -1,6 +1,5 @@
 package com.tamaki.workerapp.ui.screens.general.workerSignup.tabs
 
-import com.tamaki.workerapp.R
 import androidx.compose.animation.*
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
@@ -19,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tamaki.workerapp.data.viewModel.ExperienceType
+import com.tamaki.workerapp.data.viewModel.SignupViewModel
+import com.tamaki.workerapp.ui.components.StandardTextHeading
 import com.tamaki.workerapp.ui.screens.general.workerSignup.experienceSubcatagory.Formwork
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -26,99 +27,23 @@ import com.tamaki.workerapp.ui.screens.general.workerSignup.experienceSubcatagor
 fun WorkerSignupExperience(
     experienceType: ExperienceType,
     ChangeExperienceType:(ExperienceType)->Unit,
-    FormworkMap: Map<String, Boolean>,
-    updateFormworkMap:(String)->Unit
+    viewModel: SignupViewModel
 ) {
     Column() {
-        Text(
-            text = "Experience",
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.primary
-        )
+        StandardTextHeading("Experience")
         Spacer(modifier = Modifier.height(15.dp))
         LazyRow {
             item {
-                Box(
-                    modifier = Modifier
-                        .size(200.dp)
-                        .padding(8.dp)
-                        .background(
-                            color = if (experienceType == ExperienceType.Formwork)MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
-                            shape = RoundedCornerShape(5.dp)
-                        )
-                        .clickable {
-                            ChangeExperienceType(ExperienceType.Formwork)
-                        },
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Done,
-                        contentDescription = "titles[1]",
-                        modifier = Modifier.fillMaxSize(),
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                    Text(
-                        text = "Formwork",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = if (experienceType == ExperienceType.Formwork)MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                }
+                boxWithSkillType(experienceType, ChangeExperienceType, ExperienceType.Formwork)
             }
             item {
-                Box(
-                    modifier = Modifier
-                        .size(200.dp)
-                        .padding(8.dp)
-                        .background(
-                            color = if (experienceType == ExperienceType.Machinery)MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
-                            shape = RoundedCornerShape(5.dp)
-                        )
-                        .clickable {
-                            ChangeExperienceType(ExperienceType.Machinery)
-                        },
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Done,
-                        contentDescription = "titles[1]",
-                        modifier = Modifier.fillMaxSize(),
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                    Text(
-                        text = "Machinery",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = if (experienceType == ExperienceType.Machinery)MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer
-
-                    )
-                }
+                boxWithSkillType(experienceType, ChangeExperienceType,ExperienceType.Machinery)
             }
             item {
-                Box(
-                    modifier = Modifier
-                        .size(200.dp)
-                        .padding(8.dp)
-                        .background(
-                            color = if (experienceType == ExperienceType.Rigging)MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
-                            shape = RoundedCornerShape(5.dp)
-                        )
-                        .clickable {
-                            ChangeExperienceType(ExperienceType.Rigging)
-                        },
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Done,
-                        contentDescription = "titles[1]",
-                        modifier = Modifier.fillMaxSize(),
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                    Text(
-                        text = "Rigging",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = if (experienceType == ExperienceType.Rigging)MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer
-
-                    )
-                }
+                boxWithSkillType(experienceType, ChangeExperienceType,ExperienceType.Rigging)
+            }
+            item {
+                boxWithSkillType(experienceType, ChangeExperienceType,ExperienceType.Reinforcing)
             }
         }
         AnimatedContent(
@@ -144,22 +69,44 @@ fun WorkerSignupExperience(
             }
         ) { targetState ->
             when (targetState) {
-                ExperienceType.Machinery-> {
-
-                }
-                ExperienceType.Formwork-> {
-                    Formwork(
-                        FormworkMap = FormworkMap,
-                    updateFormworkMap = updateFormworkMap
-                    )
-                }
-                ExperienceType.Rigging -> {
-
-                }
-                ExperienceType.Reinforcing -> {
-
-                }
+                ExperienceType.Machinery-> {}
+                ExperienceType.Formwork-> {Formwork(viewModel)}
+                ExperienceType.Rigging -> {}
+                ExperienceType.Reinforcing -> {}
             }
         }
+    }
+}
+
+@Composable
+private fun boxWithSkillType(
+    CurrentExperienceType: ExperienceType,
+    ChangeExperienceType: (ExperienceType) -> Unit,
+    experienceType:ExperienceType
+) {
+    Box(
+        modifier = Modifier
+            .size(200.dp)
+            .padding(8.dp)
+            .background(
+                color = if (CurrentExperienceType == experienceType) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(5.dp)
+            )
+            .clickable {
+                ChangeExperienceType(experienceType)
+            },
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Done,
+            contentDescription = "titles[1]",
+            modifier = Modifier.fillMaxSize(),
+            tint = MaterialTheme.colorScheme.secondary
+        )
+        Text(
+            text = experienceType.name,
+            style = MaterialTheme.typography.headlineSmall,
+            color = if (CurrentExperienceType == experienceType) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer
+        )
     }
 }
