@@ -12,7 +12,7 @@ annotation class ProfileCreationNavGraph(
     val start: Boolean = false
 )
 
-@RootNavGraph(start = true)
+@RootNavGraph
 @NavGraph
 annotation class HomeViewNavGraph(
     val start: Boolean = false
@@ -24,7 +24,7 @@ annotation class WorkerNavGraph(
     val start: Boolean = false
 )
 
-@RootNavGraph
+@RootNavGraph(start = true)
 @NavGraph
 annotation class SigninNavGraph(
     val start:Boolean = false

@@ -1,7 +1,6 @@
 package com.tamaki.workerapp.ui.screens.supervisor.supervisorHome
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.ViewModel
@@ -13,13 +12,7 @@ import javax.inject.Inject
 import androidx.compose.material3.DrawerValue.Closed
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.text.input.TextFieldValue
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
-import com.tamaki.workerapp.data.authResult
-import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
 import com.tamaki.workerapp.data.dataClasses.supervisorDataClasses.SupervisorProfile
 import com.tamaki.workerapp.data.dataClasses.workerDataClasses.DriversLicence
 import com.tamaki.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
@@ -38,40 +31,30 @@ class SupervisorViewModel @Inject constructor(
     suspend fun getSupervisorProfile(): SupervisorProfile {
         return repository.getSupervisorProfile()
     }
-    /*fun updateTextField(newValue: TextFieldValue){
-        password = newValue
-    }*/
 
     suspend fun getListOfWorkerAccountsForSupervisor(): List<WorkerProfile> {
         val list = repository.getListOfWorkerAccountsForSupervisor()
-        return  list
+        return list
     }
 
     suspend fun getWorkerByEmail(email: String): WorkerProfile {
         return repository.getWorkerProfile(email)
     }
 
-    suspend fun deleteAccount(){
+    suspend fun deleteAccount() {
         repository.deleteAccount()
     }
 
-    suspend fun getWorkerDriversLicence(email: String):DriversLicence{
+    suspend fun getWorkerDriversLicence(email: String): DriversLicence {
         return repository.getWorkerDriversLicence(email)
     }
 
     //aws functions --------------------------
     //dynamodb functions
 
-
-
     suspend fun deleteAllFromDataStore() {
         dataStore.deleteAccount()
     }
-
-    //Auth state----------------------------------------------------------------------------------------------
-    private val resultChannel = Channel<authResult<Boolean?>>()
-
-    val authResults = resultChannel.receiveAsFlow()
 
     //---------------------------------------------------------------------------------------------------------
     private val _state = MutableStateFlow(HomeViewState())
@@ -148,17 +131,17 @@ class SupervisorViewModel @Inject constructor(
         )
     }
 
-fun removeFromWatchlist(email: String) {
-    savedWorkers.value.remove(email)
-}
+    fun removeFromWatchlist(email: String) {
+        savedWorkers.value.remove(email)
+    }
 
-fun addToWatchList(email: String) {
-    savedWorkers.value.add(email)
-}
+    fun addToWatchList(email: String) {
+        savedWorkers.value.add(email)
+    }
 
-fun onClickHomeBottomAppTab(tab: HomeBottomAppBarTabs) {
-    selectedHomeBottomAppBarTab.value = tab
-}
+    fun onClickHomeBottomAppTab(tab: HomeBottomAppBarTabs) {
+        selectedHomeBottomAppBarTab.value = tab
+    }
 }
 
 data class HomeViewState @OptIn(ExperimentalMaterial3Api::class) constructor(

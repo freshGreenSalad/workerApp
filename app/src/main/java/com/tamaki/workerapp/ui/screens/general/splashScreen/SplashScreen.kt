@@ -1,46 +1,32 @@
 package com.tamaki.workerapp.ui
 
-import android.view.animation.OvershootInterpolator
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import com.tamaki.workerapp.R
 import com.tamaki.workerapp.destinations.SignInPageDestination
-import com.tamaki.workerapp.data.navgraphs.HomeViewNavGraph
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-
+import com.tamaki.workerapp.data.navgraphs.SigninNavGraph
+import com.tamaki.workerapp.data.viewModel.SigninViewModel
 import kotlinx.coroutines.delay
 
-@HomeViewNavGraph(start = true)
+@SigninNavGraph(start = true)
 @Destination
 @Composable
 fun SplashScreen(
     navigator: DestinationsNavigator,
+    viewModel: SigninViewModel
 ) {
-    val scale = remember { Animatable(0f) }
-
     LaunchedEffect(key1 = true) {
-        scale.animateTo(
-            targetValue = 3f,
-            animationSpec = tween(
-                durationMillis = 500,
-                easing = {
-                    OvershootInterpolator(2f).getInterpolation(it)
-                }
-            )
-        )
+        (viewModel::changeScaleOfSplashScreenImage)()
         delay(2000L)
         navigator.navigate(SignInPageDestination)
     }
@@ -54,7 +40,7 @@ fun SplashScreen(
         Image(
             painter = painterResource(R.drawable.crane),
             contentDescription = "logo",
-            modifier = Modifier.scale(scale.value)
+            modifier = Modifier.scale(viewModel.stateLogin.collectAsState().value.scale.value)
         )
     }
 }

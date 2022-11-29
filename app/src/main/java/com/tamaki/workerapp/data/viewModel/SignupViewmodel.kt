@@ -1,8 +1,9 @@
 package com.tamaki.workerapp.data.viewModel
 
+import android.content.Context
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,12 +23,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.tamaki.workerapp.data.dataClasses.general.Location
 import com.tamaki.workerapp.data.dataClasses.supervisorDataClasses.SupervisorProfile
 import com.tamaki.workerapp.data.dataClasses.workerDataClasses.DriversLicence
 import com.tamaki.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
-import java.io.File
+import com.tamaki.workerapp.destinations.MainHolderComposableDestination
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
@@ -498,6 +499,19 @@ class SignupViewModel @Inject constructor(
     fun nextScreen(add:Int) {
         workerSignUpPoint.value = signUpPoint[currentStep.value + add]
         currentStep.value = currentStep.value + add
+    }
+
+    fun handleSupervisorSignupRequest(result: authResult<Unit>, navigator: DestinationsNavigator, context: Context){
+        when (result) {
+            is authResult.authorised<Unit> -> navigator.navigate(MainHolderComposableDestination)
+            is authResult.unauthorised<Unit> -> {
+                Toast.makeText(context, "profile not created", Toast.LENGTH_LONG).show()
+            }
+            is authResult.unknownError<Unit> -> {
+                Toast.makeText(context, "profile not created", Toast.LENGTH_LONG).show()
+            }
+            else -> {}
+        }
     }
     //______________________________________________________________________________________________________________________________________________
 }
