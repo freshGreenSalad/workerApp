@@ -19,7 +19,7 @@ import kotlin.reflect.KSuspendFunction0
 import kotlin.reflect.KSuspendFunction1
 
 @OptIn(ExperimentalMaterial3Api::class)
-@HomeViewNavGraph
+@HomeViewNavGraph(start = true)
 @Destination
 @Composable
 fun MainHolderComposable(

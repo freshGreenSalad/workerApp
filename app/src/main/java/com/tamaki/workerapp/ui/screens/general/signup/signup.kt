@@ -55,9 +55,9 @@ fun Signup(
         contentAlignment = Alignment.Center
     ) {
         Column {
-            ButtonWithTickAndColourChangeIfTrue(isSupervisor = true, text = "Supervisor", function = viewModel::updateIsSupervisor)
+            ButtonWithTickIfTrue(isSupervisor = true, text = "Supervisor", function = viewModel::updateIsSupervisor)
             Spacer(modifier = Modifier.height(15.dp))
-            ButtonWithTickAndColourChangeIfTrue(isSupervisor = false, text = "Worker", function = viewModel::updateIsSupervisor)
+            ButtonWithTickIfTrue(isSupervisor = false, text = "Worker", function = viewModel::updateIsSupervisor)
             Spacer(modifier = Modifier.height(15.dp))
             TextFieldWithKeyboardActions("Email",viewModel::updateEmail,viewState.email)
             Spacer(modifier = Modifier.height(15.dp))
@@ -71,7 +71,7 @@ fun Signup(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun ButtonWithTickAndColourChangeIfTrue(isSupervisor: Boolean, text:String, function:(Boolean)->Unit) {
+private fun ButtonWithTickIfTrue(isSupervisor: Boolean, text:String, function:(Boolean)->Unit) {
     AnimatedContent(
         targetState = isSupervisor,
         transitionSpec = {

@@ -2,7 +2,6 @@ package com.tamaki.workerapp.data.room
 
 import android.net.Uri
 import com.tamaki.workerapp.data.authResult
-import com.tamaki.workerapp.data.apiCallsToServer.AWSRequest
 import com.tamaki.workerapp.data.dataClasses.*
 import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
 import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequestWithIsSupervisor

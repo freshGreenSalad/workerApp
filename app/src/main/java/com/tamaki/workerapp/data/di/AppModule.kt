@@ -9,13 +9,13 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
-import com.tamaki.workerapp.data.SslSettings
 import com.tamaki.workerapp.data.apiCallsToServer.AWSInterface
 import com.tamaki.workerapp.data.datastore.DataStoreImplementaion
 import com.tamaki.workerapp.data.datastore.DatastoreInterface
 import com.tamaki.workerapp.data.repositorys.RepositoryInterface
 import com.tamaki.workerapp.data.room.RoomDatabase
 import com.tamaki.workerapp.data.room.YourRepository
+import com.tamaki.workerapp.data.wrapperClasses.DatastorePreferancesInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -61,17 +61,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun AWSRequest(client: HttpClient, dataStore: DataStore<Preferences>): AWSInterface =
-        AWSRequest(client, dataStore)
+    fun AWSRequest(client: HttpClient, dataStore: DataStore<Preferences>): AWSInterface = AWSRequest(client, dataStore)
 
     @Singleton
     @Provides
     fun AWSclient(@ApplicationContext appContext: Context): HttpClient = HttpClient(Android) {
-        /*engine {
-            sslManager = { httpsURLConnection ->
-                httpsURLConnection.sslSocketFactory = SslSettings.getSslContext(appContext)?.socketFactory
-            }
-        }*/
         install(Logging) {
             level = LogLevel.ALL
         }

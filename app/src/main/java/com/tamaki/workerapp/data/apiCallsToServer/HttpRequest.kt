@@ -7,22 +7,18 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.tamaki.workerapp.data.DataStorePreferances
 import com.tamaki.workerapp.data.authResult
 import com.tamaki.workerapp.data.dataClasses.*
 import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
 import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequestWithIsSupervisor
 import com.tamaki.workerapp.data.dataClasses.supervisorDataClasses.SupervisorProfile
 import com.tamaki.workerapp.data.dataClasses.supervisorDataClasses.supervisorProfileFail
-import com.tamaki.workerapp.data.dataClasses.workerDataClasses.DriversLicence
 import com.tamaki.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
-import com.tamaki.workerapp.data.dataClasses.workerDataClasses.licenceFail
-import com.tamaki.workerapp.data.dataClasses.workerDataClasses.workerProfileFail
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.coroutines.flow.first
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
@@ -30,130 +26,82 @@ import java.io.File
 
 import javax.inject.Inject
 
-class AWSRequest @Inject constructor(
+class SupervisorAPICalls @Inject constructor(
     private val client: HttpClient,
     private val dataStore: DataStore<Preferences>
 ) : AWSInterface {
 
-    private suspend fun read(key: String): String? {
-        val dataStoreKey = stringPreferencesKey(key)
-        val preferences = dataStore.data.first()
-        return preferences[dataStoreKey]
-    }
-
-    //important preSigning function
-    override suspend fun S3PresignedPut(uri: Uri): String {
-        Log.d("top of presign put", "")
-        val jwt = read("JWT")!!
-
-        val presign = try {
-            client.put(Routes.presignPutRequest) {
-                contentType(ContentType.Application.Json)
-                setBody(Json.encodeToString("profilePicture"))
-                bearerAuth(jwt)
-            }.body()
-        } catch (e: Exception) {
-            Log.d("main", "failed to get presign link")
-            ""
-        }
-
-        try {
-            val file = File(uri.path!!)
-            val bodydata = file.readBytes()
-            Log.d("main",file.totalSpace.toString())
-            client.put(presign) {
-                contentType(ContentType.MultiPart.FormData)
-                setBody(bodydata)
-            }
-        } catch (e: Exception) {
-            Log.d("AWS", "Failed to add image to AWS")
-        }
-
+    override suspend fun UploadphotoTos3Bucket(uri: Uri): String {
+        val jwt = DataStorePreferances(dataStore).read("JWT")!!
+        val presign = preSignS3Urls(client, jwt).getPresignLink()
+        putImageInS3bucketWithPresignedLink(uri, presign)
         return presign.split("?")[0]
     }
 
-    //aws visualiser route functions for workers
-// putWorkerSignupInfo
-// putWorkerSiteInfo
-// putWorkerSpecialLicence
-// putDatesWorked
-// putWorkerPersonalData
-// putWorkerExperience
+    private suspend fun putImageInS3bucketWithPresignedLink(
+        uri: Uri,
+        presign: String
+    ) {
+        try {
+            uploadfileToS3(uri, presign)
+        } catch (e: Exception) {
+            Log.d("AWS", "Failed to add image to AWS")
+        }
+    }
+
+    private suspend fun uploadfileToS3(uri: Uri, presign: String) {
+        val file = File(uri.path!!)
+        val bodydata = file.readBytes()
+        client.put(presign) {
+            contentType(ContentType.MultiPart.FormData)
+            setBody(bodydata)
+        }
+    }
+
     override suspend fun postProfileAuth(profileLoginAuthRequest: ProfileLoginAuthRequestWithIsSupervisor): authResult<Unit> {
         return try {
-            if (!profileLoginAuthRequest.email.isEmailValid()) {
-                Log.d("main ","email not valid")
-                throw Exception("email not valid")
-            }
-            if (profileLoginAuthRequest.password.length < 8) {
-                Log.d("main ","password not valid")
-
-                throw Exception("password to small")
-            }
+            profileLoginAuthRequestValidation(profileLoginAuthRequest)
             var response: String = "HttpResponse"
-            val json = try {
-                Json.encodeToString(
-                    profileLoginAuthRequest
-                )
-            }catch (e:Exception){
-                ""
-            }
-
+            val json = errorHandelJsonEncodingOfString(profileLoginAuthRequest)
             try {
-                response = client.post(Routes.putWorkerSignupInfo) {
-                    contentType(ContentType.Application.Json)
-                    setBody(json)
-                }.body()
+                response = postJsonToAPI(response, json)
             } catch (e:Exception){
-                Log.d("main","failed in ktor block")
+
             }
-            dataStore.edit { settings ->
-                settings[stringPreferencesKey(name = "JWT")] =
-                    Json.decodeFromString<jwtTokinWithIsSupervisor>(response).token
-            }
+            DataStorePreferances(dataStore).edit(Json.decodeFromString<jwtTokinWithIsSupervisor>(response).token)
             authResult.authorised()
         } catch (e: Exception) {
             authResult.unauthorised()
         }
     }
 
-    override suspend fun postWorkerProfile(personalProfile: WorkerProfile): authResult<Unit> {
-        return try {
-            client.post(Routes.putWorkerPersonalData) {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    Json.encodeToString(personalProfile)
-                )
-            }
-            authResult.authorised()
+    private suspend fun postJsonToAPI(response: String, json: String): String {
+        var response1 = response
+        response1 = client.post(Routes.putWorkerSignupInfo) {
+            contentType(ContentType.Application.Json)
+            setBody(json)
+        }.body()
+        return response1
+    }
+
+    private fun errorHandelJsonEncodingOfString(profileLoginAuthRequest: ProfileLoginAuthRequestWithIsSupervisor) =
+        try {
+            Json.encodeToString(
+                profileLoginAuthRequest
+            )
         } catch (e: Exception) {
-            Log.d("Routes", "Failed to send worker personal profile at http request block")
-            authResult.unauthorised()
+            ""
+        }
+
+    private fun profileLoginAuthRequestValidation(profileLoginAuthRequest: ProfileLoginAuthRequestWithIsSupervisor) {
+        if (!profileLoginAuthRequest.email.isEmailValid()) {
+            throw Exception("email not valid")
+        }
+        if (profileLoginAuthRequest.password.length < 8) {
+            throw Exception("password to small")
         }
     }
 
-    override suspend fun postWorkerDriversLicence(licence: DriversLicence): authResult<Unit> {
-        return try {
-            client.post(Routes.putWorkerDriversLicence) {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    Json.encodeToString(licence)
-                )
-            }
-            authResult.authorised()
-        } catch (e: Exception) {
-            Log.d("Routes", "Failed to send worker personal profile at http request block")
-            authResult.unauthorised()
-        }
-    }
-
-    //aws visualiser route functions for workers
-// getWorkerSignupInfo
-// getWorkerSiteInfo
-// getWorkerSpecialLicence
-// getDatesWorked
-// getWorkerPersonalData
-// getWorkerExperience
     override suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest): authResult<Boolean?> {
         return try {
             val response = client.post(Routes.getWorkerSignupInfo) {
@@ -180,42 +128,8 @@ class AWSRequest @Inject constructor(
         }
     }
 
-    override suspend fun getWorkerProfile(email: String): WorkerProfile {
-        val jwt = read("JWT")
-        return try {
-            val response = client.post(Routes.getWorkerPersonalData) {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    Json.encodeToString(Email(email))
-                )
-                bearerAuth(jwt!!)
-            }
-            Json.decodeFromString(response.body())
-
-        } catch (e: Exception) {
-            workerProfileFail
-        }
-    }
-
-    override suspend fun getWorkerDriversLicence(email: String): DriversLicence {
-        val jwt = read("JWT")
-        return try {
-            val response = client.post(Routes.getWorkerDriversLicence) {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    Json.encodeToString(Email(email))
-                )
-                bearerAuth(jwt!!)
-            }
-            Json.decodeFromString(response.body())
-
-        } catch (e: Exception) {
-            licenceFail
-        }
-    }
-
     override suspend fun deleteAccount() {
-        val jwt = read("JWT")
+        val jwt = DataStorePreferances(dataStore).read("JWT")!!
         try {
             val response = client.post(Routes.deleteWorkerAccount) {
                 bearerAuth(jwt!!)
@@ -224,13 +138,6 @@ class AWSRequest @Inject constructor(
         }
     }
 
-    //aws visualiser route functions for workers
-// putSupervisorSignupInfo
-// putSupervisorSiteInfo
-// putSupervisorSpecialLicence
-// putSupervisorWorked
-// putSupervisorPersonalData
-// putSupervisorExperience
     override suspend fun postSupervisorProfile(supervisorProfile: SupervisorProfile): authResult<Unit> {
         val json = Json.encodeToString(supervisorProfile)
         Log.d("json",json)
@@ -267,16 +174,8 @@ class AWSRequest @Inject constructor(
         }
     }
 
-    //aws visualiser route functions for workers
-// getSupervisorSignupInfo
-// getSupervisorSiteInfo
-// getSupervisorSpecialLicence
-// getSupervisorWorked
-// getSupervisorPersonalData
-// getSupervisorExperience
-
     override suspend fun getSupervisorProfile(): SupervisorProfile {
-        val jwt = read("JWT")
+        val jwt = DataStorePreferances(dataStore).read("JWT")
         return try {
             val response = client.get(Routes.getSupervisorPersonalData) {
                 bearerAuth(jwt!!)
@@ -288,8 +187,6 @@ class AWSRequest @Inject constructor(
         }
     }
 
-
-    //get worker accounts for supervisor profile
     override suspend fun getListOfWorkerAccountsForSupervisor(): List<WorkerProfile> {
         return try {
             val response = client.get(Routes.getListOfWorkerAccounts)
@@ -310,47 +207,29 @@ object Routes {
     //nat and stus
     private const val baseUrl = "http://192.168.68.106:8080/"
 
-    //presign put request
     const val presignPutRequest = baseUrl + "s3PresignPut"
-
-    //aws visualiser route functions for workers
 
     const val putWorkerSignupInfo = baseUrl + "putWorkerSignupInfo"
 
-    //const val putWorkerSiteInfo = baseUrl + "putWorkerSiteInfo"
-    //const val putWorkerSpecialLicence = baseUrl + "putWorkerSpecialLicence"
-    //const val putDatesWorked = baseUrl + "putDatesWorked"
+
     const val putWorkerPersonalData = baseUrl + "putWorkerPersonalData"
 
-    //const val putWorkerExperience = baseUrl + "putWorkerExperience"
     const val putWorkerDriversLicence = baseUrl + "putWorkerDriversLicence"
-
-    //aws visualiser route functions for workers
 
     const val getWorkerSignupInfo = baseUrl + "getWorkerSignupAuth"
 
-    //const val getWorkerSiteInfo = baseUrl + "getWorkerSiteInfo"
-    //const val getWorkerSpecialLicence = baseUrl + "getWorkerSpecialLicence"
-    //const val getDatesWorked = baseUrl + "getDatesWorked"
     const val getWorkerPersonalData = baseUrl + "getWorkerPersonalData"
 
-    //const val getWorkerExperience = baseUrl + "getWorkerExperience"
     const val getWorkerDriversLicence = baseUrl + "getWorkerDriversLicence"
 
-    //delete worker account
     const val deleteWorkerAccount = baseUrl + "deleteAccount"
 
-    //aws visualiser route functions for Supervisors
-
-    //const val putSupervisorSignupInfo = baseUrl + "putSupervisorSignupInfo"
     const val putSupervisorSiteInfo = baseUrl + "putSupervisorSiteInfo"
+
     const val putSupervisorPersonalData = baseUrl + "putSupervisorPersonalData"
 
-    //aws visualiser route functions for Supervisors
-
-    //const val getSupervisorSignupInfo = baseUrl + "getSupervisorSignupInfo"
-    //const val getSupervisorSiteInfo = baseUrl + "getSupervisorSiteInfo"
     const val getSupervisorPersonalData = baseUrl + "getSupervisorPersonalData"
+
     const val getListOfWorkerAccounts = baseUrl + "getListOfWorkerAccounts"
 
 }
