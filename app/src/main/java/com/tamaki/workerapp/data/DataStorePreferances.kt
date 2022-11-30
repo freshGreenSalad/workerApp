@@ -9,18 +9,18 @@ import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class DataStorePreferances @Inject constructor(
-    private val dataStore: DataStore<Preferences>?
+    private val dataStore: DataStore<Preferences>
 ): DatastorePreferancesInterface {
 
     override suspend fun read(key: String): String? {
         val dataStoreKey = stringPreferencesKey(key)
-        val preferences = dataStore?.data?.first()
-        return preferences?.get(dataStoreKey)
+        val preferences = dataStore.data.first()
+        return preferences[dataStoreKey]
     }
 
-    override suspend fun edit(key: String) {
-        dataStore?.edit { settings ->
-            settings[stringPreferencesKey(name = "JWT")] = key
+    override suspend fun edit(key: String, value:String) {
+        dataStore.edit { settings ->
+            settings[stringPreferencesKey(name = key)] = value
         }
     }
 }

@@ -18,7 +18,7 @@ import com.tamaki.workerapp.data.viewModel.SignupViewModel
 import com.tamaki.workerapp.data.viewModel.WorkerViewModel
 import com.tamaki.workerapp.ui.theme.WorkerAppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import com.tamaki.workerapp.ui.screens.supervisor.supervisorHome.SupervisorViewModel
+import com.tamaki.workerapp.userPathways.Supervisor.UI.supervisorHome.SupervisorViewModel
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.NestedNavGraphDefaultAnimations

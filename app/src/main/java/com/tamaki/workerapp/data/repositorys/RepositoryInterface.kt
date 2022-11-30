@@ -5,9 +5,9 @@ import com.tamaki.workerapp.data.authResult
 import com.tamaki.workerapp.data.dataClasses.SupervisorSite
 import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
 import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequestWithIsSupervisor
-import com.tamaki.workerapp.data.dataClasses.supervisorDataClasses.SupervisorProfile
-import com.tamaki.workerapp.data.dataClasses.workerDataClasses.DriversLicence
-import com.tamaki.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
+import com.tamaki.workerapp.userPathways.Supervisor.supervisorDataClasses.SupervisorProfile
+import com.tamaki.workerapp.userPathways.Worker.workerDataClasses.DriversLicence
+import com.tamaki.workerapp.userPathways.Worker.workerDataClasses.WorkerProfile
 
 interface RepositoryInterface {
 

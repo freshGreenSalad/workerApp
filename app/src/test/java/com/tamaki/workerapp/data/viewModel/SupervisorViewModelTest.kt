@@ -2,13 +2,13 @@ package com.tamaki.workerapp.data.viewModel
 
 import com.google.common.truth.Truth.assertThat
 import com.tamaki.workerapp.data.MainDispatcherRule
-import com.tamaki.workerapp.data.dataClasses.supervisorDataClasses.SupervisorProfile
-import com.tamaki.workerapp.data.dataClasses.workerDataClasses.WorkerProfile
+import com.tamaki.workerapp.userPathways.Supervisor.supervisorDataClasses.SupervisorProfile
+import com.tamaki.workerapp.userPathways.Worker.workerDataClasses.WorkerProfile
 import com.tamaki.workerapp.data.dataStore.FakeDatastore
 import com.tamaki.workerapp.data.datastore.DatastoreInterface
 import com.tamaki.workerapp.data.repository.FakeRepository
 import com.tamaki.workerapp.data.repositorys.RepositoryInterface
-import com.tamaki.workerapp.ui.screens.supervisor.supervisorHome.SupervisorViewModel
+import com.tamaki.workerapp.userPathways.Supervisor.UI.supervisorHome.SupervisorViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before

@@ -4,5 +4,5 @@ interface DatastorePreferancesInterface {
 
     suspend fun read(key: String): String?
 
-    suspend fun edit(key: String)
+    suspend fun edit(key: String, value:String)
 }
