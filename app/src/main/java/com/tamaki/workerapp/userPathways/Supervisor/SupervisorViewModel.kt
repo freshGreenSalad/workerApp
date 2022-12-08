@@ -49,9 +49,6 @@ class SupervisorViewModel @Inject constructor(
         return repository.getWorkerDriversLicence(email)
     }
 
-    //aws functions --------------------------
-    //dynamodb functions
-
     suspend fun deleteAllFromDataStore() {
         dataStore.deleteAccount()
     }
@@ -141,6 +138,10 @@ class SupervisorViewModel @Inject constructor(
 
     fun onClickHomeBottomAppTab(tab: HomeBottomAppBarTabs) {
         selectedHomeBottomAppBarTab.value = tab
+    }
+
+    fun WorkerInWatchlist(email: String):Boolean{
+        return email in savedWorkers.value
     }
 }
 

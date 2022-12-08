@@ -25,11 +25,10 @@ class LoginAPICalls @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : signinAPIInterface {
 
-    override suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest): authResult<Boolean?> {
+    override suspend fun Login(profileLoginAuthRequest: ProfileLoginAuthRequest): authResult<Boolean?> {
         return try {
             val profileLoginAuthRequestJson =  Json.encodeToString(profileLoginAuthRequest)
-            val response = jsonclientfunctions().SendJsonViaRouteReturnBody(client,profileLoginAuthRequestJson ,
-                Routes.getWorkerSignupInfo)
+            val response = jsonclientfunctions().SendJsonViaRouteReturnBody(client,profileLoginAuthRequestJson , Routes.sendEmailPasswordGetJWT)
             val token = Json.decodeFromString<jwtTokinWithIsSupervisor>(response.body()).token
             DataStorePreferances(dataStore).edit("JWT", token)
             CheckAuthorisationResultAndSupervisorStatus(response)

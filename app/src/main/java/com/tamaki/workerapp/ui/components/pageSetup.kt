@@ -1,8 +1,10 @@
 package com.tamaki.workerapp.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,4 +55,18 @@ fun textFormatBetweenSections(text:String) {
     TextHeadingHomePage(text)
     LineDevider()
     Spacer(modifier = Modifier.height(10.dp))
+}
+
+@Composable
+fun ComposableThatSetsInitialScreenParameters(
+    composable: @Composable ()-> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        composable()
+    }
 }

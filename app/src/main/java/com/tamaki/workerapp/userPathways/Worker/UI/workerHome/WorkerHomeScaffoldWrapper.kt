@@ -1,9 +1,6 @@
 package com.tamaki.workerapp.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -20,45 +17,27 @@ import com.tamaki.workerapp.userPathways.Worker.UI.workerProfile.WorkerDrawer
 import com.tamaki.workerapp.userPathways.Worker.UI.workerProfile.WorkerHomeProfile
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.tamaki.workerapp.ui.components.FillMaxSizePaddingBox
 import kotlinx.coroutines.launch
-import kotlin.reflect.KSuspendFunction0
 
 @OptIn(ExperimentalMaterial3Api::class)
 @WorkerNavGraph(start = true)
 @Destination
 @Composable
 fun WorkerProfile(
-    viewmodel: WorkerViewModel,
+    viewModel: WorkerViewModel,
     navigator: DestinationsNavigator
 ) {
-    val viewState by viewmodel.state.collectAsState()
-    Box(modifier = Modifier.fillMaxSize()) {
-        workerProfileScaffold(
-            drawerState = viewState.drawerState,
-            navigator = navigator,
-            deleteFromDataStore = viewmodel::deleteAllFromDataStore,
-            deleteAccount = viewmodel::deleteAccount
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun workerProfileScaffold (
-    drawerState: DrawerState,
-    navigator: DestinationsNavigator,
-    deleteFromDataStore: KSuspendFunction0< Unit>,
-    deleteAccount: KSuspendFunction0< Unit>
-){
+    val viewState by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
-        drawerState = drawerState,
+        drawerState = viewState.drawerState,
         drawerContent = {
             WorkerDrawer(
                 navigator,
-                deleteFromDataStore,
-                closeDrawer = {scope.launch { drawerState.close() }},
-                deleteAccount = deleteAccount
+                viewModel::deleteAllFromDataStore,
+                closeDrawer = {scope.launch { viewState.drawerState.close() }},
+                deleteAccount = viewModel::deleteAccount
             )
         }
     ) {
@@ -69,17 +48,13 @@ fun workerProfileScaffold (
                     title = "Home",
                     openDrawer = {
                         scope.launch {
-                            drawerState.open()
+                            viewState.drawerState.open()
                         }
                     }
                 )
             },
             bottomBar = {},
-            content = {
-                Box(){
-                    WorkerHomeProfile(it, navigator)
-                }
-            }
+            content = { FillMaxSizePaddingBox(it) { WorkerHomeProfile(navigator)} }
         )
     }
 }

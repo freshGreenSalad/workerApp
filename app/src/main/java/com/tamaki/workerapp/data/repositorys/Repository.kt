@@ -35,7 +35,7 @@ class YourRepository @Inject constructor(
 
     override suspend fun postSupervisorSite(site: SupervisorSite):authResult<Unit> = SupervisorEndpoint.postSupervisorSite(site)
 
-    override suspend fun login(authRequest: ProfileLoginAuthRequest): authResult<Boolean?> = service.getauthtokin(authRequest)
+    override suspend fun login(authRequest: ProfileLoginAuthRequest): authResult<Boolean?> = service.Login(authRequest)
 
     override suspend fun getWorkerProfile(email:String):WorkerProfile = workerEnpoints.getWorkerProfile(email)
 

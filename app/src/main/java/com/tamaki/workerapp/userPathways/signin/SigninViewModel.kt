@@ -7,14 +7,13 @@ import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.tamaki.workerapp.data.authResult
 import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
 import com.tamaki.workerapp.data.repositorys.RepositoryInterface
-import com.tamaki.workerapp.destinations.MainHolderComposableDestination
+import com.tamaki.workerapp.destinations.SupervisorHomeScaffoldDestination
 import com.tamaki.workerapp.destinations.WorkerProfileDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -94,7 +93,7 @@ class SigninViewModel @Inject constructor(
     private fun checkLoginResultForSupervisorOrWorkerAccount(result: authResult<Boolean?>, navigator: DestinationsNavigator){
         when (result.data) {
             true -> {
-                navigator.navigate(MainHolderComposableDestination)
+                navigator.navigate(SupervisorHomeScaffoldDestination)
             }
             false -> {
                 navigator.navigate(WorkerProfileDestination)

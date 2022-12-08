@@ -34,9 +34,9 @@ class SignupAPI @Inject constructor(
 
     override suspend fun postProfileAuth(profileLoginAuthRequest: ProfileLoginAuthRequestWithIsSupervisor): authResult<Unit> {
         return try {
-            profileLoginAuthRequestValidation(profileLoginAuthRequest)
+            emailPasswordStringValidation(profileLoginAuthRequest)
             val jsonProfileLoginAuthRequest = Json.encodeToString(profileLoginAuthRequest)
-            val jWT = sendloginInformationReturnJWT(client, jsonProfileLoginAuthRequest, Routes.putWorkerSignupInfo)
+            val jWT = sendloginInformationReturnJWT(client, jsonProfileLoginAuthRequest, Routes.sendEmailPasswordGetJWT)
             DataStorePreferances(dataStore).edit("JWT", Json.decodeFromString<jwtTokinWithIsSupervisor>(jWT).token)
             authResult.authorised()
         } catch (e: Exception) {
@@ -44,7 +44,7 @@ class SignupAPI @Inject constructor(
         }
     }
 
-    fun profileLoginAuthRequestValidation(profileLoginAuthRequest: ProfileLoginAuthRequestWithIsSupervisor) {
+    private fun emailPasswordStringValidation(profileLoginAuthRequest: ProfileLoginAuthRequestWithIsSupervisor) {
         if (!profileLoginAuthRequest.email.isEmailValid()) {
             throw Exception("email not valid")
         }
@@ -53,7 +53,7 @@ class SignupAPI @Inject constructor(
         }
     }
 
-    suspend fun sendloginInformationReturnJWT(client: HttpClient, json: String, Route:String): String {
+    private suspend fun sendloginInformationReturnJWT(client: HttpClient, json: String, Route:String): String {
         return client.post(Route) {
             contentType(ContentType.Application.Json)
             setBody(json)

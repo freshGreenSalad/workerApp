@@ -24,7 +24,11 @@ class WorkerAPICalls @Inject constructor(
     override suspend fun postWorkerProfile(personalProfile: WorkerProfile): authResult<Unit> {
         return try {
             val personalProfileJson = Json.encodeToString(personalProfile)
-            jsonclientfunctions().SendJsonViaRoute(client, personalProfileJson, Routes.putWorkerPersonalData)
+            jsonclientfunctions().SendJsonViaRoute(
+                client = client,
+                json = personalProfileJson,
+                Route = Routes.WorkerPersonalData
+            )
             authResult.authorised()
         } catch (e: Exception) {
             authResult.unauthorised()
@@ -34,7 +38,11 @@ class WorkerAPICalls @Inject constructor(
     override suspend fun postWorkerDriversLicence(licence: DriversLicence): authResult<Unit> {
         return try {
             val licenceJson = Json.encodeToString(licence)
-            jsonclientfunctions().SendJsonViaRoute(client, licenceJson, Routes.putWorkerDriversLicence)
+            jsonclientfunctions().SendJsonViaRoute(
+                client = client,
+                json = licenceJson,
+                Route = Routes.WorkerDriversLicence
+            )
             authResult.authorised()
         } catch (e: Exception) {
             authResult.unauthorised()
@@ -44,7 +52,7 @@ class WorkerAPICalls @Inject constructor(
     override suspend fun getWorkerProfile(email: String): WorkerProfile {
         val jwt = DataStorePreferances(dataStore).read("JWT")!!
         return try{
-            val workerProfileJson = jsonclientfunctions().getHttpResponseWithRawEmail(client,email, jwt, Routes.getWorkerPersonalData)
+            val workerProfileJson = jsonclientfunctions().getHttpResponseWithRawEmail(client,email, jwt, Routes.WorkerPersonalData)
             Json.decodeFromString(workerProfileJson)
         } catch (e: Exception) {
             workerProfileFail
@@ -54,7 +62,7 @@ class WorkerAPICalls @Inject constructor(
     override suspend fun getWorkerDriversLicence(email: String): DriversLicence {
         val jwt = DataStorePreferances(dataStore).read("JWT")!!
         return try {
-            val driversLicenceJason = jsonclientfunctions().getHttpResponseWithRawEmail(client,email, jwt, Routes.getWorkerDriversLicence)
+            val driversLicenceJason = jsonclientfunctions().getHttpResponseWithRawEmail(client,email, jwt, Routes.WorkerDriversLicence)
             Json.decodeFromString(driversLicenceJason)
         } catch (e: Exception) {
             licenceFail

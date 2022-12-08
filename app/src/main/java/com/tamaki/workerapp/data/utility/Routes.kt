@@ -10,25 +10,19 @@ object Routes {
 
     const val presignPutRequest = baseUrl + "s3PresignPut"
 
-    const val putWorkerSignupInfo = baseUrl + "putWorkerSignupInfo"
+    const val WorkerSignupInfo = baseUrl + "WorkerSignupInfo"
 
-    const val putWorkerPersonalData = baseUrl + "putWorkerPersonalData"
+    const val WorkerPersonalData = baseUrl + "WorkerPersonalData"
 
-    const val putWorkerDriversLicence = baseUrl + "putWorkerDriversLicence"
+    const val WorkerDriversLicence = baseUrl + "WorkerDriversLicence"
 
-    const val getWorkerSignupInfo = baseUrl + "getWorkerSignupAuth"
-
-    const val getWorkerPersonalData = baseUrl + "getWorkerPersonalData"
-
-    const val getWorkerDriversLicence = baseUrl + "getWorkerDriversLicence"
+    const val sendEmailPasswordGetJWT = baseUrl + "login"
 
     const val deleteWorkerAccount = baseUrl + "deleteAccount"
 
-    const val putSupervisorSiteInfo = baseUrl + "putSupervisorSiteInfo"
+    const val SupervisorSiteInfo = baseUrl + "SupervisorSiteInfo"
 
-    const val putSupervisorPersonalData = baseUrl + "putSupervisorPersonalData"
-
-    const val getSupervisorPersonalData = baseUrl + "getSupervisorPersonalData"
+    const val SupervisorPersonalData = baseUrl + "SupervisorPersonalData"
 
     const val getListOfWorkerAccounts = baseUrl + "getListOfWorkerAccounts"
 

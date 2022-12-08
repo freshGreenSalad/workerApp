@@ -1,73 +1,72 @@
 package com.tamaki.workerapp.userPathways.Supervisor.UI.supervisorHome.homeUIScafoldItems
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import com.tamaki.workerapp.userPathways.Supervisor.UI.supervisorHome.HomeBottomAppBarTabs
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.tamaki.workerapp.userPathways.Supervisor.UI.supervisorHome.SupervisorViewModel
 
 
 @Composable
 fun BottomAppBarHomePage(
-    selectedItem: HomeBottomAppBarTabs,
-    onclick: (HomeBottomAppBarTabs) -> Unit,
-    homeAppBarTabs: List<HomeBottomAppBarTabs>,
-    ListOfSavedWorkers: MutableList<String>
+    viewmodel:SupervisorViewModel
 ) {
-    val titles = homeAppBarTabs.map { it.name }
+    val state by viewmodel.state.collectAsState()
+    val titles = state.homeAppBarTabs.map { it.name }
     NavigationBar()
     {
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Filled.Home,
-                    contentDescription = titles[0]
-                )
-            },
-            label = { Text(titles[0]) },
-            selected = titles[0] == selectedItem.toString(),
-            onClick = { onclick(homeAppBarTabs[0]) },
-        )
-        NavigationBarItem(
-            icon = {
-                if (ListOfSavedWorkers.size > 0) {
-                    BadgedBox(
-                        badge = {
-                            Badge(
-                                content = { Text(ListOfSavedWorkers.size.toString()) },
-                                containerColor = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        content = {
-                            Icon(
-                                imageVector = Icons.Filled.Favorite,
-                                contentDescription = titles[1]
-                            )
-                        }
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Filled.Favorite,
-                        contentDescription = titles[1]
-                    )
-                }
-            },
-            label = { Text(titles[1]) },
-            selected = titles[1] == selectedItem.toString(),
-            onClick = { onclick(homeAppBarTabs[1]) },
-        )
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = titles[2]
-                )
-            },
-            label = { Text(titles[2]) },
-            selected = titles[2] == selectedItem.toString(),
-            onClick = { onclick(homeAppBarTabs[2]) },
-        )
+        SupervisorBottomAppBarNavItem(viewmodel,0,{IconBottomAppBar(Icons.Filled.Home, titles, 0)})
+        SupervisorBottomAppBarNavItem(viewmodel,1,{HeartIconwithcounter(viewmodel)})
+        SupervisorBottomAppBarNavItem(viewmodel,2,{IconBottomAppBar(Icons.Filled.Search, titles, 2)})
     }
+}
+
+@Composable
+private fun HeartIconwithcounter(viewmodel: SupervisorViewModel) {
+    val state by viewmodel.state.collectAsState()
+    val titles = state.homeAppBarTabs.map { it.name }
+    if (state.savedWorkers.size > 0) {
+        BadgedBox(
+            badge = {
+                Badge(
+                    content = { Text(state.savedWorkers.size.toString()) },
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            },
+            content = {
+                Icon(
+                    imageVector = Icons.Filled.Favorite,
+                    contentDescription = titles[1]
+                )
+            }
+        )
+    } else {
+        Icon(imageVector = Icons.Filled.Favorite, contentDescription = titles[1])
+    }
+}
+
+@Composable
+private fun RowScope.SupervisorBottomAppBarNavItem( viewmodel: SupervisorViewModel, num:Int, icon:@Composable ()->Unit) {
+    val state by viewmodel.state.collectAsState()
+    val titles = state.homeAppBarTabs.map { it.name }
+    NavigationBarItem(
+        icon = {},
+        label = { Text(titles[num]) },
+        selected = titles[num] == state.selectedHomeBarTab.name,
+        onClick = { (viewmodel::onClickHomeBottomAppTab)(state.homeAppBarTabs[num]) },
+    )
+}
+
+@Composable
+private fun IconBottomAppBar(icon: ImageVector, titles: List<String>, num: Int) {
+    Icon(
+        imageVector = icon,
+        contentDescription = titles[num]
+    )
 }

@@ -26,7 +26,7 @@ class SupervisorAPICalls @Inject constructor(
     override suspend fun postSupervisorProfile(supervisorProfile: SupervisorProfile): authResult<Unit> {
         return try {
             val supervisorProfileJson = Json.encodeToString(supervisorProfile)
-            jsonclientfunctions().SendJsonViaRoute(client, supervisorProfileJson, Routes.putSupervisorPersonalData)
+            jsonclientfunctions().SendJsonViaRoute(client, supervisorProfileJson, Routes.SupervisorPersonalData)
             authResult.authorised()
         } catch (e: Exception) {
             authResult.unauthorised()
@@ -36,7 +36,7 @@ class SupervisorAPICalls @Inject constructor(
     override suspend fun postSupervisorSite(site: SupervisorSite): authResult<Unit> {
         return try {
             val siteJson = Json.encodeToString(site)
-            jsonclientfunctions().SendJsonViaRoute(client, siteJson, Routes.putSupervisorSiteInfo)
+            jsonclientfunctions().SendJsonViaRoute(client, siteJson, Routes.SupervisorSiteInfo)
             authResult.authorised()
         } catch (e: Exception) {
             authResult.unauthorised()
@@ -46,7 +46,7 @@ class SupervisorAPICalls @Inject constructor(
     override suspend fun getSupervisorProfile(): SupervisorProfile {
         val jwt = DataStorePreferances(dataStore).read("JWT")!!
         return try {
-            val response = client.get(Routes.getSupervisorPersonalData) { bearerAuth(jwt) }
+            val response = client.get(Routes.SupervisorPersonalData) { bearerAuth(jwt) }
             Json.decodeFromString(response.body())
         } catch (e: Exception) {
             supervisorProfileFail

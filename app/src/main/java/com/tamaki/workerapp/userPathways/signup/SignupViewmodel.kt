@@ -28,7 +28,7 @@ import com.tamaki.workerapp.data.dataClasses.general.Location
 import com.tamaki.workerapp.userPathways.Supervisor.supervisorDataClasses.SupervisorProfile
 import com.tamaki.workerapp.userPathways.Worker.workerDataClasses.DriversLicence
 import com.tamaki.workerapp.userPathways.Worker.workerDataClasses.WorkerProfile
-import com.tamaki.workerapp.destinations.MainHolderComposableDestination
+import com.tamaki.workerapp.destinations.SupervisorHomeScaffoldDestination
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
@@ -502,7 +502,7 @@ class SignupViewModel @Inject constructor(
         context: Context
     ) {
         when (result) {
-            is authResult.authorised<Unit> -> navigator.navigate(MainHolderComposableDestination)
+            is authResult.authorised<Unit> -> navigator.navigate(SupervisorHomeScaffoldDestination)
             is authResult.unauthorised<Unit> -> {
                 Toast.makeText(context, "profile not created", Toast.LENGTH_LONG).show()
             }

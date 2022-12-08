@@ -7,7 +7,7 @@ import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequestWithIsS
 
 interface signinAPIInterface {
 
-    suspend fun getauthtokin(profileLoginAuthRequest: ProfileLoginAuthRequest): authResult<Boolean?>
+    suspend fun Login(profileLoginAuthRequest: ProfileLoginAuthRequest): authResult<Boolean?>
 
     suspend fun deleteAccount()
 }

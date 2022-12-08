@@ -31,9 +31,7 @@ fun HireScafold(
         drawerContent = {
             MainDrawer(
                 navigator = navigator,
-                deleteFromDataStore = viewModel::deleteAllFromDataStore,
-                closeDrawer = {scope.launch { drawerState.close() }},
-                deleteAccount = viewModel::deleteAccount
+                viewModel = viewModel
             )
         }
     ) {

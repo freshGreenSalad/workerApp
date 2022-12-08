@@ -11,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
@@ -24,56 +23,22 @@ import androidx.compose.ui.unit.dp
 import com.tamaki.workerapp.R
 import com.tamaki.workerapp.data.dataClasses.JobSite
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.tamaki.workerapp.ui.components.LargeTransperentText
+import com.tamaki.workerapp.ui.components.textFormatBetweenSections
 
 @Composable
 fun WorkerHomeProfile(
-    paddingValues: PaddingValues,
     navagator: DestinationsNavigator
 ) {
     val jobSite = JobSite("ardmore watercare treatment plant","8 ardmore road","03/10/22","Geoff de vries")
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues)
     ) {
-
         item {
-            Text(
-                modifier = Modifier.padding(10.dp),
-                style = MaterialTheme.typography.bodyLarge,
-                text = "Your Stats"
-            )
-        }
-        item {
-            Divider(
-                modifier = Modifier
-                    .padding(end = 30.dp)
-                    .fillMaxWidth()
-                    .height(2.dp)
-            )
-        }
-        item {
-            Spacer(modifier = Modifier.height(10.dp))
-        }
-        item {
+            textFormatBetweenSections("Your Stats")
             WorkerHomeProfileLazyRow(navagator = navagator)
-        }
-        item {
-            Text(
-                modifier = Modifier.padding(10.dp),
-                style = MaterialTheme.typography.bodyLarge,
-                text = "Current Job"
-            )
-        }
-        item {
-            Divider(
-                modifier = Modifier
-                    .padding(end = 30.dp)
-                    .fillMaxWidth()
-                    .height(2.dp)
-            )
-        }
-        item{
+            textFormatBetweenSections("Current Job")
             CurrentJob(jobSite)
         }
     }
@@ -95,27 +60,13 @@ fun CurrentJob(
 
             )
             .size(width = 400.dp, height = 180.dp)
-            .clickable {
-
-            },
+            .clickable {},
         shadowElevation = 20.dp,
     ) {
         Column() {
-            Text(
-                text = jobSite.name,
-                modifier = Modifier.padding(4.dp).alpha(0.5f),
-                style = MaterialTheme.typography.headlineSmall
-            )
-            Text(
-                text = jobSite.supervisor,
-                modifier = Modifier.padding(4.dp).alpha(0.5f),
-                style = MaterialTheme.typography.headlineSmall
-            )
-            Text(
-                text = jobSite.address,
-                modifier = Modifier.padding(4.dp).alpha(0.5f),
-                style = MaterialTheme.typography.headlineSmall
-            )
+            LargeTransperentText(jobSite.name)
+            LargeTransperentText(jobSite.supervisor)
+            LargeTransperentText(jobSite.address)
         }
     }
 }
