@@ -17,12 +17,12 @@ fun WorkerSignupCamera (
     navigator: DestinationsNavigator,
     viewModel: SignupViewModel
 ){
-    val viewStateCamera by viewModel.stateCamera.collectAsState()
+    val state by viewModel.stateLogin.collectAsState()
 
     ProfileCamera(
-        shouldShowPhoto = viewStateCamera.shouldShowPhoto,
-        shouldShowCamera = viewStateCamera.shouldShowCamera,
-        photoUri = viewStateCamera.photoUri,
+        shouldShowPhoto = state.shouldShowPhoto,
+        shouldShowCamera = state.shouldShowCamera,
+        photoUri = state.photoUri,
         shouldShowPho = viewModel::shouldshowPho,
         shouldShowCam = viewModel::shouldshowcam,
         updatePhotoURI = viewModel::updatePhotoURI,

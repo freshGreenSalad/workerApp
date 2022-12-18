@@ -27,6 +27,14 @@ class jsonclientfunctions {
         }
     }
 
+    suspend fun SendJsonViaRouteReturnHttpStatus(client: HttpClient, json: String, Route:String,):HttpStatusCode {
+        return client.post(Route) {
+                contentType(ContentType.Application.Json)
+                setBody(json)
+            }.status
+
+    }
+
     suspend fun getHttpResponseWithRawEmail(client: HttpClient, Route: String, email: String, jwt: String?): String {
         val response = client.post(Route) {
             contentType(ContentType.Application.Json)

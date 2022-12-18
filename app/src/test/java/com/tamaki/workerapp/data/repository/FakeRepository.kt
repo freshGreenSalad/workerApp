@@ -4,7 +4,7 @@ import android.net.Uri
 import com.tamaki.workerapp.data.authResult
 import com.tamaki.workerapp.data.dataClasses.SupervisorSite
 import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
-import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequestWithIsSupervisor
+import com.tamaki.workerapp.data.dataClasses.auth.EmailPasswordIsSupervisorPushId
 import com.tamaki.workerapp.userPathways.Supervisor.supervisorDataClasses.SupervisorProfile
 import com.tamaki.workerapp.userPathways.Worker.workerDataClasses.DriversLicence
 import com.tamaki.workerapp.userPathways.Worker.workerDataClasses.WorkerProfile
@@ -20,7 +20,7 @@ class FakeRepository: RepositoryInterface {
         return ""
     }
 
-    override suspend fun postAuthProfile(profileLoginAuthRequest: ProfileLoginAuthRequestWithIsSupervisor): authResult<Unit> {
+    override suspend fun postAuthProfile(profileLoginAuthRequest: EmailPasswordIsSupervisorPushId): authResult<Unit> {
         return authResult.authorised()
     }
 

@@ -32,7 +32,10 @@ fun WorkerCard(
 ) {
     val inWatchlist = (viewModel::WorkerInWatchlist)(worker.email)
     Surface(
-        onClick = { navigator.navigate(WorkerPageDestination(worker,)) },
+        onClick = {
+            (viewModel::setCurrentSelectedWorker)(worker)
+            navigator.navigate(WorkerPageDestination(worker,))
+                  },
         shape = if (inWatchlist) { WorkerCardShape(40f) } else { RoundedCornerShape(15.dp) },
         color = MaterialTheme.colorScheme.surface,
         modifier = Modifier

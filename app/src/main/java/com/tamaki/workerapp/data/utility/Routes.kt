@@ -6,7 +6,7 @@ object Routes {
     //home
     //private const val baseUrl = "http://192.168.1.151:8080/"
     //nat and stus
-    private const val baseUrl = "http://192.168.68.106:8080/"
+    private const val baseUrl = "http://192.168.1.151:8080/"
 
     const val presignPutRequest = baseUrl + "s3PresignPut"
 
@@ -16,7 +16,7 @@ object Routes {
 
     const val WorkerDriversLicence = baseUrl + "WorkerDriversLicence"
 
-    const val sendEmailPasswordGetJWT = baseUrl + "login"
+    const val sendEmailPasswordGetJWT = baseUrl + "SignupInfo"
 
     const val deleteWorkerAccount = baseUrl + "deleteAccount"
 
@@ -26,4 +26,11 @@ object Routes {
 
     const val getListOfWorkerAccounts = baseUrl + "getListOfWorkerAccounts"
 
+    const val hireWorker = baseUrl + "hireWorker"
+
+    const val SearchForWorkers = baseUrl + "SearchForWorkers"
+
+    const val WorkerExperience = baseUrl + "WorkerExperience"
+
+    const val sendnotification = baseUrl + ""
 }

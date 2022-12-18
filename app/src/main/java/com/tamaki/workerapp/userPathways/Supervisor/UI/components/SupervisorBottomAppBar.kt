@@ -56,7 +56,7 @@ private fun RowScope.SupervisorBottomAppBarNavItem( viewmodel: SupervisorViewMod
     val state by viewmodel.state.collectAsState()
     val titles = state.homeAppBarTabs.map { it.name }
     NavigationBarItem(
-        icon = {},
+        icon = {icon},
         label = { Text(titles[num]) },
         selected = titles[num] == state.selectedHomeBarTab.name,
         onClick = { (viewmodel::onClickHomeBottomAppTab)(state.homeAppBarTabs[num]) },

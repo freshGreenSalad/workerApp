@@ -17,15 +17,15 @@ fun SupervisorSignupCamera (
     navigator: DestinationsNavigator,
     viewModel: SignupViewModel
 ){
-    val viewStateCamera by viewModel.stateSupervisorCamera.collectAsState()
+    val state by viewModel.stateLogin.collectAsState()
 
     ProfileCamera(
-        shouldShowPhoto = viewStateCamera.shouldShowPhoto,
-        shouldShowCamera = viewStateCamera.shouldShowCamera,
-        photoUri = viewStateCamera.photoUri,
-        shouldShowPho = viewModel::shouldshowSupervisorPho,
-        shouldShowCam = viewModel::shouldshowSupervisorcam,
-        updatePhotoURI = viewModel::updateSupervisorPhotoURI,
+        shouldShowPhoto = state.shouldShowPhoto,
+        shouldShowCamera = state.shouldShowCamera,
+        photoUri = state.photoUri,
+        shouldShowPho = viewModel::shouldshowPho,
+        shouldShowCam = viewModel::shouldshowcam,
+        updatePhotoURI = viewModel::updatePhotoURI,
         navigator = navigator,
         destination = SupervisorSignupScaffoldDestination
     )

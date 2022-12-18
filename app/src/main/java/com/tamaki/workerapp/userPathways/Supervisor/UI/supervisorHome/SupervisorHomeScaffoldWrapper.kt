@@ -60,7 +60,7 @@ fun SupervisorHomeScaffold(
                                 )
                             }
                             HomeBottomAppBarTabs.Search -> {
-                                WorkerSearch()
+                                WorkerSearch(viewModel)
                             }
                             HomeBottomAppBarTabs.Watchlisted -> {
                                 SavedWorkers(

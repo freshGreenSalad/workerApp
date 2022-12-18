@@ -18,6 +18,12 @@ import com.tamaki.workerapp.userPathways.Worker.workerDataClasses.DriversLicence
 import com.tamaki.workerapp.userPathways.Worker.workerDataClasses.WorkerProfile
 import com.tamaki.workerapp.data.datastore.DatastoreInterface
 import com.tamaki.workerapp.data.repositorys.RepositoryInterface
+import com.tamaki.workerapp.data.utility.Combine
+import com.tamaki.workerapp.userPathways.Supervisor.supervisorDataClasses.SuccessStatus
+import com.tamaki.workerapp.userPathways.Supervisor.supervisorDataClasses.WorkerDate
+import com.tamaki.workerapp.userPathways.Supervisor.supervisorDataClasses.WorkerSearchQuery
+import com.tamaki.workerapp.userPathways.Supervisor.SupervisorRepository
+import kotlinx.coroutines.channels.Channel
 
 val Context.dataStore by preferencesDataStore("user_preferences")
 
@@ -25,35 +31,55 @@ val Context.dataStore by preferencesDataStore("user_preferences")
 @HiltViewModel
 class SupervisorViewModel @Inject constructor(
     private val repository: RepositoryInterface,
-    private val dataStore: DatastoreInterface
+    private val dataStore: DatastoreInterface,
+    private val supervisorRepository: SupervisorRepository
 ) : ViewModel() {
 
-    suspend fun getSupervisorProfile(): SupervisorProfile {
-        return repository.getSupervisorProfile()
+    fun hireWorker() {
+        val dateToBeginWork = date.value
+        val workerEmail = currentSelectedWorker.value.email
+        viewModelScope.launch {
+            updateHireWorkerSuccessStatus(
+                supervisorRepository.hireWorker(
+                    workerEmail,
+                    dateToBeginWork
+                )
+            )
+        }
     }
 
-    suspend fun getListOfWorkerAccountsForSupervisor(): List<WorkerProfile> {
-        val list = repository.getListOfWorkerAccountsForSupervisor()
-        return list
-    }
+    suspend fun updateHireWorkerSuccessStatus(status: SuccessStatus) = HireChannel.send(status)
 
-    suspend fun getWorkerByEmail(email: String): WorkerProfile {
-        return repository.getWorkerProfile(email)
-    }
+    suspend fun getSupervisorProfile(): SupervisorProfile = repository.getSupervisorProfile()
 
-    suspend fun deleteAccount() {
-        repository.deleteAccount()
-    }
+    suspend fun getListOfWorkerAccountsForSupervisor(): List<WorkerProfile> = repository.getListOfWorkerAccountsForSupervisor()
 
-    suspend fun getWorkerDriversLicence(email: String): DriversLicence {
-        return repository.getWorkerDriversLicence(email)
-    }
+    suspend fun getWorkerByEmail(email: String): WorkerProfile = repository.getWorkerProfile(email)
 
-    suspend fun deleteAllFromDataStore() {
-        dataStore.deleteAccount()
-    }
+    suspend fun deleteAccount() = repository.deleteAccount()
 
-    //---------------------------------------------------------------------------------------------------------
+    suspend fun getWorkerDriversLicence(email: String): DriversLicence = repository.getWorkerDriversLicence(email)
+
+    suspend fun deleteAllFromDataStore() = dataStore.deleteAccount()
+
+    suspend fun getListOfHiredWorkers(): List<WorkerProfile> =
+        supervisorRepository.getListOfHiredWorkers()
+
+    fun searchForWorkers() {
+        viewModelScope.launch {
+            val searchQuery = WorkerSearchQuery(
+                lowerBound = range.value.start.toInt(),
+                upperBound = range.value.endInclusive.toInt(),
+                experience = experience.value
+            )
+            searchedForWorkerList.value =
+                supervisorRepository.searchForWorker(searchQuery).toMutableStateList()
+        }
+    }
+    private val HireChannel = Channel<SuccessStatus>()
+
+    val HireChannelStatus = HireChannel.receiveAsFlow()
+
     private val _state = MutableStateFlow(HomeViewState())
 
     val state: StateFlow<HomeViewState>
@@ -71,31 +97,61 @@ class SupervisorViewModel @Inject constructor(
 
     private val workerListSize = MutableStateFlow(0)
 
-    init {
-        viewModelScope.launch {
-            val list = getListOfWorkerAccountsForSupervisor()
-            workerListSize.value = list.size
-            workerList.value = list.toMutableStateList()
-        }
-    }
+    private val hiredWorkerList = MutableStateFlow(mutableStateListOf<WorkerProfile>())
+
+    private val hiredWorkerListSize = MutableStateFlow(0)
+
+    private val currentSelectedWorker = MutableStateFlow(WorkerProfile("", "", "", "", 45))
+
+    private val date = MutableStateFlow(WorkerDate(0, 0, 0))
+
+    private val searchedForWorkerList = MutableStateFlow(mutableStateListOf<WorkerProfile>())
+
+    private val range = MutableStateFlow(0f..10f)
+
+    private val experience = MutableStateFlow("")
 
     init {
         viewModelScope.launch {
-            combine(
+            val displayListOfWorkers = getListOfWorkerAccountsForSupervisor()
+            workerListSize.value = displayListOfWorkers.size
+            workerList.value = displayListOfWorkers.toMutableStateList()
+
+            val listOfHiredWorkers = getListOfHiredWorkers()
+            hiredWorkerListSize.value = listOfHiredWorkers.size
+            hiredWorkerList.value = listOfHiredWorkers.toMutableStateList()
+
+            Combine().thirteen(
                 homeBottomAppBarTabs,
                 selectedHomeBottomAppBarTab,
                 drawerState,
                 savedWorkers,
                 workerList,
-                workerListSize
-            ) { homeBottomAppBarTabs, SelectedHomeBottomAppBarTab, drawerState, savedWorkers, _workerList, _workerListSize ->
+                workerListSize,
+                currentSelectedWorker,
+                date,
+                hiredWorkerListSize,
+                hiredWorkerList,
+                range,
+                experience,
+                searchedForWorkerList
+            ) { homeBottomAppBarTabs, SelectedHomeBottomAppBarTab, drawerState,
+                savedWorkers, _workerList, _workerListSize, currentSelectedWorker,
+                date, hiredWorkerListSize, hiredWorkerList, range,experience,searchedForWorkerList  ->
                 HomeViewState(
                     homeAppBarTabs = homeBottomAppBarTabs,
                     selectedHomeBarTab = SelectedHomeBottomAppBarTab,
                     drawerState = drawerState,
                     savedWorkers = savedWorkers,
                     workerList = _workerList,
-                    workerListSize = _workerListSize
+                    workerListSize = _workerListSize,
+                    currentSelectedWorker = currentSelectedWorker,
+                    date = date,
+                    hiredWorkerListSize = hiredWorkerListSize,
+                    hiredWorkerList = hiredWorkerList,
+                    range = range,
+                    experience = experience,
+                    searchedForWorkerList = searchedForWorkerList
                 )
             }.catch { throwable ->
                 // TODO: emit a UI error here. For now we'll just rethrow
@@ -106,52 +162,43 @@ class SupervisorViewModel @Inject constructor(
         }
     }
 
-    fun <T1, T2, T3, T4, T5, T6, R> combine(
-        flow: Flow<T1>,
-        flow2: Flow<T2>,
-        flow3: Flow<T3>,
-        flow4: Flow<T4>,
-        flow5: Flow<T5>,
-        flow6: Flow<T6>,
-        transform: suspend (T1, T2, T3, T4, T5, T6) -> R
-    ): Flow<R> = combine(
-        combine(flow, flow2, flow3, ::Triple),
-        combine(flow4, flow5, flow6, ::Triple),
-    ) { t1, t2 ->
-        transform(
-            t1.first,
-            t1.second,
-            t1.third,
-            t2.first,
-            t2.second,
-            t2.third,
-        )
-    }
+    fun removeFromWatchlist(email: String) = savedWorkers.value.remove(email)
 
-    fun removeFromWatchlist(email: String) {
-        savedWorkers.value.remove(email)
-    }
-
-    fun addToWatchList(email: String) {
-        savedWorkers.value.add(email)
-    }
+    fun addToWatchList(email: String) = savedWorkers.value.add(email)
 
     fun onClickHomeBottomAppTab(tab: HomeBottomAppBarTabs) {
         selectedHomeBottomAppBarTab.value = tab
     }
 
-    fun WorkerInWatchlist(email: String):Boolean{
-        return email in savedWorkers.value
+    fun WorkerInWatchlist(email: String): Boolean = email in savedWorkers.value
+
+    fun setCurrentSelectedWorker(WorkerProfile: WorkerProfile) {
+        currentSelectedWorker.value = WorkerProfile
     }
+
+    fun updateChosenDate(day:Int, month:Int, year:Int){
+        date.value = WorkerDate(day = day, month = month, year = year)
+    }
+    fun updateRange(newRange:ClosedFloatingPointRange<Float>){
+        range.value = newRange
+    }
+
 }
 
 data class HomeViewState @OptIn(ExperimentalMaterial3Api::class) constructor(
-    val homeAppBarTabs: List<HomeBottomAppBarTabs> = emptyList(),
+    val homeAppBarTabs: List<HomeBottomAppBarTabs> = HomeBottomAppBarTabs.values().asList(),
     val selectedHomeBarTab: HomeBottomAppBarTabs = HomeBottomAppBarTabs.Home,
     val drawerState: DrawerState = DrawerState(initialValue = Closed),
     val savedWorkers: MutableList<String> = mutableListOf(),
     val workerList: List<WorkerProfile> = mutableListOf(),
-    val workerListSize: Int = 0
+    val workerListSize: Int = 0,
+    val currentSelectedWorker: WorkerProfile = WorkerProfile("","","","",45),
+    val date: WorkerDate = WorkerDate(0,0,0),
+    val hiredWorkerListSize: Int = 0,
+    val hiredWorkerList:List<WorkerProfile> = emptyList(),
+    val range:ClosedFloatingPointRange<Float> = 0f..10f,
+    val experience: String = "",
+    val searchedForWorkerList: List<WorkerProfile> = emptyList()
 )
 
 enum class HomeBottomAppBarTabs {

@@ -27,7 +27,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.tamaki.workerapp.ui.components.StandardButton
 import com.tamaki.workerapp.ui.components.StandardOnPrimaryTextHeading
-import com.tamaki.workerapp.ui.components.StandardPrimaryTextHeading
 import com.tamaki.workerapp.ui.components.TextFieldWithKeyboardActions
 import kotlinx.coroutines.launch
 
@@ -39,7 +38,7 @@ fun Signup(
     navigate: DestinationsNavigator
 ) {
 
-    val viewState by viewModel.state.collectAsState()
+    val state by viewModel.stateLogin.collectAsState()
 
     val scope = rememberCoroutineScope()
 
@@ -47,7 +46,7 @@ fun Signup(
 
     LaunchedEffect(viewModel, context) {
         viewModel.authResults.collect { result ->
-            beginAccountCreation(result, navigate, viewState.isSupervisor, context)
+            beginAccountCreation(result, navigate, state.isSupervisor, context)
         }
     }
 
@@ -56,15 +55,15 @@ fun Signup(
         contentAlignment = Alignment.Center
     ) {
         Column {
-            ButtonWithTickIfTrue(true, isSupervisorState = viewState.isSupervisor, text = "Supervisor", function = {(viewModel::updateIsSupervisor)(true)})
+            ButtonWithTickIfTrue(true, isSupervisorState = state.isSupervisor, text = "Supervisor", function = {(viewModel::updateIsSupervisor)(true)})
             Spacer(modifier = Modifier.height(15.dp))
-            ButtonWithTickIfTrue(false,isSupervisorState = viewState.isSupervisor, text = "Worker", function = {(viewModel::updateIsSupervisor)(false)})
+            ButtonWithTickIfTrue(false,isSupervisorState = state.isSupervisor, text = "Worker", function = {(viewModel::updateIsSupervisor)(false)})
             Spacer(modifier = Modifier.height(15.dp))
-            TextFieldWithKeyboardActions("Email",viewModel::updateEmail,viewState.email)
+            TextFieldWithKeyboardActions("Email",viewModel::updateEmail,state.email)
             Spacer(modifier = Modifier.height(15.dp))
-            TextFieldWithKeyboardActions("Password",viewModel::updatePassword,viewState.password)
+            TextFieldWithKeyboardActions("Password",viewModel::updatePassword,state.password)
             Spacer(modifier = Modifier.height(15.dp))
-            StandardButton("Sign up") { scope.launch { (viewModel::postAuthProfile)() }
+            StandardButton("Sign up") { scope.launch { (viewModel::postEmailPasswordIsSupervisor)() }
             }
         }
     }

@@ -25,20 +25,18 @@ fun BasicInformation(
         }
     )
 
-    val viewState by viewModel.stateName.collectAsState()
-
-    val cameraState by viewModel.stateCamera.collectAsState()
+    val State by viewModel.stateLogin.collectAsState()
 
     LazyColumnOfOrganisedComposables() {
         StandardPrimaryTextHeading("Basic Information")
         Spacer(modifier = Modifier.height(15.dp))
-        TextFieldWithKeyboardActions("Firstname",viewModel::updateWorkerFirstname,viewState.firstname)
+        TextFieldWithKeyboardActions("Firstname",viewModel::updateFirstname,State.firstname)
         Spacer(modifier = Modifier.height(15.dp))
-        TextFieldWithKeyboardActions("Lastname",viewModel::updateWorkerLastname,viewState.lastname)
+        TextFieldWithKeyboardActions("Lastname",viewModel::updateLastname,State.lastname)
         Spacer(modifier = Modifier.height(15.dp))
         StandardButton("Take A Photo of Yourself!", { navigator.navigate(WorkerSignupCameraDestination) })
         Spacer(modifier = Modifier.height(15.dp))
-        ScreenShotImageHolder(cameraState.photoUri)
+        ScreenShotImageHolder(State.photoUri)
         StandardButton("clicking this button takes you to your own photos", { launcher.launch("image/jpeg") })
     }
 }

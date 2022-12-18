@@ -46,9 +46,9 @@ fun WorkerProfileScaffold(
     navigator: DestinationsNavigator,
     viewModel: SignupViewModel
 ) {
-    val supervisorState by viewModel.stateSupervisorScaffold.collectAsState()
+    val state by viewModel.stateLogin.collectAsState()
     val animatedProgress by animateFloatAsState(
-        targetValue = (supervisorState.currentSupervisorStep.toFloat()+0.00001f),
+        targetValue = (state.currentSupervisorStep.toFloat()+0.00001f),
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
     )
 
@@ -74,10 +74,10 @@ private fun AnimateTransitionsBetweenMapScreenAndBasicInformationScreen(
     viewModel: SignupViewModel
 ) {
 
-    val supervisorState by viewModel.stateSupervisorScaffold.collectAsState()
+    val state by viewModel.stateLogin.collectAsState()
 
     AnimatedContent(
-        targetState = supervisorState.supervisorSignupPoint,
+        targetState = state.supervisorSignupPoint,
         transitionSpec = {
             val direction = if (initialState.ordinal < targetState.ordinal)
                 AnimatedContentScope.SlideDirection.Left else AnimatedContentScope

@@ -1,5 +1,8 @@
 package com.tamaki.workerapp.userPathways.signin.signin
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -8,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.tamaki.workerapp.destinations.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.tamaki.workerapp.data.authResult
 import com.tamaki.workerapp.data.navgraphs.SigninNavGraph
 import com.tamaki.workerapp.data.viewModel.SigninViewModel
 import com.tamaki.workerapp.ui.components.*
@@ -45,25 +49,26 @@ fun SignInBox(
 
     Column {
         LogoImageBox()
-        Spacer(modifier = Modifier.height(15.dp))
+        StandardSpacer()
         TextFieldWithKeyboardActions(
             text = "Enter email",
             function = viewModel::updateEmailField,
             textFieldValue = viewState.email
         )
-        Spacer(modifier = Modifier.height(15.dp))
+        StandardSpacer()
         TextFieldWithKeyboardActions(
             text = "Enter password",
             function = viewModel::updatePasswordField,
             textFieldValue = viewState.password
         )
-        Spacer(modifier = Modifier.height(15.dp))
+        StandardSpacer()
         StandardButton(
             text = "Login",
             function = viewModel::tryToLoginToAccountWhenClickingOnButton
         )
-        Spacer(modifier = Modifier.height(15.dp))
+        StandardSpacer()
         StandardButton(text = "Sign up") { navigator.navigate(SignupDestination) }
-        Spacer(modifier = Modifier.height(15.dp))
+        StandardSpacer()
     }
 }
+

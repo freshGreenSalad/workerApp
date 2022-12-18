@@ -17,8 +17,8 @@ fun SupervisorBasicInformation(
     navigator: DestinationsNavigator,
     viewModel: SignupViewModel
 ) {
-    val viewSupervisorStateCamera by viewModel.stateSupervisorCamera.collectAsState()
-    val viewState by viewModel.stateSupervisorScaffold.collectAsState()
+    val state by viewModel.stateLogin.collectAsState()
+
     val imageData = remember { mutableStateOf<Uri?>(null) }
 
     val launcher = rememberLauncherForActivityResult(
@@ -27,16 +27,17 @@ fun SupervisorBasicInformation(
             imageData.value = uri
         }
     )
+
     LazyColumnOfOrganisedComposables() {
         StandardPrimaryTextHeading("Basic Information")
         Spacer(modifier = Modifier.height(15.dp))
-        TextFieldWithKeyboardActions("Firstname", viewModel::updateSupervisorFirstName, viewState.supervisorFirstName)
+        TextFieldWithKeyboardActions("Firstname", viewModel::updateFirstname, state.firstname)
         Spacer(modifier = Modifier.height(15.dp))
-        TextFieldWithKeyboardActions("Lastname", viewModel::updateSupervisorLastName, viewState.supervisorLastName)
+        TextFieldWithKeyboardActions("Lastname", viewModel::updateLastname, state.lastname)
         Spacer(modifier = Modifier.height(15.dp))
         StandardButton("Take A Photo of Yourself!"){navigator.navigate(SupervisorSignupCameraDestination)}
         Spacer(modifier = Modifier.height(15.dp))
-        ScreenShotImageHolder(viewSupervisorStateCamera.photoUri)
+        ScreenShotImageHolder(state.photoUri)
         StandardButton("clicking this button takes you to your own photos",{ launcher.launch("image/jpeg") })
     }
 }

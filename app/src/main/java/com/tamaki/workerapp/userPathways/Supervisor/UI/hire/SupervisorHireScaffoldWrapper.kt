@@ -12,6 +12,7 @@ import com.tamaki.workerapp.userPathways.Supervisor.UI.supervisorHome.homeUIScaf
 import com.tamaki.workerapp.userPathways.Supervisor.UI.supervisorHome.homeUIScafoldItems.TopBar
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.tamaki.workerapp.ui.components.FillMaxSizePaddingBox
 import com.tamaki.workerapp.userPathways.Worker.workerDataClasses.WorkerProfile
 import kotlinx.coroutines.launch
 
@@ -37,21 +38,14 @@ fun HireScafold(
     ) {
         Scaffold(
             modifier = Modifier.padding(.4.dp),
-            topBar = {
-                TopBar(
-                    title = "hire ${worker.firstName}",
-                    openDrawer = {
-                        scope.launch {
-                            drawerState.open()
-                        }
-                    }
-                )
-            },
+            topBar = { TopBar(title = "hire ${worker.firstName}", openDrawer = { scope.launch { drawerState.open() } }) },
             content = {
-                HireWorker(
-                    paddingValues = it,
-                    worker = worker
-                )
+                FillMaxSizePaddingBox(it) {
+                    HireWorker(
+                        viewModel = viewModel,
+                        navigator = navigator
+                    )
+                }
             }
         )
     }

@@ -50,17 +50,23 @@ private fun TwoButtons_nextScreen_PreviousScreen(
     scope: CoroutineScope,
     viewModel: SignupViewModel
 ) {
-    val supervisorState by viewModel.stateSupervisorScaffold.collectAsState()
+    val state by viewModel.stateLogin.collectAsState()
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        StandardButton(text = "Back") { if (supervisorState.currentSupervisorStep == 0) { } else (viewModel::nextSupervisorScreen)(-1) }
-        val text = if (supervisorState.supervisorSignupPoint == SupervisorSignupPoint.Map) "Done" else "Next"
-        StandardButton(text = text) { if (supervisorState.supervisorSignupPoint == SupervisorSignupPoint.Map) { scope.launch { (viewModel::postSupervisorPersonalAndSite)() } } else (viewModel::nextSupervisorScreen)(1) }
+        StandardButton(text = "Back") {
+            if (state.currentSupervisorStep == 0) { } else (viewModel::incrementSupervisorEnumPage)(-1) }
+            val text = if (state.supervisorSignupPoint == SupervisorSignupPoint.Map) "Done" else "Next"
+            StandardButton(text = text) {
+                if (state.supervisorSignupPoint == SupervisorSignupPoint.Map) {
+                    scope.launch { (viewModel::postSupervisorPersonalAndSite)() }
+                } else (viewModel::incrementSupervisorEnumPage)(1)
+            }
+        }
     }
-}
+
 
 @Composable
 fun StepProgressBar(

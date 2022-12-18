@@ -70,3 +70,8 @@ fun ComposableThatSetsInitialScreenParameters(
         composable()
     }
 }
+
+@Composable
+fun StandardSpacer() {
+    Spacer(modifier = Modifier.height(15.dp))
+}

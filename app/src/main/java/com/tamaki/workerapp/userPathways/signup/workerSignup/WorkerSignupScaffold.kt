@@ -22,8 +22,10 @@ import com.tamaki.workerapp.destinations.WorkerProfileDestination
 import com.tamaki.workerapp.userPathways.signup.workerSignup.tabs.WorkerSignupExperience
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.tamaki.workerapp.ui.components.FillMaxSizePaddingBox
 import com.tamaki.workerapp.ui.components.StandardButton
 import com.tamaki.workerapp.ui.components.StepProgressBar
+import com.tamaki.workerapp.userPathways.signup.workerSignup.ticketSubcategories.DriversLicence
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,8 +44,6 @@ fun WorkerSignupScaffold(
         }
     }
 
-    val viewStateExperience by viewModel.stateExperience.collectAsState()
-
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.padding(.4.dp),
@@ -54,13 +54,12 @@ fun WorkerSignupScaffold(
                 )
             },
             content = {
-                workerSignupMainBody(
-                    it,
-                    navigator,
-                    viewStateExperience.experienceType,
-                    viewModel::updateExperienceType,
-                    viewModel = viewModel
-                )
+                FillMaxSizePaddingBox(it) {
+                    workerSignupMainBody(
+                        navigator,
+                        viewModel = viewModel
+                    )
+                }
             }
         )
     }
@@ -87,21 +86,17 @@ fun destinationsfromworkersignup(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun workerSignupMainBody(
-    it: PaddingValues,
     navigator: DestinationsNavigator,
-    ExperienceType: ExperienceType,
-    ChangeExperienceType: (ExperienceType) -> Unit,
     viewModel: SignupViewModel
 ) {
-    val viewState by viewModel.state.collectAsState()
+    val state by viewModel.stateLogin.collectAsState()
 
     Box(
         modifier = Modifier
-            .padding(it)
             .fillMaxSize()
     ) {
         AnimatedContent(
-            targetState = viewState.workerSignUpPoint,
+            targetState = state.workerSignUpPoint,
             transitionSpec = {
                 val direction = if (initialState.ordinal < targetState.ordinal)
                     AnimatedContentScope.SlideDirection.Left else AnimatedContentScope
@@ -132,15 +127,11 @@ private fun workerSignupMainBody(
                 }
                 WorkerSignUpPoint.Experience -> {
                     WorkerSignupExperience(
-                        experienceType = ExperienceType,
-                        ChangeExperienceType = ChangeExperienceType,
                         viewModel = viewModel
                     )
                 }
                 WorkerSignUpPoint.Tickets -> {
-                    WorkerSignupTickets(
-                        viewModel
-                    )
+                    DriversLicence(viewModel)
                 }
             }
         }
@@ -153,10 +144,10 @@ private fun bottomBarWorkerSignUpPages(
 ) {
     val scope = rememberCoroutineScope()
 
-    val viewState by viewModel.state.collectAsState()
+    val state by viewModel.stateLogin.collectAsState()
 
     val animatedProgress by animateFloatAsState(
-        targetValue = (viewState.currentStep.toFloat()*0.5f),
+        targetValue = (state.currentWorkerStep.toFloat()*0.5f),
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
     )
 
@@ -185,14 +176,11 @@ private fun bottomBarWorkerSignUpPages(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 StandardButton("Back") {
-                    if (viewState.currentStep == 0) {
-                    } else (viewModel::nextScreen)(-1)
+                    if (state.workerSignUpPoint == WorkerSignUpPoint.BasicInformation) { } else (viewModel::incrementWorkerEnumPage)(-1)
                 }
-                var text = if (viewState.workerSignUpPoint == WorkerSignUpPoint.Experience) "Done" else "Next"
+                val text = if (state.workerSignUpPoint == WorkerSignUpPoint.Experience) "Done" else "Next"
                 StandardButton(text) {
-                    if (viewState.workerSignUpPoint == WorkerSignUpPoint.Experience) {
-                        scope.launch { (viewModel::postPersonalWorker)() }
-                    } else (viewModel::nextScreen)(1)
+                    if (state.workerSignUpPoint == WorkerSignUpPoint.Experience) { scope.launch { (viewModel::postPersonalWorkerLicenceExperience)() } } else (viewModel::incrementWorkerEnumPage)(1)
                 }
             }
         }

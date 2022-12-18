@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "638296576508",
+    "project_id": "workerapp-a57cf",
+    "storage_bucket": "workerapp-a57cf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:638296576508:android:1169fb6980ffcc5714e279",
+        "android_client_info": {
+          "package_name": "com.tamaki.workerapp.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "638296576508-tmnmef59k0qgb1egv78pi0qop7ila96q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkaGODfA5Q37gTnBpITwDRfBcyRR8_fWc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "638296576508-tmnmef59k0qgb1egv78pi0qop7ila96q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

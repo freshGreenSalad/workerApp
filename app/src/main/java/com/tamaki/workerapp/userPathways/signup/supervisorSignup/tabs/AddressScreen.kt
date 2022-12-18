@@ -1,5 +1,6 @@
 package com.tamaki.workerapp.ui.screens.general
 
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -22,15 +23,15 @@ fun AddressScreen(
     viewModel: SignupViewModel
 ) {
 
-    val mapState by viewModel.stateMap.collectAsState()
+    val state by viewModel.stateLogin.collectAsState()
 
     LazyColumnOfOrganisedComposables(){
         StandardPrimaryTextHeading("Site address")
         Spacer(modifier = Modifier.height(15.dp))
-        TextFieldWithKeyboardActions("Site Address", viewModel::updateSiteAddress, mapState.siteAddress)
+        TextFieldWithKeyboardActions("Site Address", viewModel::updateSiteAddress, state.siteAddress)
         Spacer(modifier = Modifier.height(15.dp))
         Button(onClick = { navigator.navigate(MapScreenDestination) }) { Text("Add button on map") }
         Spacer(modifier = Modifier.height(15.dp))
-        ScreenShotImageHolder(mapState.mapScreenShoturi)
+        ScreenShotImageHolder(Uri.EMPTY)
     }
 }

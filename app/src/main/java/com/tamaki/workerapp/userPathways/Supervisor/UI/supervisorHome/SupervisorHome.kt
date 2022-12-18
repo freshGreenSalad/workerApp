@@ -26,7 +26,10 @@ fun SupervisorHome(
             textFormatBetweenSections(stringResource(id = R.string.home_screen_findNewWorkers))
             WorkerLazyRowHome(navigator = navigator, viewModel = viewModel)
             textFormatBetweenSections(stringResource(id = R.string.home_screen_yourCrew))
-            CrewSection()
+            CrewSection(
+                viewModel,
+                navigator
+            )
             textFormatBetweenSections("Notices")
             Notices()
         }
@@ -34,7 +37,12 @@ fun SupervisorHome(
 }
 
 @Composable
-private fun CrewSection() {
+private fun CrewSection(
+    viewModel: SupervisorViewModel,
+    navigator: DestinationsNavigator,
+) {
+
+    val viewstate by viewModel.state.collectAsState()
     Surface(
         shape = RoundedCornerShape(15.dp),
         color = MaterialTheme.colorScheme.surface,
@@ -47,7 +55,11 @@ private fun CrewSection() {
             .size(width = 400.dp, height = 180.dp),
         shadowElevation = 20.dp,
     ) {
-        LargeTransperentText("no workers in your crew")
+        if (viewstate.hiredWorkerListSize==0){
+            LargeTransperentText("no workers in your crew")
+        }else{
+            HireWorkerLazyRowHome( navigator,viewModel)
+        }
     }
 }
 
@@ -70,6 +82,26 @@ fun WorkerLazyRowHome(
     val viewstate by viewModel.state.collectAsState()
     LazyRow {
         for (worker in viewstate.workerList) {
+            item {
+                WorkerCard(
+                    worker = worker,
+                    navigator = navigator,
+                    viewModel = viewModel
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun HireWorkerLazyRowHome(
+    navigator: DestinationsNavigator,
+    viewModel: SupervisorViewModel
+) {
+    val viewstate by viewModel.state.collectAsState()
+
+    LazyRow {
+        for (worker in viewstate.hiredWorkerList) {
             item {
                 WorkerCard(
                     worker = worker,

@@ -31,6 +31,7 @@ class LoginAPICalls @Inject constructor(
             val response = jsonclientfunctions().SendJsonViaRouteReturnBody(client,profileLoginAuthRequestJson , Routes.sendEmailPasswordGetJWT)
             val token = Json.decodeFromString<jwtTokinWithIsSupervisor>(response.body()).token
             DataStorePreferances(dataStore).edit("JWT", token)
+            DataStorePreferances(dataStore).edit("email", profileLoginAuthRequest.email)
             CheckAuthorisationResultAndSupervisorStatus(response)
         } catch (e: Exception) {
             authResult.unauthorised()

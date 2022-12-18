@@ -7,12 +7,12 @@ import com.tamaki.workerapp.data.utility.Routes
 import com.tamaki.workerapp.data.utility.jsonclientfunctions
 import com.tamaki.workerapp.data.authResult
 import com.tamaki.workerapp.data.dataClasses.SupervisorSite
-import com.tamaki.workerapp.userPathways.Supervisor.supervisorDataClasses.SupervisorProfile
-import com.tamaki.workerapp.userPathways.Supervisor.supervisorDataClasses.supervisorProfileFail
+import com.tamaki.workerapp.userPathways.Supervisor.supervisorDataClasses.*
 import com.tamaki.workerapp.userPathways.Worker.workerDataClasses.WorkerProfile
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -26,7 +26,11 @@ class SupervisorAPICalls @Inject constructor(
     override suspend fun postSupervisorProfile(supervisorProfile: SupervisorProfile): authResult<Unit> {
         return try {
             val supervisorProfileJson = Json.encodeToString(supervisorProfile)
-            jsonclientfunctions().SendJsonViaRoute(client, supervisorProfileJson, Routes.SupervisorPersonalData)
+            jsonclientfunctions().SendJsonViaRoute(
+                client,
+                supervisorProfileJson,
+                Routes.SupervisorPersonalData
+            )
             authResult.authorised()
         } catch (e: Exception) {
             authResult.unauthorised()
@@ -61,4 +65,42 @@ class SupervisorAPICalls @Inject constructor(
             emptyList()
         }
     }
+
+    override suspend fun hireWorker(workeremail:String,date: WorkerDate):SuccessStatus {
+        val supervisorEmail = DataStorePreferances(dataStore).read("email")?:"email"
+        val hireWorker = HireWorker(supervisorEmail,workeremail,date)
+        val hireWorkerJson = Json.encodeToString(hireWorker)
+        val httpStatusCode = jsonclientfunctions().SendJsonViaRouteReturnHttpStatus(client, hireWorkerJson,Routes.hireWorker)
+        return if (httpStatusCode== HttpStatusCode.OK){SuccessStatus.Success()}else{SuccessStatus.Failure()}
+    }
+
+    override suspend fun getlistofHiredWorkers():List<WorkerProfile>{
+        return try {
+            val supervisorEmail = DataStorePreferances(dataStore).read("email")?:"email"
+            val response = client.get(Routes.hireWorker){
+                headers{
+                    append("email", supervisorEmail)
+                }
+            }
+            return Json.decodeFromString(response.body())
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun SearchForWorkers(workerSearchQuery: WorkerSearchQuery):List<WorkerProfile>{
+        return try {
+            val response = client.get(Routes.SearchForWorkers){
+                val jwt = DataStorePreferances(dataStore).read("JWT")!!
+                bearerAuth(jwt)
+                headers {
+                    append("Json",Json.encodeToString(workerSearchQuery))
+                }
+            }
+            return Json.decodeFromString(response.body())
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
 }
+

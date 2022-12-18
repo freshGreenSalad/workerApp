@@ -32,38 +32,14 @@ fun MapScreen(
     navigator: DestinationsNavigator,
     viewModel: SignupViewModel,
 ) {
-    val mediaDir = File.createTempFile("filename", null, LocalContext.current.cacheDir)
-    val view = LocalView.current
-    val context = LocalContext.current
-
-    val handler = Handler(Looper.getMainLooper())
-    fun File.writeBitmap(bitmap: Bitmap, format: Bitmap.CompressFormat, quality: Int) {
-        outputStream().use { out ->
-            bitmap.compress(format, quality, out)
-            out.flush()
-        }
-    }
-    val mapState by viewModel.stateMap.collectAsState()
-    val returnUri = viewModel::returnUri
+    val state by viewModel.stateLogin.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.primary,
-                onClick = {
-                   /* handler.postDelayed(Runnable {
-                        val bmp = Bitmap.createBitmap(view.width, view.height,
-                            Bitmap.Config.ARGB_8888).applyCanvas {
-                            view.draw(this)
-                        }
-                        bmp.let {
-                            File(mediaDir, "screenshot.png").writeBitmap(bmp, Bitmap.CompressFormat.PNG, 85)
-                            returnUri(Uri.fromFile(mediaDir))
-                        }
-                    }, 1000)*/
-                    navigator.navigate(SupervisorSignupScaffoldDestination)
-                }
+                onClick = {navigator.navigate(SupervisorSignupScaffoldDestination) }
             ) {
                 Icon(imageVector = Icons.Filled.Done, contentDescription = "", tint = MaterialTheme.colorScheme.onPrimary)
             }
@@ -77,7 +53,7 @@ fun MapScreen(
                 position = CameraPosition(LatLng(-36.86, 174.83), 12f, 0f, 0f)
             ),
             onMapLongClick = { (viewModel::updateSitelatlng)(it) },
-            properties = mapState.map.properties,
+            properties = state.googleMap.properties,
             uiSettings = MapUiSettings(
                 mapToolbarEnabled = true,
                 compassEnabled = true,
@@ -92,7 +68,7 @@ fun MapScreen(
             )
         ) {
             Marker(
-                state = mapState.latLngAddress,
+                state = state.latLngAddress,
                 title = "Your Site",
                 snippet = "Marker on Your Site"
             )
