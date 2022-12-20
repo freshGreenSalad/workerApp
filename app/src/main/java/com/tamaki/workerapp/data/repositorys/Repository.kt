@@ -1,7 +1,7 @@
 package com.tamaki.workerapp.data.room
 
 import android.net.Uri
-import com.tamaki.workerapp.data.apiCallsToServer.LoginAPICalls
+import com.tamaki.workerapp.userPathways.signin.onetap.LoginAPICalls
 import com.tamaki.workerapp.userPathways.Supervisor.API.SupervisorAPICalls
 import com.tamaki.workerapp.userPathways.Worker.API.WorkerAPICalls
 import com.tamaki.workerapp.data.authResult

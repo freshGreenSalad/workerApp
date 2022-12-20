@@ -25,7 +25,7 @@ import com.ramcosta.composedestinations.animations.defaults.NestedNavGraphDefaul
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.navigation.dependency
-import com.tamaki.workerapp.data.viewModel.SigninViewModel
+import com.tamaki.workerapp.userPathways.signin.onetap.AuthViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -78,13 +78,19 @@ class MainActivity : ComponentActivity() {
                             val parentEntry = remember(navBackStackEntry) {
                                 navController.getBackStackEntry(NavGraphs.root.route)
                             }
-                            hiltViewModel<SigninViewModel>(parentEntry)
+                            hiltViewModel<AuthViewModel>(parentEntry)
                         }
                         dependency(NavGraphs.worker) {
                             val parentEntry = remember(navBackStackEntry) {
                                 navController.getBackStackEntry(NavGraphs.root.route)
                             }
                             hiltViewModel<WorkerViewModel>(parentEntry)
+                        }
+                        dependency(NavGraphs.onetap) {
+                            val parentEntry = remember(navBackStackEntry) {
+                                navController.getBackStackEntry(NavGraphs.root.route)
+                            }
+                            hiltViewModel<AuthViewModel>(parentEntry)
                         }
                     }
                 )
@@ -110,11 +116,5 @@ class MainActivity : ComponentActivity() {
             else -> requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
-
-
-    /*override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
-    }*/
 }
 

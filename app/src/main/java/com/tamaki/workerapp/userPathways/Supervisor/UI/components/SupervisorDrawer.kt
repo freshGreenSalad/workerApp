@@ -9,9 +9,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.tamaki.workerapp.destinations.SignInPageDestination
 import com.tamaki.workerapp.destinations.SupervisorProfilePageDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.tamaki.workerapp.destinations.AuthScreenDestination
 import com.tamaki.workerapp.destinations.SupervisorHomeScaffoldDestination
 import kotlinx.coroutines.Job
 import com.tamaki.workerapp.ui.components.StandardButton
@@ -50,7 +50,7 @@ fun Logout(
     scope.launch {
         (viewModel::deleteAllFromDataStore)()
     }
-    navigator.navigate(SignInPageDestination)
+    navigator.navigate(AuthScreenDestination)
     closeDrawer()
 }
 
@@ -64,5 +64,5 @@ fun DeleteAccount(
         (viewModel::deleteAccount)()
     }
     closeDrawer()
-    navigator.navigate(SignInPageDestination)
+    navigator.navigate(AuthScreenDestination)
 }

@@ -9,7 +9,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
-import com.tamaki.workerapp.userPathways.signin.signinAPIInterface
+import com.tamaki.workerapp.userPathways.signin.onetap.signinAPIInterface
 import com.tamaki.workerapp.data.datastore.DataStoreImplementaion
 import com.tamaki.workerapp.data.datastore.DatastoreInterface
 import com.tamaki.workerapp.data.repositorys.RepositoryInterface

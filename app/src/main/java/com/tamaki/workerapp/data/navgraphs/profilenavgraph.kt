@@ -24,13 +24,17 @@ annotation class WorkerNavGraph(
     val start: Boolean = false
 )
 
-@RootNavGraph(start = true)
+@RootNavGraph
 @NavGraph
 annotation class SigninNavGraph(
     val start:Boolean = false
 )
 
-
+@RootNavGraph(start = true)
+@NavGraph
+annotation class OnetapNavGraph(
+    val start:Boolean = false
+)
 
 @ProfileCreationNavGraph
 @Destination

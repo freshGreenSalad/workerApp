@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "638296576508-hhig009pgnbtoiv195q8rtmsog8kjfg9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tamaki.workerapp.debug",
+            "certificate_hash": "4d62db7a93ae168d1186f09e5f9efd970218d11e"
+          }
+        },
+        {
           "client_id": "638296576508-tmnmef59k0qgb1egv78pi0qop7ila96q.apps.googleusercontent.com",
           "client_type": 3
         }

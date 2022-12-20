@@ -57,12 +57,12 @@ fun WorkerDrawer(
             clickable = deleteFromDataStore,
             title = "Signout",
             navigator = navigator,
-            destination = SignInPageDestination,
+            destination = AuthScreenDestination,
             closeDrawer = closeDrawer
         )
         DeleteDrawerItem(
             navigator = navigator,
-            destination = SignInPageDestination,
+            destination = AuthScreenDestination,
             title = "Delete Account",
             deleteAccount = deleteAccount,
             closeDrawer = closeDrawer

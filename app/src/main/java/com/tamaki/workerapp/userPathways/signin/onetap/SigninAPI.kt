@@ -1,4 +1,4 @@
-package com.tamaki.workerapp.data.apiCallsToServer
+package com.tamaki.workerapp.userPathways.signin.onetap
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -9,7 +9,6 @@ import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
 import com.tamaki.workerapp.data.utility.Routes
 import com.tamaki.workerapp.data.utility.TryCatch
 import com.tamaki.workerapp.data.utility.jsonclientfunctions
-import com.tamaki.workerapp.userPathways.signin.signinAPIInterface
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
