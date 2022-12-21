@@ -74,33 +74,32 @@ class AuthViewModel @Inject constructor(
         resultChannel.send(result)
     }
 
-    var email = MutableStateFlow ("")
-    var password = MutableStateFlow ("")
-    private var scale = MutableStateFlow(Animatable(0f))
-
     private val resultChannel = Channel<authResult<Boolean?>>()
 
     private val authResults = resultChannel.receiveAsFlow()
+
+    var email = MutableStateFlow ("")
+    var password = MutableStateFlow ("")
+    private var LoginOrSignIn = MutableStateFlow(0)
+    private val newEmail = MutableStateFlow("")
+    private val newPassword = MutableStateFlow("")
+    private val isSupervisor = MutableStateFlow(true)
 
     private val _stateLogin = MutableStateFlow(LoginState())
 
     val stateLogin: StateFlow<LoginState>
         get() = _stateLogin
 
-    private val newEmail = MutableStateFlow("")
-    private val newPassword = MutableStateFlow("")
-    private val isSupervisor = MutableStateFlow(true)
-
     init {
 
         viewModelScope.launch {
             Combine().six(
-                email,password,scale,newEmail,newPassword,isSupervisor
-            ) { email,password,scale,newEmail,newPassword,isSupervisor ->
+                email,password,LoginOrSignIn,newEmail,newPassword,isSupervisor
+            ) { email,password,LoginOrSignIn,newEmail,newPassword,isSupervisor ->
                 LoginState(
                     email,
                     password,
-                    scale,
+                    LoginOrSignIn,
                     newEmail,
                     newPassword,
                     isSupervisor
@@ -113,12 +112,12 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun updatePasswordField(newPassword:String){
-        password.value = newPassword
-    }
-    fun updateEmailField(newEmail:String){
-        email.value = newEmail
-    }
+    fun updatePasswordField(newPassword:String){ password.value = newPassword }
+    fun updateEmailField(newEmail:String){ email.value = newEmail }
+    fun updatePassword(newPassworda: String) { newPassword.value = newPassworda }
+    fun updateEmail(newEmaila: String) { newEmail.value = newEmaila }
+    fun updateIsSupervisor(newIsSupervisor: Boolean) { isSupervisor.value = newIsSupervisor }
+    fun updateLoginOrSignIn(newLoginOrSignIn:Int){LoginOrSignIn.value = newLoginOrSignIn}
 
     fun tryToLoginToAccountWhenClickingOnButton(){
         viewModelScope.launch {
@@ -150,22 +149,18 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    suspend fun returnAToastOrANavigationPathwayDependingOnLoginDetails(navigator: DestinationsNavigator, viewModel: AuthViewModel, context: Context){
+    suspend fun returnAToastOrANavigationPathwayDependingOnLoginDetails(navigator: DestinationsNavigator, viewModel: AuthViewModel, context: Context) {
         authResults.collect { result ->
             checkLoginResultForSupervisorOrWorkerAccount(result, navigator)
             checkLoginDetailsAreCorrect(result, context = context)
         }
     }
-
-    fun updatePassword(newPassworda: String) { newPassword.value = newPassworda }
-    fun updateEmail(newEmaila: String) { newEmail.value = newEmaila }
-    fun updateIsSupervisor(newIsSupervisor: Boolean) { isSupervisor.value = newIsSupervisor }
 }
 
 data class LoginState(
     val email: String = "",
     val password: String = "",
-    val scale: Animatable<Float, AnimationVector1D> = Animatable(0f),
+    val LoginOrSignIn: Int = 0,
     val newEmail: String = "",
     val newPassword: String = "",
     val isSupervisor:Boolean = true

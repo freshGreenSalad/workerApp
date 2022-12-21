@@ -1,5 +1,6 @@
 package com.tamaki.workerapp.ui.components
 
+import android.media.MediaPlayer
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,10 +16,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.tamaki.workerapp.R
+import com.tamaki.workerapp.userPathways.signin.onetap.utilities.FixedSizeVideoView
 
 @Composable
 fun LogoImageBox(){
@@ -66,5 +69,22 @@ fun SqareImageLoader(imageString :String, imageholder:Int) {
         placeholder = painterResource(imageholder),
         contentScale = ContentScale.FillBounds,
         contentDescription = ""
+    )
+}
+
+@Composable
+fun backgroundmovie() {
+    AndroidView(
+        factory = {
+            FixedSizeVideoView(it).apply {
+                setVideoURI(Uri.parse("android.resource://com.tamaki.workerapp.debug/${R.raw.construction}"))
+                setOnPreparedListener { mp ->
+                    mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+                    mp.isLooping = true
+                    mp.setScreenOnWhilePlaying(false)
+                }
+                start()
+            }
+        },
     )
 }

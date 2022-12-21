@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import com.tamaki.workerapp.data.navgraphs.ProfileCreationNavGraph
 import com.tamaki.workerapp.data.viewModel.SignupViewModel
 import com.tamaki.workerapp.destinations.WorkerSignupScaffoldDestination
-import com.tamaki.workerapp.ui.screens.camera.ProfileCamera
+import com.tamaki.workerapp.ui.components.camera.ProfileCamera
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 

@@ -1,4 +1,4 @@
-package com.tamaki.workerapp.ui.screens.camera
+package com.tamaki.workerapp.ui.components.camera
 
 import android.net.Uri
 import android.util.Log
