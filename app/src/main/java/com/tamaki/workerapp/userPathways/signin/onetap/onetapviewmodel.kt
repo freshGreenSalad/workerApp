@@ -1,31 +1,25 @@
 package com.tamaki.workerapp.userPathways.signin.onetap
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
-import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.AuthCredential
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.tamaki.workerapp.data.authResult
 import com.tamaki.workerapp.data.dataClasses.auth.ProfileLoginAuthRequest
 import com.tamaki.workerapp.data.repositorys.RepositoryInterface
+import com.tamaki.workerapp.data.utility.Combine
 import com.tamaki.workerapp.destinations.SupervisorHomeScaffoldDestination
 import com.tamaki.workerapp.destinations.WorkerProfileDestination
 import com.tamaki.workerapp.userPathways.signin.onetap.repositiory.interfaces.*
-import com.tamaki.workerapp.userPathways.signin.onetap.utilities.MetaDataReader
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -38,43 +32,7 @@ class AuthViewModel @Inject constructor(
     val oneTapClient: SignInClient,
     private val repoprof: ProfileRepository,
     private val repository: RepositoryInterface,
-    private val savedStateHandle: SavedStateHandle,
-    val player: Player,
-    private val metaDataReader: MetaDataReader,
 ): ViewModel() {
-    //_______
-    private val videoUris = savedStateHandle.getStateFlow("videoUris", emptyList<Uri>())
-
-    val videoItems = videoUris.map { uris ->
-        uris.map { uri ->
-            VideoItem(
-                contentUri = uri,
-                mediaItem = MediaItem.fromUri(uri),
-                name = metaDataReader.getMetaDataFromUri(uri)?.fileName ?: "No name"
-            )
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    init {
-        player.prepare()
-    }
-
-    fun addVideoUri(uri: Uri) {
-        savedStateHandle["videoUris"] = videoUris.value + uri
-        player.addMediaItem(MediaItem.fromUri(uri))
-    }
-
-    fun playVideo(uri: Uri) {
-        player.setMediaItem(
-            videoItems.value.find { it.contentUri == uri }?.mediaItem ?: return
-        )
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        player.release()
-    }
-    //_____________
 
     val isUserAuthenticated get() = repo.isUserAuthenticatedInFirebase
 
@@ -111,10 +69,6 @@ class AuthViewModel @Inject constructor(
         revokeAccessResponse = repoprof.revokeAccess()
     }
 
-
-
-
-
     private suspend fun useProvidedLoginDetailsToTryLogin(authRequest: ProfileLoginAuthRequest) {
         val result = repository.login(authRequest)
         resultChannel.send(result)
@@ -133,17 +87,23 @@ class AuthViewModel @Inject constructor(
     val stateLogin: StateFlow<LoginState>
         get() = _stateLogin
 
+    private val newEmail = MutableStateFlow("")
+    private val newPassword = MutableStateFlow("")
+    private val isSupervisor = MutableStateFlow(true)
+
     init {
 
-
         viewModelScope.launch {
-            combine(
-                email,password,scale
-            ) { email,password,scale ->
+            Combine().six(
+                email,password,scale,newEmail,newPassword,isSupervisor
+            ) { email,password,scale,newEmail,newPassword,isSupervisor ->
                 LoginState(
                     email,
                     password,
-                    scale
+                    scale,
+                    newEmail,
+                    newPassword,
+                    isSupervisor
                 )
             }.catch { throwable ->
                 throw throwable
@@ -164,18 +124,6 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             useProvidedLoginDetailsToTryLogin(ProfileLoginAuthRequest(email.value, password.value))
         }
-    }
-
-    suspend fun changeScaleOfSplashScreenImage(){
-        scale.value.animateTo(
-            targetValue = 3f,
-            animationSpec = tween(
-                durationMillis = 500,
-                easing = {
-                    OvershootInterpolator(2f).getInterpolation(it)
-                }
-            )
-        )
     }
 
     private fun checkLoginResultForSupervisorOrWorkerAccount(result: authResult<Boolean?>, navigator: DestinationsNavigator){
@@ -208,16 +156,17 @@ class AuthViewModel @Inject constructor(
             checkLoginDetailsAreCorrect(result, context = context)
         }
     }
+
+    fun updatePassword(newPassworda: String) { newPassword.value = newPassworda }
+    fun updateEmail(newEmaila: String) { newEmail.value = newEmaila }
+    fun updateIsSupervisor(newIsSupervisor: Boolean) { isSupervisor.value = newIsSupervisor }
 }
 
 data class LoginState(
     val email: String = "",
     val password: String = "",
-    val scale: Animatable<Float, AnimationVector1D> = Animatable(0f)
-)
-
-data class VideoItem(
-    val contentUri: Uri,
-    val mediaItem: MediaItem,
-    val name: String
+    val scale: Animatable<Float, AnimationVector1D> = Animatable(0f),
+    val newEmail: String = "",
+    val newPassword: String = "",
+    val isSupervisor:Boolean = true
 )

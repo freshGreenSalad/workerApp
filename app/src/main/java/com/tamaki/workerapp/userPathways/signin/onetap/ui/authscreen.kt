@@ -1,43 +1,46 @@
 package com.tamaki.workerapp.userPathways.signin.onetap.ui
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
+import android.media.MediaPlayer
+import android.net.Uri
+import android.widget.VideoView
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.*
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.media3.ui.PlayerView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider.getCredential
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.tamaki.workerapp.R
 import com.tamaki.workerapp.data.navgraphs.OnetapNavGraph
 import com.tamaki.workerapp.destinations.ProfileScreenDestination
-import com.tamaki.workerapp.destinations.SignupDestination
-import com.tamaki.workerapp.ui.components.LogoImageBox
 import com.tamaki.workerapp.ui.components.StandardButton
 import com.tamaki.workerapp.ui.components.StandardSpacer
 import com.tamaki.workerapp.ui.components.TextFieldWithKeyboardActions
+import com.tamaki.workerapp.ui.screens.general.signup.ButtonWithTickIfTrue
 import com.tamaki.workerapp.userPathways.signin.onetap.AuthViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @OnetapNavGraph(start = true)
 @Destination
 @Composable
@@ -45,18 +48,22 @@ fun AuthScreen(
     viewModel: AuthViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
+
     if (viewModel.isUserAuthenticated) {
         navigator.navigate(ProfileScreenDestination)
     }
 
-    Scaffold(
-        content = { padding ->
-            Box(modifier = Modifier.fillMaxSize()) {
-                backgroundmovie(padding, viewModel)
-                boxThatSlidesInFromtheRight()
-            }
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        Alignment.Center
+    ) {
+        backgroundmovie()
+        WrapperAnimateSlideInFromRight() {
+            SignInSignUpBox(navigator, viewModel)
         }
-    )
+    }
+
 
     val launcher = rememberLauncherForActivityResult(StartIntentSenderForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
@@ -76,8 +83,110 @@ fun AuthScreen(
         launcher.launch(intent)
     }
 
-    OneTapSignIn(viewModel, launch ={launch(it)})
+    OneTapSignIn(viewModel, launch = { launch(it) })
     SignInWithGoogle(viewModel, navigator)
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun SignInSignUpBox(
+    navigator: DestinationsNavigator,
+    viewModel: AuthViewModel
+) {
+    var state by remember { mutableStateOf(0) }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = 16.dp,
+                end = 16.dp
+            )
+            .background(
+                color = MaterialTheme.colorScheme.primaryContainer.copy(0.5f),
+                shape = RoundedCornerShape(15.dp)
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TabRow(
+            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(0.01f),
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.primaryContainer.copy(0.5f),shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)),
+            selectedTabIndex = state) {
+            Tab(
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.primaryContainer.copy(0.5f),shape = RoundedCornerShape(topStart = 15.dp)),
+                selected = state == 0,
+                onClick = { state = 0 },
+                text = { Text(text = "Login", maxLines = 2, overflow = TextOverflow.Ellipsis) }
+            )
+            Tab(
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.primaryContainer.copy(0.5f),shape = RoundedCornerShape(topEnd = 15.dp)),
+                selected = state == 1,
+                onClick = { state = 1 },
+                text = { Text(text = "Signup", maxLines = 2, overflow = TextOverflow.Ellipsis) }
+            )
+
+        }
+        AnimatedContent(
+            targetState = state,
+            transitionSpec = {
+                val direction = if (initialState < targetState)
+                    AnimatedContentScope.SlideDirection.Left else AnimatedContentScope
+                    .SlideDirection.Right
+
+                slideIntoContainer(
+                    towards = direction,
+                    animationSpec = tween(500)
+                ) with
+                        slideOutOfContainer(
+                            towards = direction,
+                            animationSpec = tween(500)
+                        ) using SizeTransform(
+                    clip = false,
+                    sizeAnimationSpec = { _, _ ->
+                        tween(500, easing = EaseInOut)
+                    }
+                )
+            }
+
+        ) { targetState ->
+            when (targetState) {
+                0 -> { SignInBox(navigator, viewModel) }
+                1 -> { signup(viewModel) }
+            }
+        }
+        StandardSpacer()
+    }
+}
+
+@Composable
+fun signup(
+    viewModel: AuthViewModel
+){
+    val scope = rememberCoroutineScope()
+    val state = viewModel.stateLogin.collectAsState().value
+    Column {
+        StandardSpacer()
+        ButtonWithTickIfTrue(
+            true,
+            isSupervisorState = state.isSupervisor,
+            text = "Supervisor",
+            function = { (viewModel::updateIsSupervisor)(true) })
+        StandardSpacer()
+        ButtonWithTickIfTrue(
+            false,
+            isSupervisorState = state.isSupervisor,
+            text = "Worker",
+            function = { (viewModel::updateIsSupervisor)(false) })
+        StandardSpacer()
+        TextFieldWithKeyboardActions("Email", viewModel::updateEmail, state.email)
+        StandardSpacer()
+        TextFieldWithKeyboardActions("Password", viewModel::updatePassword, state.password)
+        StandardSpacer()
+        StandardButton("Sign up") {
+            scope.launch {}// (viewModel::postEmailPasswordIsSupervisor)() }
+        }
+    }
+
 }
 
 @Composable
@@ -85,17 +194,20 @@ fun SignInBox(
     navigator: DestinationsNavigator,
     viewModel: AuthViewModel
 ) {
-
     val viewState by viewModel.stateLogin.collectAsState()
 
     val context = LocalContext.current
 
     LaunchedEffect(viewModel, context) {
-        (viewModel::returnAToastOrANavigationPathwayDependingOnLoginDetails)(navigator, viewModel, context)
+        (viewModel::returnAToastOrANavigationPathwayDependingOnLoginDetails)(
+            navigator,
+            viewModel,
+            context
+        )
     }
-
-    Column {
-        LogoImageBox()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         StandardSpacer()
         TextFieldWithKeyboardActions(
             text = "Enter email",
@@ -114,94 +226,65 @@ fun SignInBox(
             function = viewModel::tryToLoginToAccountWhenClickingOnButton
         )
         StandardSpacer()
-        StandardButton(text = "Sign up") { navigator.navigate(SignupDestination) }
-        StandardSpacer()
+        signInWithGoogle(viewModel::oneTapSignIn)
     }
 }
 
 @Composable
-fun backgroundmovie(
-    padding:PaddingValues,
-    viewModel: AuthViewModel
-){
-    val videoItems by viewModel.videoItems.collectAsState()
-    val selectVideoLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
-            uri?.let(viewModel::addVideoUri)
-        }
+fun backgroundmovie() {
+    AndroidView(
+        factory = {
+            FixedSizeVideoView(it).apply {
+                setVideoURI(Uri.parse("android.resource://com.tamaki.workerapp.debug/${R.raw.construction}"))
+                setOnPreparedListener { mp ->
+                    mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
+                    mp.isLooping = true
+                    mp.setScreenOnWhilePlaying(false)
+                }
+                start()
+            }
+        },
     )
-    var lifecycle by remember {
-        mutableStateOf(Lifecycle.Event.ON_CREATE)
-    }
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            lifecycle = event
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
+}
 
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
+@Composable
+fun WrapperAnimateSlideInFromRight(composable: @Composable() () -> Unit) {
+
+    val scope = rememberCoroutineScope()
+    var showBox by remember { mutableStateOf(false) }
+
+    LaunchedEffect(true) {
+        scope.launch {
+            delay(2000L)
+            showBox = true
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)
+    AnimatedVisibility(
+        visible = showBox,
+        enter = slideInHorizontally(),
     ) {
-        AndroidView(
-            factory = { context ->
-                PlayerView(context).also {
-                    it.player = viewModel.player
-                }
-            },
-            update = {
-                when (lifecycle) {
-                    Lifecycle.Event.ON_PAUSE -> {
-                        it.onPause()
-                        it.player?.pause()
-                    }
-                    Lifecycle.Event.ON_RESUME -> {
-                        it.onResume()
-                    }
-                    else -> Unit
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(8 / 15f)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        IconButton(onClick = {
-            selectVideoLauncher.launch("video/mp4")
-        }) {
-            Icon(
-                imageVector = Icons.Default.Done,
-                contentDescription = "Select video"
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(videoItems) { item ->
-                Text(
-                    text = item.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            viewModel.playVideo(item.contentUri)
-                        }
-                        .padding(16.dp)
-                )
+        composable()
+    }
+
+
+}
+
+class FixedSizeVideoView(ctx: Context) : VideoView(ctx) {
+    private var mVideoWidth = 0
+    private var mVideoHeight = 0
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        var width = getDefaultSize(mVideoWidth, widthMeasureSpec)
+        var height = getDefaultSize(mVideoHeight, heightMeasureSpec)
+        if (mVideoWidth > 0 && mVideoHeight > 0) {
+            if (mVideoWidth * height > width * mVideoHeight) {
+                height = width * mVideoHeight / mVideoWidth
+            } else if (mVideoWidth * height < width * mVideoHeight) {
+                width = height * mVideoWidth / mVideoHeight
+            } else {
             }
         }
+        setMeasuredDimension(width, height)
     }
-}
-
-@Composable
-fun boxThatSlidesInFromtheRight(){
-
 }

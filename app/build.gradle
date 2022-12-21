@@ -146,10 +146,6 @@ dependencies {
     //coil
     implementation("io.coil-kt:coil-compose:2.1.0")
 
-    //exoplayer
-    implementation 'androidx.media3:media3-exoplayer:1.0.0-beta02'
-    implementation 'androidx.media3:media3-ui:1.0.0-beta02'
-
     // Room
     implementation "androidx.room:room-paging:2.4.3"
     implementation 'androidx.room:room-ktx:2.4.3'

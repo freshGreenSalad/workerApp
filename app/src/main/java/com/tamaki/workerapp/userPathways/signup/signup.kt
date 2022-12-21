@@ -72,7 +72,7 @@ fun Signup(
 //worker
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun ButtonWithTickIfTrue(isSupervisorBox:Boolean,isSupervisorState: Boolean, text:String, function:()->Unit) {
+fun ButtonWithTickIfTrue(isSupervisorBox:Boolean, isSupervisorState: Boolean, text:String, function:()->Unit) {
     AnimatedContent(
         targetState = isSupervisorState,
         transitionSpec = {

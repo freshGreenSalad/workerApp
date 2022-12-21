@@ -2,8 +2,6 @@ package com.tamaki.workerapp.data.di
 
 import android.app.Application
 import android.content.Context
-import androidx.media3.common.Player
-import androidx.media3.exoplayer.ExoPlayer
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -21,32 +19,16 @@ import com.tamaki.workerapp.userPathways.signin.onetap.ProfileRepositoryImpl
 import com.tamaki.workerapp.userPathways.signin.onetap.repositiory.implementaion.AuthRepositoryImpl
 import com.tamaki.workerapp.userPathways.signin.onetap.repositiory.interfaces.AuthRepository
 import com.tamaki.workerapp.userPathways.signin.onetap.repositiory.interfaces.ProfileRepository
-import com.tamaki.workerapp.userPathways.signin.onetap.utilities.MetaDataReader
-import com.tamaki.workerapp.userPathways.signin.onetap.utilities.MetaDataReaderImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Named
 
 @Module
 @InstallIn(ViewModelComponent::class)
 class AppModuleer {
-
-    @Provides
-    @ViewModelScoped
-    fun provideVideoPlayer(app: Application): Player {
-        return ExoPlayer.Builder(app)
-            .build()
-    }
-
-    @Provides
-    @ViewModelScoped
-    fun provideMetaDataReader(app: Application): MetaDataReader {
-        return MetaDataReaderImpl(app)
-    }
 
     @Provides
     fun provideFirebaseAuth() = Firebase.auth

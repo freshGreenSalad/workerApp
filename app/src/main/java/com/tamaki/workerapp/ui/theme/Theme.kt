@@ -31,14 +31,14 @@ private val DarkColorScheme = darkColorScheme(
     errorContainer = Red30,
     onErrorContainer = Red90,
     background = Grey10,
-    /*onBackground = Grey90,
+    onBackground = Grey90,
     surface = GreenGrey30,
     onSurface = GreenGrey80,
     inverseSurface = Grey90,
     inverseOnSurface = Grey10,
     surfaceVariant = GreenGrey30,
     onSurfaceVariant = GreenGrey80,
-    outline = GreenGrey80*/
+    outline = GreenGrey80
 )
 
 
@@ -62,14 +62,14 @@ private val LightColorScheme = lightColorScheme(
     errorContainer = Red90,
     onErrorContainer = Red10,
     background = Grey99,
-    /*onBackground = Grey10,
+    onBackground = Grey10,
     surface = GreenGrey90,
     onSurface = GreenGrey30,
     inverseSurface = Grey20,
     inverseOnSurface = Grey95,
     surfaceVariant = GreenGrey90,
     onSurfaceVariant = GreenGrey30,
-    outline = GreenGrey50*/
+    outline = GreenGrey50
 )
 
 @Composable

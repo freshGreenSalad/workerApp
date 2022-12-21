@@ -1,7 +1,9 @@
 package com.tamaki.workerapp.userPathways.signin.onetap.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -17,10 +19,8 @@ import com.tamaki.workerapp.userPathways.signin.onetap.AuthViewModel
 import com.tamaki.workerapp.userPathways.signin.onetap.Constants.AUTH_SCREEN
 import com.tamaki.workerapp.userPathways.signin.onetap.Constants.SIGN_IN_WITH_GOOGLE
 import com.tamaki.workerapp.userPathways.signin.onetap.Response.*
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -35,11 +35,13 @@ fun SignInWithGoogle(
     viewModel: AuthViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
-    when(val signInWithGoogleResponse = viewModel.signInWithGoogleResponse) {
+    when (val signInWithGoogleResponse = viewModel.signInWithGoogleResponse) {
         is Loading -> ProgressBar()
         is Success -> signInWithGoogleResponse.data?.let { signedIn ->
             LaunchedEffect(signedIn) {
-                if(signedIn){navigator.navigate(ProfileScreenDestination)}
+                if (signedIn) {
+                    navigator.navigate(ProfileScreenDestination)
+                }
             }
         }
         is Failure -> LaunchedEffect(Unit) {
@@ -51,39 +53,50 @@ fun SignInWithGoogle(
 
 @Composable
 fun signInWithGoogle(
-    padding: PaddingValues,
     oneTapSignIn: () -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxSize().padding(padding),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Button(
-            modifier = Modifier.padding(bottom = 48.dp),
-            shape = RoundedCornerShape(6.dp),
-            onClick = oneTapSignIn
+        modifier = Modifier
+            .width(280.dp)
+            .height(50.dp)
+            .background(
+                shape = RoundedCornerShape(5.dp),
+                color = MaterialTheme.colorScheme.primary
+            )
+            .clickable {
+                oneTapSignIn()
+            },
+        contentAlignment = Alignment.Center,
+
+
         ) {
-            Image(
-                painter = painterResource(
-                    id = R.drawable.googlelogo
-                ),
-                contentDescription = null
-            )
-            Text(
-                text = SIGN_IN_WITH_GOOGLE,
-                modifier = Modifier.padding(6.dp),
-                fontSize = 18.sp
-            )
-        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+        Image(
+            painter = painterResource(
+                id = R.drawable.googlelogo
+            ),
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.width(5.dp))
+        Text(
+            text = SIGN_IN_WITH_GOOGLE,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+    }
     }
 }
+
 
 @Composable
 fun OneTapSignIn(
     viewModel: AuthViewModel = hiltViewModel(),
     launch: (result: BeginSignInResult) -> Unit
 ) {
-    when(val oneTapSignInResponse = viewModel.oneTapSignInResponse) {
+    when (val oneTapSignInResponse = viewModel.oneTapSignInResponse) {
         is Loading -> ProgressBar()
         is Success -> oneTapSignInResponse.data?.let {
             LaunchedEffect(it) {
@@ -100,6 +113,6 @@ fun OneTapSignIn(
 @SigninNavGraph(start = true)
 @Destination
 @Composable
-fun asdf(){
+fun asdf() {
 
 }
